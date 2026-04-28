@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商业方法论 — 《因为独特》×《真需求》</title>
+<style>
+  :root {
+    --bg-dark: #0a0a0f;
+    --bg-card: #141419;
+    --gold: #c9a84c;
+    --gold-light: #e8d48b;
+    --gold-dim: rgba(201,168,76,0.15);
+    --text: #e8e4dc;
+    --text-dim: rgba(232,228,220,0.55);
+    --accent-blue: #4a7cf7;
+    --accent-coral: #e85d4a;
+    --slide-h: 100vh;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ===== SLIDE SYSTEM ===== */
+  .slide {
+    min-height: var(--slide-h);
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Slide number */
+  .slide-num {
+    position: absolute;
+    top: 40px;
+    right: 60px;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== SLIDE 0: COVER ===== */
+  .slide-cover {
+    background: linear-gradient(160deg, #0a0a0f 0%, #1a1520 40%, #0f0a14 100%);
+    text-align: center;
+  }
+
+  .slide-cover::before {
+    content: '';
+    position: absolute;
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cover-label {
+    font-size: 12px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+    opacity: 0.8;
+  }
+
+  .cover-title {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #a88430 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .cover-sub {
+    font-size: 20px;
+    color: var(--text-dim);
+    font-weight: 300;
+    margin-bottom: 48px;
+    line-height: 1.6;
+  }
+
+  .cover-books {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+  }
+
+  .cover-book {
+    padding: 16px 28px;
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 12px;
+    background: rgba(201,168,76,0.05);
+    backdrop-filter: blur(10px);
+  }
+
+  .cover-book .book-name {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+
+  .cover-book .book-author {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .audience-bar {
+    position: fixed;
+    top: 22px;
+    left: 24px;
+    z-index: 40;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .audience-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(20,20,25,0.72);
+    color: rgba(232,228,220,0.72);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    backdrop-filter: blur(14px);
+    transition: transform 0.2s, border-color 0.2s, background 0.2s;
+  }
+
+  .audience-tab:hover {
+    transform: translateY(-2px);
+  }
+
+  .audience-tab.active {
+    border-color: rgba(201,168,76,0.28);
+    background: linear-gradient(180deg, rgba(201,168,76,0.14), rgba(201,168,76,0.04));
+    color: var(--gold-light);
+  }
+
+  .perspective-card {
+    margin-top: 36px;
+    width: min(760px, 100%);
+    padding: 24px 28px;
+    border-radius: 16px;
+    border: 1px solid rgba(201,168,76,0.16);
+    background: linear-gradient(180deg, rgba(201,168,76,0.08), rgba(255,255,255,0.02));
+    text-align: left;
+  }
+
+  .perspective-tag {
+    display: inline-flex;
+    margin-bottom: 14px;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+  }
+
+  .perspective-title {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 24px;
+    line-height: 1.45;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .perspective-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: rgba(232,228,220,0.72);
+    margin-bottom: 14px;
+  }
+
+  .perspective-points {
+    display: grid;
+    gap: 10px;
+  }
+
+  .perspective-points div {
+    position: relative;
+    padding-left: 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(232,228,220,0.74);
+  }
+
+  .perspective-points div::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  /* ===== CONTENT SLIDES ===== */
+  .slide-content {
+    align-items: flex-start;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .slide-title {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 40px;
+  }
+
+  .slide-title .highlight {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Grid layout */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    width: 100%;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 32px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(201,168,76,0.2);
+  }
+
+  .card-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+
+  .card-label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .card-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(232,228,220,0.72);
+  }
+
+  /* Quote block */
+  .quote-block {
+    position: relative;
+    padding: 40px 48px;
+    background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, rgba(201,168,76,0.02) 100%);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 16px 16px 0;
+    margin: 32px 0;
+    width: 100%;
+  }
+
+  .quote-block .quote-mark {
+    position: absolute;
+    top: 16px; left: 20px;
+    font-size: 48px;
+    color: var(--gold);
+    opacity: 0.3;
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+
+  .quote-block .quote-text {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 24px;
+    line-height: 1.65;
+    font-weight: 400;
+    color: var(--gold-light);
+  }
+
+  .quote-block .quote-src {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* Big number */
+  .big-num {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 120px;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(180deg, rgba(201,168,76,0.3) 0%, rgba(201,168,76,0.05) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    justify-content: center;
+    margin: 40px 0;
+  }
+
+  .flow-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 200px;
+  }
+
+  .flow-circle {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    border: 2px solid var(--gold);
+    background: rgba(201,168,76,0.06);
+  }
+
+  .flow-label {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .flow-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+    max-width: 160px;
+  }
+
+  .flow-arrow {
+    font-size: 28px;
+    color: var(--gold);
+    opacity: 0.5;
+    flex-shrink: 0;
+    margin: 0 8px;
+    margin-bottom: 40px;
+  }
+
+  /* Comparison */
+  .vs-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 32px;
+    width: 100%;
+    align-items: start;
+  }
+
+  .vs-side {
+    padding: 36px;
+    border-radius: 20px;
+    min-height: 360px;
+  }
+
+  .vs-left {
+    background: linear-gradient(160deg, rgba(74,124,247,0.1) 0%, rgba(74,124,247,0.02) 100%);
+    border: 1px solid rgba(74,124,247,0.15);
+  }
+
+  .vs-right {
+    background: linear-gradient(160deg, rgba(232,93,74,0.1) 0%, rgba(232,93,74,0.02) 100%);
+    border: 1px solid rgba(232,93,74,0.15);
+  }
+
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-dim);
+    padding-top: 120px;
+  }
+
+  .vs-book-title {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .vs-book-author {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .vs-point {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+
+  .vs-point .bullet {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  .vs-left .bullet { background: var(--accent-blue); }
+  .vs-right .bullet { background: var(--accent-coral); }
+
+  .vs-point p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: rgba(232,228,220,0.8);
+  }
+
+  /* List style */
+  .insight-list {
+    list-style: none;
+    width: 100%;
+  }
+
+  .insight-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .insight-list li:last-child { border-bottom: none; }
+
+  .insight-list .li-num {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--gold);
+    opacity: 0.4;
+    flex-shrink: 0;
+    width: 48px;
+    text-align: right;
+    line-height: 1.2;
+  }
+
+  .insight-list .li-content h3 {
+    font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .insight-list .li-content p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: rgba(232,228,220,0.7);
+  }
+
+  /* Bottom nav */
+  .slide-nav {
+    position: fixed;
+    bottom: 32px;
+    right: 40px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .nav-dot.active {
+    background: var(--gold);
+    box-shadow: 0 0 8px rgba(201,168,76,0.4);
+  }
+
+  /* Decorative elements */
+  .deco-line {
+    width: 60px; height: 2px;
+    background: var(--gold);
+    opacity: 0.4;
+    margin-bottom: 24px;
+  }
+
+  /* Takeaway card */
+  .takeaway {
+    background: linear-gradient(160deg, rgba(201,168,76,0.12) 0%, rgba(201,168,76,0.03) 100%);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 20px;
+    padding: 48px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .takeaway h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .takeaway p {
+    font-size: 18px;
+    line-height: 1.8;
+    color: rgba(232,228,220,0.8);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .audience-bar {
+      top: 16px;
+      left: 16px;
+      right: 84px;
+      gap: 8px;
+    }
+    .audience-tab {
+      padding: 9px 12px;
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+    .slide { padding: 40px 24px; }
+    .cover-title { font-size: 36px; }
+    .cover-books { flex-direction: column; gap: 16px; }
+    .slide-title { font-size: 28px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .vs-container { grid-template-columns: 1fr; }
+    .vs-divider { padding-top: 0; font-size: 22px; }
+    .flow { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); margin: 0; }
+    .big-num { font-size: 72px; }
+    .quote-block .quote-text { font-size: 19px; }
+  }
+</style>
+</head>
+<body data-feedback-page="1">
+
+<!-- Nav dots -->
+<div class="slide-nav" id="navDots"></div>
+<div class="audience-bar" data-audience-switch>
+  <button class="audience-tab active" type="button" data-mode="leader" data-audience-label="领导视角" aria-pressed="true">领导视角</button>
+  <button class="audience-tab" type="button" data-mode="colleague" data-audience-label="同事视角" aria-pressed="false">同事视角</button>
+  <button class="audience-tab" type="button" data-mode="user" data-audience-label="用户视角" aria-pressed="false">用户视角</button>
+</div>
+
+<!-- ========== SLIDE 0: COVER ========== -->
+<section class="slide slide-cover" id="s0" data-feedback-index="1">
+  <div class="cover-label">商业方法论精读</div>
+  <h1 class="cover-title">因为独特 × 真需求</h1>
+  <p class="cover-sub" id="coverSub">两本书，两套思考框架<br>一个关于如何做出独特的品牌，一个关于如何找到真正的需求</p>
+  <div class="cover-books">
+    <div class="cover-book">
+      <div class="book-name">《因为独特》</div>
+      <div class="book-author">李翔 访谈 王宁（泡泡玛特）</div>
+    </div>
+    <div class="cover-book">
+      <div class="book-name">《真需求》</div>
+      <div class="book-author">梁宁</div>
+    </div>
+  </div>
+  <div class="perspective-card">
+    <div class="perspective-tag" id="perspectiveTag">领导视角</div>
+    <div class="perspective-title" id="perspectiveTitle">把两本书读成一套战略判断框架。</div>
+    <div class="perspective-text" id="perspectiveText">领导视角先看：需求是否成立，独特性是否能构成优势，最后能不能长成可复制的模式。</div>
+    <div class="perspective-points" id="perspectivePoints"></div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 1: 因为独特 — 核心方法论 ========== -->
+<section class="slide slide-content" id="s1" data-feedback-index="2">
+  <span class="slide-num">01 / 08</span>
+  <span class="section-tag">因为独特</span>
+  <h2 class="slide-title">泡泡玛特的<span class="highlight">独特</span>方法论</h2>
+  <p style="font-size:17px; color:var(--text-dim); margin-bottom:36px; max-width:700px;">
+    从濒临倒闭的杂货铺到千亿市值的潮玩帝国——王宁的商业智慧不在于追逐风口，而在于坚守独特。
+  </p>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-icon">🎨</div>
+      <div class="card-label">IP 即核心资产</div>
+      <div class="card-title">用唱片公司理解泡泡玛特</div>
+      <div class="card-text">IP 的本质是低成本的市场营销。泡泡玛特不是玩具公司，是 IP 平台——像唱片公司签约艺术家一样签约设计师。</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⛪</div>
+      <div class="card-label">门店即教堂</div>
+      <div class="card-title">线下传递品牌文化</div>
+      <div class="card-text">线上各品牌很难有差异，但线下门店能调动视觉、触觉、听觉与服务，全面传递品牌文化。门店是品牌的教堂。</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">✨</div>
+      <div class="card-label">满足感 + 存在感</div>
+      <div class="card-title">消费的两个本质</div>
+      <div class="card-text">消费就是解决两个问题：满足感和存在感。泡泡玛特解决的是情感慰藉需求——不是生活刚需，是精神刚需。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 2: 因为独特 — 经营哲学 ========== -->
+<section class="slide slide-content" id="s2" data-feedback-index="3">
+  <span class="slide-num">02 / 08</span>
+  <span class="section-tag">因为独特</span>
+  <h2 class="slide-title">王宁的<span class="highlight">经营哲学</span></h2>
+
+  <div class="quote-block">
+    <span class="quote-mark">"</span>
+    <div class="quote-text">本来想做 A，然后做了 B，最后在 C 上伟大。<br>ABC 背后都有一个共同目标——满足人的快乐、分享欲和收藏欲。</div>
+    <div class="quote-src">—— 王宁，泡泡玛特创始人</div>
+  </div>
+
+  <ul class="insight-list">
+    <li>
+      <span class="li-num">01</span>
+      <div class="li-content">
+        <h3>尊重时间，尊重经营</h3>
+        <p>不追风口，不做打折促销。在所有人冲向移动互联网时，王宁还在琢磨收银员应该坐着还是站着、音乐应该开多少分贝。</p>
+      </div>
+    </li>
+    <li>
+      <span class="li-num">02</span>
+      <div class="li-content">
+        <h3>每个小品类都可以诞生伟大的公司</h3>
+        <p>不追求做大众消费品，而是做收藏品。在看似天花板很低的品类里，用深度和独特性撑起千亿市值。</p>
+      </div>
+    </li>
+    <li>
+      <span class="li-num">03</span>
+      <div class="li-content">
+        <h3>全球化 × IP 集团化</h3>
+        <p>双引擎战略：国际业务扩展（尤其非华人市场）+ 围绕 IP 的多业务线延展。"道"没变，变的是"术"。</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ========== SLIDE 3: 真需求 — 核心框架 ========== -->
+<section class="slide slide-content" id="s3" data-feedback-index="4">
+  <span class="slide-num">03 / 08</span>
+  <span class="section-tag">真需求</span>
+  <h2 class="slide-title">商业闭环的<span class="highlight">极简模型</span></h2>
+  <p style="font-size:17px; color:var(--text-dim); margin-bottom:20px; max-width:700px;">
+    梁宁用一个三步框架解构所有商业本质：<strong style="color:var(--gold-light)">价值 → 共识 → 模式</strong>
+  </p>
+
+  <div class="flow">
+    <div class="flow-node">
+      <div class="flow-circle">💎</div>
+      <div class="flow-label">价值</div>
+      <div class="flow-desc">源自需求。<br>因为被需求，所以有价值。</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-circle">🤝</div>
+      <div class="flow-label">共识</div>
+      <div class="flow-desc">来自对分歧的超越。<br>共识的成果是成交与关系。</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-circle">⚙️</div>
+      <div class="flow-label">模式</div>
+      <div class="flow-desc">如何生存与发展。<br>投资自己的竞争力。</div>
+    </div>
+  </div>
+
+  <div class="quote-block" style="margin-top:16px;">
+    <span class="quote-mark">"</span>
+    <div class="quote-text">理解需求，才能理解所有的商业与关系。</div>
+    <div class="quote-src">—— 梁宁，《真需求》</div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 4: 真需求 — 核心洞察 ========== -->
+<section class="slide slide-content" id="s4" data-feedback-index="5">
+  <span class="slide-num">04 / 08</span>
+  <span class="section-tag">真需求</span>
+  <h2 class="slide-title">什么是<span class="highlight">真需求</span>？</h2>
+
+  <div class="grid-2">
+    <div>
+      <div class="quote-block" style="margin:0 0 28px 0;">
+        <span class="quote-mark">"</span>
+        <div class="quote-text" style="font-size:20px;">你能连接的人，不是你的人脉；<br>你能帮到的人，才是你的人脉。</div>
+        <div class="quote-src">—— 梁宁</div>
+      </div>
+      <div class="card" style="border-color: rgba(232,93,74,0.2);">
+        <div class="card-title" style="color:var(--accent-coral);">真需求 = 刚性</div>
+        <div class="card-text">
+          有些东西你一直在吐槽，一直在怨念，却无法离开。最核心的原因是需求——你对它的需求依然存在。真需求，就是这么刚性。
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-icon">❌</div>
+        <div class="card-title">伪需求的特征</div>
+        <div class="card-text">看着挺好，但是没有也可以。加了微信、吃过饭、点过赞——如果对方对你毫无需求，这些都不是"交情"。</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📉</div>
+        <div class="card-title">需求消失 = 关系消失</div>
+        <div class="card-text">曾经的亲密无间、不可或离，却渐行渐远。原因往往非常简单——没有需求了。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 5: 真需求 — 产业故事 ========== -->
+<section class="slide slide-content" id="s5" data-feedback-index="6">
+  <span class="slide-num">05 / 08</span>
+  <span class="section-tag">真需求</span>
+  <h2 class="slide-title">穿越百年的<span class="highlight">产业故事</span></h2>
+  <p style="font-size:17px; color:var(--text-dim); margin-bottom:36px; max-width:700px;">
+    梁宁用跨越时间的案例证明：真需求是一切商业的本源。
+  </p>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-icon">🧵</div>
+      <div class="card-title">丝绸之路 → SHEIN</div>
+      <div class="card-text">从古代丝路到现代快时尚巨头的蜕变，背后是同一个需求的千年迁移：人类对"美"与"身份表达"的渴望。</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📱</div>
+      <div class="card-title">中国手机 30 年崛起</div>
+      <div class="card-text">从山寨机到全球前五，中国手机产业的崛起本质是精准捕捉了不同阶段用户的核心需求，逐层升级。</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">☕</div>
+      <div class="card-title">脑白金 & 瑞幸的秘技</div>
+      <div class="card-text">脑白金抓住了"送礼焦虑"，瑞幸抓住了"咖啡平权"。看似不同的品类，背后是同一种方法论：找到真需求，构建共识。</div>
+    </div>
+  </div>
+
+  <div class="quote-block" style="margin-top:36px;">
+    <span class="quote-mark">"</span>
+    <div class="quote-text" style="font-size:20px;">在这个人人都在谈创新的时代，99% 的人其实都在做无用功。<br>因为不懂什么是"真需求"。</div>
+    <div class="quote-src">—— 梁宁，《真需求》</div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 6: 双书对比 ========== -->
+<section class="slide slide-content" id="s6" data-feedback-index="7">
+  <span class="slide-num">06 / 08</span>
+  <span class="section-tag">对比</span>
+  <h2 class="slide-title">两本书的<span class="highlight">方法论对照</span></h2>
+
+  <div class="vs-container">
+    <div class="vs-side vs-left">
+      <div class="vs-book-title" style="color:var(--accent-blue);">《因为独特》</div>
+      <div class="vs-book-author">李翔 × 王宁</div>
+      <div class="vs-point"><span class="bullet"></span><p><strong>核心命题：</strong>如何在小品类中创造独特价值</p></div>
+      <div class="vs-point"><span class="bullet"></span><p><strong>方法：</strong>IP 平台化 + 门店教堂化 + 情感需求</p></div>
+      <div class="vs-point"><span class="bullet"></span><p><strong>视角：</strong>从一家公司的实战出发，自下而上</p></div>
+      <div class="vs-point"><span class="bullet"></span><p><strong>关键词：</strong>聚焦、耐心、独特、尊重经营</p></div>
+    </div>
+
+    <div class="vs-divider">×</div>
+
+    <div class="vs-side vs-right">
+      <div class="vs-book-title" style="color:var(--accent-coral);">《真需求》</div>
+      <div class="vs-book-author">梁宁</div>
+      <div class="vs-point"><span class="bullet"></span><p><strong>核心命题：</strong>如何识别和满足真实需求</p></div>
+      <div class="vs-point"><span class="bullet"></span><p><strong>方法：</strong>价值 → 共识 → 模式 三步闭环</p></div>
+      <div class="vs-point"><span class="bullet"></span><p><strong>视角：</strong>从商业本质出发，自上而下</p></div>
+      <div class="vs-point"><span class="bullet"></span><p><strong>关键词：</strong>需求、共识、模式、本质思考</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 7: 交叉洞察 ========== -->
+<section class="slide slide-content" id="s7" data-feedback-index="8">
+  <span class="slide-num">07 / 08</span>
+  <span class="section-tag">交叉洞察</span>
+  <h2 class="slide-title">两本书的<span class="highlight">共振</span></h2>
+
+  <ul class="insight-list">
+    <li>
+      <span class="li-num">01</span>
+      <div class="li-content">
+        <h3>需求是一切的起点</h3>
+        <p>王宁发现了潮玩背后的情感需求（满足感 + 存在感），梁宁说"因为被需求，所以有价值"。两者殊途同归——找到真需求，才有独特价值。</p>
+      </div>
+    </li>
+    <li>
+      <span class="li-num">02</span>
+      <div class="li-content">
+        <h3>独特是最好的共识策略</h3>
+        <p>梁宁说共识是"对分歧的超越"。泡泡玛特正是用"独特"建立了新共识——潮玩不是玩具，是艺术化消费的代表。</p>
+      </div>
+    </li>
+    <li>
+      <span class="li-num">03</span>
+      <div class="li-content">
+        <h3>模式 = 长期主义 × 实干</h3>
+        <p>梁宁的"模式"强调可持续竞争力，王宁的"尊重时间、尊重经营"是模式的最佳注脚。不靠风口，靠深度。</p>
+      </div>
+    </li>
+    <li>
+      <span class="li-num">04</span>
+      <div class="li-content">
+        <h3>人性洞察 > 数据分析</h3>
+        <p>两本书都强调：好的商业决策来自对人性的深刻理解，而不仅仅是数据报表。乔布斯不调研市场，王宁从社群中发现 SONY ANGEL。</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ========== SLIDE 8: CLOSING ========== -->
+<section class="slide slide-cover" id="s8" data-feedback-index="9" style="background: linear-gradient(160deg, #0f0a14 0%, #1a1520 40%, #0a0a0f 100%);">
+  <span class="slide-num">08 / 08</span>
+  <div class="cover-label" style="margin-bottom:48px;">TAKEAWAY</div>
+  
+  <div class="takeaway">
+    <h2 id="takeawayTitle">核心行动框架</h2>
+    <p id="takeawayBody" style="text-align:left; max-width:600px;">
+      <strong style="color:var(--gold-light);">① 找到真需求</strong> — 不是用户说要什么，而是他们无法离开什么<br><br>
+      <strong style="color:var(--gold-light);">② 做到独特</strong> — 在小品类中深耕，每个小领域都能诞生伟大公司<br><br>
+      <strong style="color:var(--gold-light);">③ 建立共识</strong> — 让市场认可你的价值定义，而不是追随别人的<br><br>
+      <strong style="color:var(--gold-light);">④ 形成模式</strong> — 尊重时间，尊重经营，把独特做成可复制的系统
+    </p>
+  </div>
+
+  <div style="margin-top:48px; text-align:center;">
+<p id="closingQuote" style="font-family:'Songti SC','STSong','Source Han Serif SC','Noto Serif SC',serif; font-size:24px; color:var(--gold-light); font-weight:600; line-height:1.6;">
+      真需求是一切商业的本源<br>
+      因为独特是最好的生存策略
+    </p>
+    <p style="margin-top:16px; font-size:14px; color:var(--text-dim);">
+      《因为独特》李翔 × 王宁 &nbsp;|&nbsp; 《真需求》梁宁
+    </p>
+  </div>
+</section>
+
+<script>
+  const AUDIENCE_KEY = "kb_audience_mode";
+  const audienceButtons = [...document.querySelectorAll('.audience-tab')];
+  const perspectiveContent = {
+    leader: {
+      tag: "领导视角",
+      coverSub: "把两本书读成一套战略判断框架<br>判断需求、优势与模式能否真正成立",
+      title: "把两本书读成一套战略判断框架。",
+      text: "领导视角先看：需求是否成立，独特性是否能构成优势，最后能不能长成可复制的模式。",
+      points: [
+        "先判断需求是不是刚性的，而不是概念性的。",
+        "再判断独特是不是优势，而不是自我感动。",
+        "最后判断能不能沉淀成长期模式。"
+      ],
+      takeawayTitle: "给领导看的行动框架",
+      takeawayBody: '<strong style="color:var(--gold-light);">① 看需求</strong> — 先分清是真需求还是伪需求<br><br><strong style="color:var(--gold-light);">② 看优势</strong> — 独特性是否足够强，能否形成壁垒<br><br><strong style="color:var(--gold-light);">③ 看共识</strong> — 市场是否会接受你的价值定义<br><br><strong style="color:var(--gold-light);">④ 看模式</strong> — 这件事能不能持续，不靠运气和风口',
+      closingQuote: "真需求决定方向<br>独特决定生存空间"
+    },
+    colleague: {
+      tag: "同事视角",
+      coverSub: "把两本书读成一套方法论拆解<br>理解产品、品牌、经营和需求识别怎么互相咬合",
+      title: "把两本书读成一套可执行的方法论。",
+      text: "同事视角先看：价值从哪里来、共识怎么建立、独特如何落到经营动作里。",
+      points: [
+        "把“真需求”看成价值起点，而不是口号。",
+        "把“因为独特”看成共识建立和品牌经营方法。",
+        "把两本书合起来读成一套价值 → 共识 → 模式的链路。"
+      ],
+      takeawayTitle: "给同事看的拆解框架",
+      takeawayBody: '<strong style="color:var(--gold-light);">① 识别需求</strong> — 找到用户无法离开的那个点<br><br><strong style="color:var(--gold-light);">② 放大独特</strong> — 用产品、品牌和场景把差异做实<br><br><strong style="color:var(--gold-light);">③ 建立共识</strong> — 让用户理解并接受你的价值定义<br><br><strong style="color:var(--gold-light);">④ 形成模式</strong> — 把偶发亮点沉淀成长期经营能力',
+      closingQuote: "不是先做品牌，再找需求<br>而是先抓需求，再把独特经营出来"
+    },
+    user: {
+      tag: "用户视角",
+      coverSub: "把两本书读成一套理解商业和关系的方式<br>看清为什么有些东西让你离不开，有些只是看起来很好",
+      title: "把两本书读成一套看懂选择的方式。",
+      text: "用户视角先看：什么是真需求，为什么独特会更有吸引力，以及为什么很多看似热闹的东西最后留不下来。",
+      points: [
+        "不是所有喜欢都是真需求，有些只是短暂新鲜。",
+        "真正让人记住的，往往来自独特体验和被理解。",
+        "会长期存在的关系和品牌，通常同时踩中了需求与独特。"
+      ],
+      takeawayTitle: "给用户看的理解框架",
+      takeawayBody: '<strong style="color:var(--gold-light);">① 先看自己真正需要什么</strong><br><br><strong style="color:var(--gold-light);">② 再看什么东西真的足够独特</strong><br><br><strong style="color:var(--gold-light);">③ 最后看它是否值得长期相信和长期使用</strong>',
+      closingQuote: "真需求让人留下来<br>独特让人愿意记住你"
+    }
+  };
+
+  function renderPerspective(mode) {
+    const data = perspectiveContent[mode];
+    document.getElementById('coverSub').innerHTML = data.coverSub;
+    document.getElementById('perspectiveTag').textContent = data.tag;
+    document.getElementById('perspectiveTitle').textContent = data.title;
+    document.getElementById('perspectiveText').textContent = data.text;
+    document.getElementById('perspectivePoints').innerHTML = data.points.map((item) => `<div>${item}</div>`).join('');
+    document.getElementById('takeawayTitle').textContent = data.takeawayTitle;
+    document.getElementById('takeawayBody').innerHTML = data.takeawayBody;
+    document.getElementById('closingQuote').innerHTML = data.closingQuote.replace(/\n/g, '<br>');
+    audienceButtons.forEach((button) => {
+      const active = button.dataset.mode === mode;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    sessionStorage.setItem(AUDIENCE_KEY, mode);
+  }
+
+  audienceButtons.forEach((button) => {
+    button.addEventListener('click', () => renderPerspective(button.dataset.mode));
+  });
+
+  // Nav dots
+  const slides = document.querySelectorAll('.slide');
+  const navContainer = document.getElementById('navDots');
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => slides[i].scrollIntoView({ behavior: 'smooth' });
+    navContainer.appendChild(dot);
+  });
+
+  // Update active dot on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = Array.from(slides).indexOf(entry.target);
+        document.querySelectorAll('.nav-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === idx);
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+
+  slides.forEach(s => observer.observe(s));
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const dots = document.querySelectorAll('.nav-dot');
+    const current = Array.from(dots).findIndex(d => d.classList.contains('active'));
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      if (current < slides.length - 1) slides[current + 1].scrollIntoView({ behavior: 'smooth' });
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      if (current > 0) slides[current - 1].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  renderPerspective(sessionStorage.getItem(AUDIENCE_KEY) || 'leader');
+</script>
+<script src="/assets/kb-feedback.js" defer></script>
+
+</body>
+</html>

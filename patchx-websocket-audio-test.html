@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PatchX WebSocket Audio Test</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f8fc;
+        --panel: #ffffff;
+        --ink: #152033;
+        --muted: #6c7894;
+        --border: #dbe4f2;
+        --accent: #335dff;
+        --accent-soft: #edf2ff;
+        --success: #0b8f55;
+        --error: #d13d3d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: linear-gradient(180deg, #fbfcff 0%, var(--bg) 100%);
+        color: var(--ink);
+      }
+
+      .shell {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 28px 20px 48px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: 0 18px 48px rgba(27, 46, 94, 0.08);
+      }
+
+      .hero {
+        padding: 24px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.1;
+      }
+
+      .sub {
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .section {
+        padding: 20px;
+      }
+
+      .section h2 {
+        margin: 0 0 14px;
+        font-size: 16px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px 14px;
+        font: inherit;
+        color: var(--ink);
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+
+      .row {
+        display: grid;
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .row.two {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 16px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .secondary {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      .ghost {
+        background: #f3f6fb;
+        color: var(--ink);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .pill.idle {
+        background: #eef3fb;
+        color: #5c6a84;
+      }
+
+      .pill.ready {
+        background: #edf8f1;
+        color: var(--success);
+      }
+
+      .pill.error {
+        background: #fff0f0;
+        color: var(--error);
+      }
+
+      .log {
+        background: #0d1424;
+        color: #dce7ff;
+        border-radius: 18px;
+        padding: 16px;
+        min-height: 360px;
+        overflow: auto;
+        font-family: Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.55;
+        white-space: pre-wrap;
+      }
+
+      .output {
+        margin-top: 14px;
+        padding: 14px;
+        border-radius: 16px;
+        background: #f7f9fd;
+        border: 1px solid var(--border);
+      }
+
+      .output h3 {
+        margin: 0 0 10px;
+        font-size: 14px;
+      }
+
+      .output p {
+        margin: 6px 0;
+        line-height: 1.6;
+      }
+
+      .hint {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      @media (max-width: 820px) {
+        .grid,
+        .row.two {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="panel hero">
+        <h1>PatchX WebSocket Audio Test</h1>
+        <div class="sub">
+          最小可运行测试页。流程是：建立 WebSocket → 发送 <code>hello</code> → 获取
+          <code>session_id</code> → 开始麦克风采集 → 下采样为 16k PCM → 按 1600 bytes 帧发送 →
+          停止后等待服务端返回 <code>partial</code> / <code>result</code> / <code>error</code>。
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="panel section">
+          <h2>连接配置</h2>
+
+          <div class="row two">
+            <div>
+              <label for="wsUrl">WebSocket 地址</label>
+              <input id="wsUrl" value="ws://114.55.246.148:8080/ws/audio" />
+            </div>
+            <div>
+              <label for="deviceId">device_id</label>
+              <input id="deviceId" value="13548763217" />
+            </div>
+          </div>
+
+          <div class="row two">
+            <div>
+              <label for="format">音频格式</label>
+              <select id="format">
+                <option value="pcm" selected>pcm</option>
+                <option value="opus">opus（前端此页未编码 opus）</option>
+              </select>
+            </div>
+            <div>
+              <label for="sampleRate">采样率</label>
+              <input id="sampleRate" value="16000" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="connectBtn">1. 建立连接</button>
+            <button class="secondary" id="startBtn" disabled>2. 开始录音</button>
+            <button class="ghost" id="stopBtn" disabled>3. 停止录音</button>
+            <button class="ghost" id="disconnectBtn" disabled>断开连接</button>
+            <button class="ghost" id="clearBtn">清空日志</button>
+          </div>
+
+          <div class="output">
+            <h3>当前状态</h3>
+            <p><span id="statusPill" class="pill idle">IDLE</span></p>
+            <p><strong>session_id：</strong><span id="sessionId">-</span></p>
+            <p><strong>实时转写：</strong><span id="partialText">-</span></p>
+            <p><strong>最终结果：</strong><span id="resultText">-</span></p>
+          </div>
+
+          <div class="hint">
+            注意：
+            <br />
+            1. 浏览器必须允许麦克风权限。
+            <br />
+            2. 这页只实现了 PCM 发送；如果你后面要走 4G 设备，建议还是按文档最终切到 Opus。
+            <br />
+            3. 如果服务端需要鉴权 token，可以在 <code>connectWebSocket()</code> 里补 header 或 query。
+          </div>
+        </div>
+
+        <div class="panel section">
+          <h2>运行日志</h2>
+          <div id="log" class="log"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const state = {
+        ws: null,
+        sessionId: '',
+        isConnected: false,
+        isRecording: false,
+        audioContext: null,
+        stream: null,
+        sourceNode: null,
+        processorNode: null,
+        pcmCache: new Uint8Array(0),
+      };
+
+      const els = {
+        wsUrl: document.getElementById('wsUrl'),
+        deviceId: document.getElementById('deviceId'),
+        format: document.getElementById('format'),
+        sampleRate: document.getElementById('sampleRate'),
+        connectBtn: document.getElementById('connectBtn'),
+        startBtn: document.getElementById('startBtn'),
+        stopBtn: document.getElementById('stopBtn'),
+        disconnectBtn: document.getElementById('disconnectBtn'),
+        clearBtn: document.getElementById('clearBtn'),
+        log: document.getElementById('log'),
+        statusPill: document.getElementById('statusPill'),
+        sessionId: document.getElementById('sessionId'),
+        partialText: document.getElementById('partialText'),
+        resultText: document.getElementById('resultText'),
+      };
+
+      function log(message, data) {
+        const line = `[${new Date().toLocaleTimeString('zh-CN', { hour12: false })}] ${message}${
+          data !== undefined ? ' ' + (typeof data === 'string' ? data : JSON.stringify(data)) : ''
+        }`;
+        els.log.textContent += line + '\n';
+        els.log.scrollTop = els.log.scrollHeight;
+      }
+
+      function setStatus(label, kind = 'idle') {
+        els.statusPill.textContent = label;
+        els.statusPill.className = `pill ${kind}`;
+      }
+
+      function refreshButtons() {
+        els.connectBtn.disabled = state.isConnected;
+        els.startBtn.disabled = !state.isConnected || state.isRecording;
+        els.stopBtn.disabled = !state.isRecording;
+        els.disconnectBtn.disabled = !state.isConnected;
+      }
+
+      function appendBytes(a, b) {
+        const result = new Uint8Array(a.length + b.length);
+        result.set(a, 0);
+        result.set(b, a.length);
+        return result;
+      }
+
+      function downsampleTo16k(float32Array, inputSampleRate, targetSampleRate = 16000) {
+        if (targetSampleRate === inputSampleRate) {
+          return float32Array;
+        }
+        const ratio = inputSampleRate / targetSampleRate;
+        const newLength = Math.round(float32Array.length / ratio);
+        const output = new Float32Array(newLength);
+        let offsetResult = 0;
+        let offsetBuffer = 0;
+        while (offsetResult < output.length) {
+          const nextOffsetBuffer = Math.round((offsetResult + 1) * ratio);
+          let accum = 0;
+          let count = 0;
+          for (let i = offsetBuffer; i < nextOffsetBuffer && i < float32Array.length; i += 1) {
+            accum += float32Array[i];
+            count += 1;
+          }
+          output[offsetResult] = count > 0 ? accum / count : 0;
+          offsetResult += 1;
+          offsetBuffer = nextOffsetBuffer;
+        }
+        return output;
+      }
+
+      function convertFloatTo16BitPCM(float32Array) {
+        const pcm = new Int16Array(float32Array.length);
+        for (let i = 0; i < float32Array.length; i += 1) {
+          const sample = Math.max(-1, Math.min(1, float32Array[i]));
+          pcm[i] = sample < 0 ? sample * 0x8000 : sample * 0x7fff;
+        }
+        return new Uint8Array(pcm.buffer);
+      }
+
+      function flushPcmFrames() {
+        if (!state.ws || state.ws.readyState !== WebSocket.OPEN || !state.isRecording) {
+          return;
+        }
+        while (state.pcmCache.length >= 1600) {
+          const frame = state.pcmCache.slice(0, 1600);
+          state.pcmCache = state.pcmCache.slice(1600);
+          state.ws.send(frame.buffer);
+          log('PCM_FRAME_SENT', `1600 bytes`);
+        }
+      }
+
+      async function connectWebSocket() {
+        const baseUrl = els.wsUrl.value.trim();
+        const deviceId = encodeURIComponent(els.deviceId.value.trim());
+        if (!baseUrl || !deviceId) {
+          log('CONNECT_ABORT', '缺少 wsUrl 或 device_id');
+          return;
+        }
+
+        const connector = baseUrl.includes('?') ? '&' : '?';
+        const finalUrl = `${baseUrl}${connector}device_id=${deviceId}`;
+        log('CONNECTING', finalUrl);
+
+        const ws = new WebSocket(finalUrl);
+        ws.binaryType = 'arraybuffer';
+
+        ws.onopen = () => {
+          state.ws = ws;
+          state.isConnected = true;
+          setStatus('CONNECTED', 'ready');
+          refreshButtons();
+          log('WS_OPEN');
+
+          const hello = {
+            type: 'hello',
+            version: 1,
+            transport: 'websocket',
+            audio_params: {
+              format: els.format.value,
+              sample_rate: Number(els.sampleRate.value),
+              channels: 1,
+              frame_duration: 60,
+            },
+          };
+
+          ws.send(JSON.stringify(hello));
+          log('HELLO_SENT', hello);
+        };
+
+        ws.onmessage = (event) => {
+          if (typeof event.data !== 'string') {
+            log('BINARY_MESSAGE', `size=${event.data.byteLength || 0}`);
+            return;
+          }
+
+          log('WS_MESSAGE', event.data);
+
+          let payload = null;
+          try {
+            payload = JSON.parse(event.data);
+          } catch {
+            return;
+          }
+
+          if (payload.type === 'hello' && payload.session_id) {
+            state.sessionId = payload.session_id;
+            els.sessionId.textContent = payload.session_id;
+            setStatus('READY', 'ready');
+            refreshButtons();
+          }
+
+          if (payload.type === 'partial') {
+            els.partialText.textContent = payload.text || '-';
+          }
+
+          if (payload.type === 'result') {
+            els.resultText.textContent = payload.text || '-';
+            setStatus('RESULT', 'ready');
+          }
+
+          if (payload.type === 'error') {
+            setStatus('ERROR', 'error');
+            els.resultText.textContent = payload.message || '未知错误';
+          }
+        };
+
+        ws.onerror = () => {
+          setStatus('WS_ERROR', 'error');
+          log('WS_ERROR');
+        };
+
+        ws.onclose = (event) => {
+          log('WS_CLOSE', { code: event.code, reason: event.reason });
+          state.ws = null;
+          state.isConnected = false;
+          state.sessionId = '';
+          if (state.isRecording) {
+            stopRecording(true);
+          }
+          els.sessionId.textContent = '-';
+          refreshButtons();
+          if (els.statusPill.textContent !== 'ERROR') {
+            setStatus('DISCONNECTED', 'idle');
+          }
+        };
+      }
+
+      async function startRecording() {
+        if (!state.ws || state.ws.readyState !== WebSocket.OPEN || !state.sessionId) {
+          log('START_ABORT', 'WebSocket 未连接或未拿到 session_id');
+          return;
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
+        });
+
+        const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+        const audioContext = new AudioContextCtor();
+        const sourceNode = audioContext.createMediaStreamSource(stream);
+        const processorNode = audioContext.createScriptProcessor(4096, 1, 1);
+
+        state.stream = stream;
+        state.audioContext = audioContext;
+        state.sourceNode = sourceNode;
+        state.processorNode = processorNode;
+        state.isRecording = true;
+        state.pcmCache = new Uint8Array(0);
+
+        processorNode.onaudioprocess = (event) => {
+          const input = event.inputBuffer.getChannelData(0);
+          const downsampled = downsampleTo16k(input, audioContext.sampleRate, 16000);
+          const pcmBytes = convertFloatTo16BitPCM(downsampled);
+          state.pcmCache = appendBytes(state.pcmCache, pcmBytes);
+          flushPcmFrames();
+        };
+
+        sourceNode.connect(processorNode);
+        processorNode.connect(audioContext.destination);
+
+        state.ws.send(
+          JSON.stringify({
+            type: 'listen',
+            session_id: state.sessionId,
+            state: 'start',
+            mode: 'manual',
+          })
+        );
+
+        setStatus('RECORDING', 'ready');
+        refreshButtons();
+        log('LISTEN_START_SENT', { session_id: state.sessionId });
+      }
+
+      function stopRecording(silent = false) {
+        if (!state.isRecording) return;
+
+        try {
+          state.processorNode && state.processorNode.disconnect();
+          state.sourceNode && state.sourceNode.disconnect();
+        } catch {}
+
+        if (state.stream) {
+          state.stream.getTracks().forEach((track) => track.stop());
+        }
+
+        if (state.audioContext) {
+          state.audioContext.close().catch(() => {});
+        }
+
+        state.processorNode = null;
+        state.sourceNode = null;
+        state.stream = null;
+        state.audioContext = null;
+        state.isRecording = false;
+        state.pcmCache = new Uint8Array(0);
+
+        if (!silent && state.ws && state.ws.readyState === WebSocket.OPEN && state.sessionId) {
+          state.ws.send(
+            JSON.stringify({
+              type: 'listen',
+              session_id: state.sessionId,
+              state: 'stop',
+            })
+          );
+          log('LISTEN_STOP_SENT', { session_id: state.sessionId });
+        }
+
+        setStatus('WAITING_RESULT', 'idle');
+        refreshButtons();
+      }
+
+      function disconnectWebSocket() {
+        stopRecording(true);
+        if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+          state.ws.close(1000, 'manual_close');
+        }
+      }
+
+      els.connectBtn.addEventListener('click', () => {
+        connectWebSocket().catch((error) => {
+          setStatus('ERROR', 'error');
+          log('CONNECT_FAILED', error.message);
+        });
+      });
+
+      els.startBtn.addEventListener('click', () => {
+        startRecording().catch((error) => {
+          setStatus('ERROR', 'error');
+          log('MIC_START_FAILED', error.message);
+        });
+      });
+
+      els.stopBtn.addEventListener('click', () => stopRecording(false));
+      els.disconnectBtn.addEventListener('click', disconnectWebSocket);
+      els.clearBtn.addEventListener('click', () => {
+        els.log.textContent = '';
+        els.partialText.textContent = '-';
+        els.resultText.textContent = '-';
+      });
+
+      setStatus('IDLE', 'idle');
+      refreshButtons();
+      log('INIT', '页面已加载，可以开始测试');
+    </script>
+  </body>
+</html>

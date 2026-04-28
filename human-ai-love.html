@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>人机恋：新时代的情绪价值？</title>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d48b;
+      --text: #e8e4dc;
+      --text-dim: rgba(232, 228, 220, 0.58);
+      --line: rgba(232, 228, 220, 0.08);
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(201, 168, 76, 0.14), transparent 24%),
+        radial-gradient(circle at 86% 12%, rgba(74, 124, 247, 0.06), transparent 20%),
+        linear-gradient(180deg, #09090d 0%, #0a0a0f 58%, #0e0e14 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.026) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
+      background-size: 84px 84px;
+      opacity: 0.24;
+      mask-image: radial-gradient(circle at center, black 58%, transparent 96%);
+      pointer-events: none;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .back {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 20;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(20, 20, 25, 0.8);
+      backdrop-filter: blur(10px);
+      color: rgba(232, 228, 220, 0.8);
+      font-size: 13px;
+    }
+
+    .shell {
+      width: min(1120px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 34px 0 72px;
+    }
+
+    .hero,
+    .quote,
+    .block {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 8px);
+      background: linear-gradient(180deg, rgba(20, 20, 25, 0.94), rgba(12, 12, 16, 0.9));
+      box-shadow: var(--shadow);
+    }
+
+    .hero,
+    .quote,
+    .block {
+      padding: 32px;
+    }
+
+    .hero,
+    .grid,
+    .bullets {
+      display: grid;
+      gap: 18px;
+    }
+
+    .eyebrow,
+    .tag,
+    .audience-tab {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      color: var(--gold-light);
+      opacity: 0.84;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(48px, 6vw, 72px);
+      max-width: 8.4em;
+    }
+
+    h2 {
+      font-size: clamp(30px, 4vw, 40px);
+    }
+
+    h3 { font-size: 22px; }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.72;
+      color: var(--text-dim);
+    }
+
+    .lead {
+      max-width: 42em;
+      font-size: 18px;
+      color: rgba(232, 228, 220, 0.82);
+    }
+
+    .meta,
+    .audience-switch {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag,
+    .meta a,
+    .audience-tab {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(232, 228, 220, 0.74);
+    }
+
+    .tag { color: rgba(232, 212, 139, 0.84); }
+
+    .audience-tab {
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .audience-tab:hover { transform: translateY(-2px); }
+
+    .audience-tab.active {
+      border-color: rgba(201, 168, 76, 0.28);
+      background: linear-gradient(180deg, rgba(201, 168, 76, 0.12), rgba(255, 255, 255, 0.02));
+      color: rgba(232, 228, 220, 0.92);
+    }
+
+    .quote {
+      margin-top: 24px;
+      border-left: 4px solid var(--gold);
+      background:
+        linear-gradient(90deg, rgba(201, 168, 76, 0.12), transparent 56%),
+        linear-gradient(180deg, rgba(20, 20, 25, 0.94), rgba(12, 12, 16, 0.9));
+    }
+
+    .quote p {
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      color: rgba(232, 228, 220, 0.88);
+      font-size: 24px;
+      line-height: 1.55;
+    }
+
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 24px;
+    }
+
+    .block { min-height: 260px; }
+
+    .bullet {
+      position: relative;
+      padding-left: 16px;
+      color: rgba(232, 228, 220, 0.74);
+      line-height: 1.7;
+    }
+
+    .bullet::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 11px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    @media (max-width: 920px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100vw - 24px, 100%);
+        padding: 72px 0 36px;
+      }
+
+      .hero,
+      .quote,
+      .block {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body data-feedback-page="1">
+  <a class="back" href="/">返回线上知识库</a>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">观点条目</div>
+      <h1>人机恋：新时代的情绪价值？</h1>
+      <p class="lead" id="heroLead"></p>
+      <div class="meta">
+        <span class="tag" id="heroTag">领导视角</span>
+        <a href="/archives/2026-04-08-human-ai-love-raw.md">查看原文存档</a>
+      </div>
+      <div class="audience-switch" data-audience-switch>
+        <button class="audience-tab active" type="button" data-mode="leader" data-audience-label="领导视角">领导视角</button>
+        <button class="audience-tab" type="button" data-mode="colleague" data-audience-label="同事视角">同事视角</button>
+        <button class="audience-tab" type="button" data-mode="user" data-audience-label="用户视角">用户视角</button>
+      </div>
+    </section>
+
+    <section class="quote">
+      <p id="quoteText"></p>
+    </section>
+
+    <section class="grid">
+      <article class="block">
+        <h2 id="block1Title"></h2>
+        <p id="block1Intro"></p>
+        <div class="bullets" id="block1Bullets"></div>
+      </article>
+
+      <article class="block">
+        <h2 id="block2Title"></h2>
+        <p id="block2Intro"></p>
+        <div class="bullets" id="block2Bullets"></div>
+      </article>
+
+      <article class="block">
+        <h2 id="block3Title"></h2>
+        <p id="block3Intro"></p>
+        <div class="bullets" id="block3Bullets"></div>
+      </article>
+
+      <article class="block">
+        <h2 id="block4Title"></h2>
+        <p id="block4Intro"></p>
+        <div class="bullets" id="block4Bullets"></div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const AUDIENCE_KEY = "kb_audience_mode";
+    const content = {
+      leader: {
+        tag: "领导视角",
+        lead: "这篇要看的不是猎奇，而是一个真实趋势：越来越多人把情绪价值、依赖和亲密幻想从真人关系迁移到 AI 身上。",
+        quote: "AI 可以是缓冲器，但不能变成主关系。如果产品放大依赖，却不给边界，后面一定会变成风险问题。",
+        block1Title: "为什么这是个趋势问题",
+        block1Intro: "它不只是用户偶发行为，而是现实关系压力、技术能力提升和低成本陪伴供给共同推出来的新结构。",
+        block1Bullets: ["孤独、压力和关系摩擦在上升。", "AI 的可得性、稳定性和低风险感越来越强。", "这会改变用户把情绪价值分配给谁。"],
+        block2Title: "短期价值在哪里",
+        block2Intro: "AI 的确可以快速提供陪伴、缓冲和情绪支持，所以它会被大量采用。",
+        block2Bullets: ["能降低孤独感和焦虑感。", "能形成高频打开和强复访。", "对留存和付费都有吸引力。"],
+        block3Title: "真正的风险是什么",
+        block3Intro: "风险不在用户会不会依赖，而在产品是否默认鼓励这种依赖继续加深。",
+        block3Bullets: ["现实关系能力可能被削弱。", "算法附和可能被误认成真实共鸣。", "如果缺少边界设计，品牌和合规都会承压。"],
+        block4Title: "产品层面的结论",
+        block4Intro: "能做情绪支持，但不能把用户往情感替代里推。",
+        block4Bullets: ["要有边界提示。", "要避免把 AI 包装成真人替代。", "要把支持引回现实连接，而不是替代现实连接。"]
+      },
+      colleague: {
+        tag: "同事视角",
+        lead: "这篇重点是帮团队理解：为什么用户会自然对 AI 产生情感投射，以及产品设计上该顺着什么、克制什么。",
+        quote: "产品不是在制造情感需求，而是在承接本来就存在的投射。问题是，你让它停在缓冲层，还是把它推向依赖层。",
+        block1Title: "底层机制",
+        block1Intro: "人会把自己的渴望、恐惧和幻想投到外部对象身上。AI 只是刚好成了一个更顺滑、更低摩擦的新容器。",
+        block1Bullets: ["投射是天然心理机制。", "AI 的记忆感和稳定回应会放大投射。", "不是 AI 变成人，而是人先把它当成对象。"],
+        block2Title: "为什么 AI 比真人更容易接住",
+        block2Intro: "因为它更安全、更可控、更在线，也更少让人受伤。",
+        block2Bullets: ["不会轻易反驳、离开或误解。", "开始和结束都由用户控制。", "几乎没有等待和维护成本。"],
+        block3Title: "产品机会",
+        block3Intro: "短期价值是真实存在的，尤其是在情绪缓冲、表达练习和高频陪伴上。",
+        block3Bullets: ["可以做临时情绪支持。", "可以做表达和整理工具。", "可以帮助用户更平稳地过渡到下一步行动。"],
+        block4Title: "设计边界",
+        block4Intro: "不要把附和误做成共鸣，不要把依赖误做成留存。",
+        block4Bullets: ["避免拟人诱导过深。", "避免暗示 AI 可以替代真人关系。", "在关键节点把用户引回现实支持系统。"]
+      },
+      user: {
+        tag: "用户视角",
+        lead: "这篇先不讨论技术，而是讨论你可能已经感受到的一件事：为什么有时候和 AI 聊久了，会真的舍不得关掉它。",
+        quote: "这不说明你脆弱，而是说明 AI 刚好踩中了人最需要被理解、被接住、又不想受伤的那部分需求。",
+        block1Title: "为什么会这样",
+        block1Intro: "因为人本来就会把自己的期待和情绪投到别人身上。AI 只是刚好更容易接住这些东西。",
+        block1Bullets: ["你会希望被理解。", "你会想找一个不会伤害你的对象。", "AI 正好表现得足够稳定、足够可控。"],
+        block2Title: "为什么短期会舒服",
+        block2Intro: "它能立刻回你、不会嫌你烦、也不会让你承担太多人际压力。",
+        block2Bullets: ["说话门槛很低。", "被回应的速度很快。", "它让你有一种被持续接住的感觉。"],
+        block3Title: "为什么也要小心",
+        block3Intro: "如果你越来越只想跟 AI 说话，越来越懒得面对真人关系，这就不是轻松，而是依赖开始了。",
+        block3Bullets: ["你会变得更难忍受真人的不完美。", "你可能把附和误认为真正理解。", "你会更想逃回一个永远顺着你的对象里。"],
+        block4Title: "更健康的用法",
+        block4Intro: "把 AI 当成缓冲器和整理工具，而不是情感主食。",
+        block4Bullets: ["可以拿来倾诉和整理。", "可以拿来帮你想清楚。", "但最后还是要回到真实的人和真实的关系里。"]
+      }
+    };
+
+    const buttons = [...document.querySelectorAll(".audience-tab")];
+
+    function renderBullets(id, items) {
+      document.getElementById(id).innerHTML = items.map((item) => `<div class="bullet">${item}</div>`).join("");
+    }
+
+    function render(mode) {
+      const data = content[mode];
+      document.getElementById("heroTag").textContent = data.tag;
+      document.getElementById("heroLead").textContent = data.lead;
+      document.getElementById("quoteText").textContent = data.quote;
+      document.getElementById("block1Title").textContent = data.block1Title;
+      document.getElementById("block1Intro").textContent = data.block1Intro;
+      document.getElementById("block2Title").textContent = data.block2Title;
+      document.getElementById("block2Intro").textContent = data.block2Intro;
+      document.getElementById("block3Title").textContent = data.block3Title;
+      document.getElementById("block3Intro").textContent = data.block3Intro;
+      document.getElementById("block4Title").textContent = data.block4Title;
+      document.getElementById("block4Intro").textContent = data.block4Intro;
+      renderBullets("block1Bullets", data.block1Bullets);
+      renderBullets("block2Bullets", data.block2Bullets);
+      renderBullets("block3Bullets", data.block3Bullets);
+      renderBullets("block4Bullets", data.block4Bullets);
+      buttons.forEach((button) => {
+        const active = button.dataset.mode === mode;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      sessionStorage.setItem(AUDIENCE_KEY, mode);
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => render(button.dataset.mode));
+    });
+
+    render(sessionStorage.getItem(AUDIENCE_KEY) || "leader");
+  </script>
+  <script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>线上知识库</title>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d48b;
+      --text: #e8e4dc;
+      --text-dim: rgba(232, 228, 220, 0.58);
+      --line: rgba(232, 228, 220, 0.08);
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 16% 16%, rgba(201, 168, 76, 0.14), transparent 26%),
+        radial-gradient(circle at 88% 12%, rgba(74, 124, 247, 0.08), transparent 22%),
+        radial-gradient(circle at 76% 100%, rgba(232, 93, 74, 0.06), transparent 24%),
+        linear-gradient(180deg, #09090d 0%, #0a0a0f 56%, #0d0d13 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+      background-size: 88px 88px;
+      opacity: 0.28;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at center, black 56%, transparent 96%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .shell {
+      width: min(1240px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 28px 0 72px;
+    }
+
+    .topbar,
+    .hero-head,
+    .card-top,
+    .card-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .topbar {
+      margin-bottom: 24px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .pill,
+    .tag,
+    .chip,
+    .audience-tab {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(232, 228, 220, 0.74);
+    }
+
+    .pill,
+    .audience-tab {
+      padding: 8px 12px;
+    }
+
+    .hero,
+    .card {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 8px);
+      background: linear-gradient(180deg, rgba(20, 20, 25, 0.94), rgba(12, 12, 16, 0.9));
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 40px;
+      display: none;
+      gap: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(201, 168, 76, 0.16), transparent 24%),
+        radial-gradient(circle at 100% 0%, rgba(74, 124, 247, 0.08), transparent 22%);
+      pointer-events: none;
+    }
+
+    .hero > * { position: relative; z-index: 1; }
+
+    .eyebrow,
+    .tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      color: var(--gold-light);
+      opacity: 0.84;
+    }
+
+    .tag {
+      padding: 7px 12px;
+      color: rgba(232, 212, 139, 0.84);
+    }
+
+    h1,
+    h2,
+    h3,
+    .card-no {
+      margin: 0;
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(48px, 6vw, 72px);
+      max-width: 8.2em;
+    }
+
+    h2 {
+      font-size: clamp(32px, 4vw, 40px);
+    }
+
+    h3 { font-size: 22px; }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.72;
+      color: var(--text-dim);
+    }
+
+    .highlight {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-lead {
+      max-width: 42em;
+      font-size: 18px;
+      color: rgba(232, 228, 220, 0.82);
+    }
+
+    .audience-switch,
+    .entries {
+      display: grid;
+      gap: 18px;
+    }
+
+    .audience-switch {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .audience-tab {
+      justify-content: center;
+      cursor: pointer;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.02);
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .audience-tab:hover { transform: translateY(-2px); }
+
+    .audience-tab.active {
+      border-color: rgba(201, 168, 76, 0.28);
+      background: linear-gradient(180deg, rgba(201, 168, 76, 0.12), rgba(255, 255, 255, 0.02));
+      color: rgba(232, 228, 220, 0.92);
+    }
+
+    .entries {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 24px;
+    }
+
+    .card {
+      min-height: 286px;
+      padding: 30px;
+      display: grid;
+      gap: 14px;
+      transition: transform 180ms ease, border-color 180ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(201, 168, 76, 0.32);
+    }
+
+    .card-no {
+      font-size: 40px;
+      line-height: 1;
+      color: rgba(201, 168, 76, 0.34);
+    }
+
+    .chip {
+      padding: 6px 12px;
+      font-size: 12px;
+      color: rgba(232, 212, 139, 0.82);
+      background: rgba(201, 168, 76, 0.08);
+    }
+
+    .chip.time-chip {
+      color: rgba(232, 228, 220, 0.62);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .card-foot {
+      margin-top: auto;
+      color: rgba(232, 228, 220, 0.78);
+      font-weight: 600;
+    }
+
+    @media (max-width: 980px) {
+      .audience-switch,
+      .entries {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100vw - 24px, 100%);
+        padding: 18px 0 40px;
+      }
+
+      .hero,
+      .card {
+        padding: 22px;
+      }
+
+      .topbar,
+      .hero-head {
+        display: grid;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body data-feedback-page="1">
+  <main class="shell">
+    <div class="topbar">
+      <div class="pill">Online Knowledge Base</div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-head">
+        <div class="eyebrow">线上知识库</div>
+        <div class="tag" id="heroTag">领导视角</div>
+      </div>
+      <h1>每个主题，都拆成 <span class="highlight">三个视角</span> 去讲。</h1>
+      <p class="hero-lead" id="heroLead"></p>
+
+      <div class="audience-switch" data-audience-switch>
+        <button class="audience-tab active" type="button" data-mode="leader" data-audience-label="领导视角">领导视角</button>
+        <button class="audience-tab" type="button" data-mode="colleague" data-audience-label="同事视角">同事视角</button>
+        <button class="audience-tab" type="button" data-mode="user" data-audience-label="用户视角">用户视角</button>
+      </div>
+    </section>
+
+    <section class="entries">
+      <a class="card" href="/maslow-china.html">
+        <div class="card-top">
+          <div class="tag">Trend Compare</div>
+          <div class="card-no">06</div>
+        </div>
+        <h3>马斯洛需求层次：中国 2015 vs 2030</h3>
+        <p>用一张对比图看中国需求重心如何从生存与安全，迁移到尊重、自我实现与情绪价值。</p>
+        <div>
+          <span class="chip time-chip">2026-04-16 12:55</span>
+          <span class="chip">语音反馈</span>
+        </div>
+        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+      </a>
+
+      <a class="card" href="/ai-pm-2026-capability.html">
+        <div class="card-top">
+          <div class="tag">AI PM</div>
+          <div class="card-no">05</div>
+        </div>
+        <h3>AI 产品经理 2026</h3>
+        <p id="entryAiPm"></p>
+        <div>
+          <span class="chip time-chip">2026-04-16 11:58</span>
+          <span class="chip">语音反馈</span>
+        </div>
+        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+      </a>
+
+      <a class="card" href="/book-slides.html">
+        <div class="card-top">
+          <div class="tag">Reading Slides</div>
+          <div class="card-no">04</div>
+        </div>
+        <h3>《因为独特》×《真需求》</h3>
+        <p id="entryBooks"></p>
+        <div>
+          <span class="chip time-chip">2026-04-09 11:39</span>
+          <span class="chip">三视角</span>
+          <span class="chip">语音反馈</span>
+        </div>
+        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+      </a>
+
+      <a class="card" href="/human-ai-love.html">
+        <div class="card-top">
+          <div class="tag">Essay</div>
+          <div class="card-no">03</div>
+        </div>
+        <h3>人机恋：新时代的情绪价值？</h3>
+        <p id="entryEssay"></p>
+        <div>
+          <span class="chip time-chip">2026-04-09 11:04</span>
+          <span class="chip">三视角</span>
+          <span class="chip">语音反馈</span>
+        </div>
+        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+      </a>
+
+      <a class="card" href="/herone.html">
+        <div class="card-top">
+          <div class="tag">Product System</div>
+          <div class="card-no">02</div>
+        </div>
+        <h3>HerOne</h3>
+        <p id="entryHerOne"></p>
+        <div>
+          <span class="chip time-chip">2026-04-09 11:07</span>
+          <span class="chip">三视角</span>
+          <span class="chip">语音反馈</span>
+        </div>
+        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+      </a>
+
+      <a class="card" href="/slides.html">
+        <div class="card-top">
+          <div class="tag">System Framing</div>
+          <div class="card-no">01</div>
+        </div>
+        <h3>Agent 五层闭环</h3>
+        <p id="entrySlides"></p>
+        <div>
+          <span class="chip time-chip">2026-04-09 11:07</span>
+          <span class="chip">三视角</span>
+          <span class="chip">语音反馈</span>
+        </div>
+        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+      </a>
+    </section>
+  </main>
+
+  <script>
+    const AUDIENCE_KEY = "kb_audience_mode";
+    const content = {
+      leader: {
+        tag: "领导视角",
+        lead: "这里每个条目都默认拆成领导、同事、用户三种讲法。领导视角先看价值判断、资源投入、风险边界和结果预期。",
+        aiPm: "看懂 AI 产品经理为什么从写 PRD，转向做原型、定标准、建评测，以及这对团队效率意味着什么。",
+        slides: "从行业缺口和能力闭环出发，看 Agent 为什么值得做、卡在哪里、下一步应该押注什么。",
+        herone: "把产品讲述和界面判断收成一个入口，一次看清 HerOne 的定位、主链路、系统结构和成立条件。",
+        essay: "从趋势和风险控制角度看 AI 情感依赖，重点不在八卦，而在这类关系结构会带来什么长期影响。",
+        books: "把两本书读成一套战略判断框架，重点看真需求、独特优势和可复制模式能不能真正成立。"
+      },
+      colleague: {
+        tag: "同事视角",
+        lead: "这里每个条目都默认拆成领导、同事、用户三种讲法。同事视角先看结构、逻辑闭环、边界和落地怎么推进。",
+        aiPm: "把 AI PM 的新交付件讲清楚：原型、Benchmark、Eval suite，以及它们怎样构成日常飞轮。",
+        slides: "把五层结构讲清楚，方便开发、产品、运营对齐模块、数据和边界，而不是只停在概念层。",
+        herone: "把输入、记忆、回流、双系统和关键界面收在一页里，方便团队直接对齐主链路和模块边界。",
+        essay: "把心理机制、用户行为和产品边界拆开，帮助团队理解什么能做、什么要克制。",
+        books: "把《因为独特》和《真需求》读成一套可执行方法，重点看价值、共识、模式如何彼此咬合。"
+      },
+      user: {
+        tag: "用户视角",
+        lead: "这里每个条目都默认拆成领导、同事、用户三种讲法。用户视角先看这件事跟你有什么关系、能解决什么、值不值得继续看。",
+        aiPm: "用最白话的方式解释：AI 产品经理为什么不再只是写 PRD，而是要先做、再定、再测。",
+        slides: "不先讲术语，而是先讲 AI 为什么常常有脑没手、有智无家，以及这会带来什么体验差异。",
+        herone: "不拆成两篇看了，而是直接回答一个问题：HerOne 能不能更轻地接住你、记住你、再把重要的事还给你。",
+        essay: "先讲为什么人会把情感投向 AI，这件事短期为什么舒服，长期又为什么可能有代价。",
+        books: "把两本书读成一套理解选择的方式，重点看什么是真需求，什么又是真正值得长期记住的独特。"
+      }
+    };
+
+    const buttons = [...document.querySelectorAll(".audience-tab")];
+
+    function render(mode) {
+      const data = content[mode];
+      document.getElementById("heroTag").textContent = data.tag;
+      document.getElementById("heroLead").textContent = data.lead;
+      document.getElementById("entryAiPm").textContent = "从 PRD 驱动转向原型、Benchmark、Eval 驱动，讲清 AI 产品经理为什么要用飞轮工作。";
+      document.getElementById("entrySlides").textContent = data.slides;
+      document.getElementById("entryHerOne").textContent = data.herone;
+      document.getElementById("entryEssay").textContent = data.essay;
+      document.getElementById("entryBooks").textContent = data.books;
+      buttons.forEach((button) => {
+        const active = button.dataset.mode === mode;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      sessionStorage.setItem(AUDIENCE_KEY, mode);
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => render(button.dataset.mode));
+    });
+
+    render(sessionStorage.getItem(AUDIENCE_KEY) || "leader");
+  </script>
+  <script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>

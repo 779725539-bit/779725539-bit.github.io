@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HerOne</title>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d48b;
+      --text: #e8e4dc;
+      --text-dim: rgba(232, 228, 220, 0.58);
+      --line: rgba(232, 228, 220, 0.08);
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.44);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 14% 16%, rgba(201, 168, 76, 0.14), transparent 24%),
+        radial-gradient(circle at 84% 14%, rgba(74, 124, 247, 0.07), transparent 22%),
+        linear-gradient(180deg, #09090d 0%, #0a0a0f 56%, #0e0e14 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+      background-size: 88px 88px;
+      opacity: 0.24;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at center, black 58%, transparent 96%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .back {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 20;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(20, 20, 25, 0.8);
+      backdrop-filter: blur(10px);
+      color: rgba(232, 228, 220, 0.8);
+      font-size: 13px;
+    }
+
+    .shell {
+      width: min(1240px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 34px 0 72px;
+    }
+
+    .hero,
+    .panel,
+    .summary {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 8px);
+      background: linear-gradient(180deg, rgba(20, 20, 25, 0.94), rgba(12, 12, 16, 0.9));
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 36px;
+      display: grid;
+      gap: 22px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(201, 168, 76, 0.14), transparent 24%),
+        radial-gradient(circle at 100% 0%, rgba(74, 124, 247, 0.06), transparent 20%);
+      pointer-events: none;
+    }
+
+    .hero > * { position: relative; z-index: 1; }
+
+    .eyebrow,
+    .label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      color: var(--gold-light);
+      opacity: 0.84;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(46px, 6vw, 68px);
+      max-width: 9.4em;
+    }
+
+    h2 {
+      font-size: clamp(26px, 3vw, 34px);
+    }
+
+    h3 { font-size: 22px; }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.72;
+      color: var(--text-dim);
+    }
+
+    .hero-lead {
+      max-width: 42em;
+      font-size: 18px;
+      color: rgba(232, 228, 220, 0.8);
+    }
+
+    .roles {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .role {
+      padding: 18px 18px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .role:hover { transform: translateY(-2px); }
+
+    .role.active {
+      border-color: rgba(201, 168, 76, 0.28);
+      background: linear-gradient(180deg, rgba(201, 168, 76, 0.12), rgba(255, 255, 255, 0.02));
+    }
+
+    .role strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 18px;
+      color: rgba(232, 228, 220, 0.94);
+    }
+
+    .role span {
+      color: rgba(232, 228, 220, 0.6);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .panel {
+      min-height: 270px;
+      padding: 28px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .label { color: rgba(232, 212, 139, 0.84); }
+
+    .panel-no {
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      font-size: 34px;
+      line-height: 1;
+      color: rgba(201, 168, 76, 0.36);
+    }
+
+    .bullets {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bullet {
+      position: relative;
+      padding-left: 16px;
+      color: rgba(232, 228, 220, 0.74);
+      line-height: 1.68;
+    }
+
+    .bullet::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 11px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .summary {
+      margin-top: 24px;
+      padding: 28px 30px;
+      border-left: 4px solid var(--gold);
+      background:
+        linear-gradient(90deg, rgba(201, 168, 76, 0.12), transparent 56%),
+        linear-gradient(180deg, rgba(20, 20, 25, 0.94), rgba(12, 12, 16, 0.9));
+    }
+
+    .summary strong { color: var(--gold-light); }
+
+    @media (max-width: 980px) {
+      .roles,
+      .panel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100vw - 24px, 100%);
+        padding: 72px 0 36px;
+      }
+
+      .hero,
+      .panel,
+      .summary {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body data-feedback-page="1">
+  <a class="back" href="/">返回线上知识库</a>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">HerOne</div>
+      <h1>一个入口，收住 HerOne 的产品判断与界面判断。</h1>
+      <p class="hero-lead" id="heroLead"></p>
+      <div class="roles">
+        <button class="role active" type="button" data-mode="leader" data-audience-label="领导视角" aria-pressed="true">
+          <strong>我是领导</strong>
+          <span>先看值不值得做、值不值得继续投。</span>
+        </button>
+        <button class="role" type="button" data-mode="colleague" data-audience-label="同事视角" aria-pressed="false">
+          <strong>我是同事</strong>
+          <span>先看主链路、模块边界和落地顺序。</span>
+        </button>
+        <button class="role" type="button" data-mode="user" data-audience-label="用户视角" aria-pressed="false">
+          <strong>我是用户</strong>
+          <span>先看它能不能真的接住我、记住我。</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="panel-grid">
+      <article class="panel">
+        <div class="panel-head"><div class="label">Positioning</div><div class="panel-no">01</div></div>
+        <h2 id="panel1Title"></h2>
+        <p id="panel1Intro"></p>
+        <div class="bullets" id="panel1Bullets"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head"><div class="label">Loop</div><div class="panel-no">02</div></div>
+        <h2 id="panel2Title"></h2>
+        <p id="panel2Intro"></p>
+        <div class="bullets" id="panel2Bullets"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head"><div class="label">System</div><div class="panel-no">03</div></div>
+        <h2 id="panel3Title"></h2>
+        <p id="panel3Intro"></p>
+        <div class="bullets" id="panel3Bullets"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head"><div class="label">Screens</div><div class="panel-no">04</div></div>
+        <h2 id="panel4Title"></h2>
+        <p id="panel4Intro"></p>
+        <div class="bullets" id="panel4Bullets"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head"><div class="label">MVP</div><div class="panel-no">05</div></div>
+        <h2 id="panel5Title"></h2>
+        <p id="panel5Intro"></p>
+        <div class="bullets" id="panel5Bullets"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head"><div class="label">Judgement</div><div class="panel-no">06</div></div>
+        <h2 id="panel6Title"></h2>
+        <p id="panel6Intro"></p>
+        <div class="bullets" id="panel6Bullets"></div>
+      </article>
+    </section>
+
+    <section class="summary">
+      <h3 id="summaryTitle"></h3>
+      <p id="summaryText"></p>
+    </section>
+  </main>
+
+  <script>
+    const AUDIENCE_KEY = "kb_audience_mode";
+    const content = {
+      leader: {
+        heroLead: "HerOne 不再拆成“讲述”和“预览”两篇看，而是一次判断清楚：它是不是一个能占住语音入口、长出长期记忆壁垒、再延伸到陪伴与执行的产品。",
+        panels: [
+          {
+            title: "它不是工具堆叠，而是在抢入口",
+            intro: "核心不是再做一个记录工具，而是判断能不能占住“个人长期记忆”的高频入口。",
+            bullets: [
+              "高频输入如果成立，才有后续留存和付费。",
+              "长期记忆如果形成，才有真实壁垒。",
+              "陪伴和执行都要建立在同一套记忆底座上。"
+            ]
+          },
+          {
+            title: "价值闭环必须跑通",
+            intro: "一条语音进来之后，不能只停在转写，而要持续变成后续结果。",
+            bullets: [
+              "语音进入系统。",
+              "系统识别任务、情绪、关系和灵感。",
+              "在合适的时候返回提醒、摘要、安抚或推进。"
+            ]
+          },
+          {
+            title: "一层记忆，双系统表达",
+            intro: "上层看起来有两面，底层必须是一套系统。",
+            bullets: [
+              "执行面解决今天要发生什么。",
+              "陪伴面解决我现在的处境和情绪。",
+              "两边共享同一条长期记忆时间线。"
+            ]
+          },
+          {
+            title: "界面只是入口证明",
+            intro: "启动页、今天页、语音页、记忆页、陪伴页、我的页，分别证明不同能力不是空话。",
+            bullets: [
+              "启动页证明品牌入口成立。",
+              "今天页证明回流价值成立。",
+              "记忆页和陪伴页证明长期壁垒成立。"
+            ]
+          },
+          {
+            title: "MVP 先证明方向，不先做重",
+            intro: "第一阶段只验证最关键的高频价值，不追求功能铺满。",
+            bullets: [
+              "语音输入和秒级转写。",
+              "任务 / 情绪 / 灵感 / 留存 四类分类。",
+              "今天页、夜间回顾、基础记忆查询和基础陪伴回应。"
+            ]
+          },
+          {
+            title: "真正该看的判断点",
+            intro: "这件事值不值得继续投，取决于几个硬指标而不是氛围好不好。",
+            bullets: [
+              "是否形成稳定复访。",
+              "是否形成记忆沉淀和回看习惯。",
+              "是否证明用户愿意把重要内容持续交给它。"
+            ]
+          }
+        ],
+        summaryTitle: "一句话结论",
+        summaryText: "HerOne 如果能占住语音入口并把长期记忆真正用起来，它就不是一个新功能，而是一个新入口。"
+      },
+      colleague: {
+        heroLead: "这页把 HerOne 的产品叙事和界面判断归成一个结构，方便团队直接对齐：输入从哪来，记忆怎么写，结果往哪回，页面分别负责什么。",
+        panels: [
+          {
+            title: "先对齐产品对象",
+            intro: "HerOne 不是笔记 App，也不是单一聊天 App，而是一个带长期记忆底座的个人 AI 系统。",
+            bullets: [
+              "高频入口是语音。",
+              "主资产是结构化长期记忆。",
+              "上层输出分为执行面和陪伴面。"
+            ]
+          },
+          {
+            title: "主链路只有一条",
+            intro: "先把主链路打稳，再谈扩展页面和硬件形态。",
+            bullets: [
+              "采集语音与上下文。",
+              "转写、分类、写入记忆。",
+              "回流到今天、陪伴、提醒和复盘。"
+            ]
+          },
+          {
+            title: "系统模块怎么拆",
+            intro: "模块边界要围绕数据流而不是围绕页面名来拆。",
+            bullets: [
+              "输入层：录音、转写、意图识别。",
+              "记忆层：分类、标签、检索、时间线。",
+              "输出层：今天、陪伴、提醒、回顾。"
+            ]
+          },
+          {
+            title: "关键界面分别证明什么",
+            intro: "界面不是装饰，而是系统能力的外显。",
+            bullets: [
+              "今天页承接即时回流。",
+              "记忆页承接长期组织和检索。",
+              "陪伴页承接情绪与共同历史。"
+            ]
+          },
+          {
+            title: "MVP 要收紧到可验证",
+            intro: "第一版只验证“说得进来、找得回来、会有回声”。",
+            bullets: [
+              "不先扩多模态。",
+              "不先做过重的代理执行。",
+              "先把最小记忆闭环做完整。"
+            ]
+          },
+          {
+            title: "实现时重点盯住边界",
+            intro: "真正会返工的地方，不在页面，而在状态、异常和隐私处理。",
+            bullets: [
+              "误分类怎么回收。",
+              "敏感内容怎么默认私密。",
+              "没有回流价值的记录怎么避免继续堆积。"
+            ]
+          }
+        ],
+        summaryTitle: "一句话结论",
+        summaryText: "HerOne 的重点不是页面多，而是输入、记忆、回流三段先打穿，页面只是这条主链路的外显。"
+      },
+      user: {
+        heroLead: "如果把两篇合成一句话，HerOne 想做的事就是：你只管说出来，它替你记住、整理，并在之后把重要的东西还给你。",
+        panels: [
+          {
+            title: "它想解决的麻烦是什么",
+            intro: "很多重要的念头不是没有出现过，而是出现的时候来不及记，记了之后又找不回来。",
+            bullets: [
+              "灵感一闪而过。",
+              "待办记了很多次还是会漏。",
+              "情绪和关系线索留不住。"
+            ]
+          },
+          {
+            title: "你会怎么用它",
+            intro: "最核心的动作很简单，就是想到什么说一句。",
+            bullets: [
+              "说出来，不用先整理语言。",
+              "系统自动转成文字并分类。",
+              "之后在合适的时候再提醒你、还给你。"
+            ]
+          },
+          {
+            title: "它和普通工具有什么不同",
+            intro: "区别不在于它会不会记，而在于它会不会持续记得你。",
+            bullets: [
+              "不是只把内容存起来。",
+              "而是把人、事、情绪和习惯连起来。",
+              "所以后面给你的回声会越来越像你懂自己的方式。"
+            ]
+          },
+          {
+            title: "这些页面分别让你得到什么",
+            intro: "每个页面都在减少负担，而不是增加学习成本。",
+            bullets: [
+              "今天页让你先看到最重要的事。",
+              "记忆页让你回看而不是重找。",
+              "陪伴页让你被接住而不是被敷衍。"
+            ]
+          },
+          {
+            title: "第一版先给你什么价值",
+            intro: "它不会一开始就很复杂，但会先把最常用的价值交出来。",
+            bullets: [
+              "语音说完马上有文字结果。",
+              "自动分出任务、灵感、情绪和留存。",
+              "晚上能帮你回看今天真正重要的内容。"
+            ]
+          },
+          {
+            title: "你真正会不会留下来",
+            intro: "最后还是看它是不是足够轻、足够有用、足够可信。",
+            bullets: [
+              "是不是想到就能用。",
+              "是不是之后真的帮到你。",
+              "是不是让你觉得你的数据还属于你自己。"
+            ]
+          }
+        ],
+        summaryTitle: "一句话结论",
+        summaryText: "HerOne 不是要你更努力记录，而是想先替你接住生活里那些容易错过、又真的重要的东西。"
+      }
+    };
+
+    const roles = [...document.querySelectorAll(".role")];
+
+    function renderBullets(id, items) {
+      document.getElementById(id).innerHTML = items
+        .map((item) => `<div class="bullet">${item}</div>`)
+        .join("");
+    }
+
+    function render(mode) {
+      const data = content[mode];
+      document.getElementById("heroLead").textContent = data.heroLead;
+      data.panels.forEach((panel, index) => {
+        const n = index + 1;
+        document.getElementById(`panel${n}Title`).textContent = panel.title;
+        document.getElementById(`panel${n}Intro`).textContent = panel.intro;
+        renderBullets(`panel${n}Bullets`, panel.bullets);
+      });
+      document.getElementById("summaryTitle").textContent = data.summaryTitle;
+      document.getElementById("summaryText").innerHTML = `<strong>${data.summaryText}</strong>`;
+      roles.forEach((role) => {
+        const active = role.dataset.mode === mode;
+        role.classList.toggle("active", active);
+        role.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      sessionStorage.setItem(AUDIENCE_KEY, mode);
+    }
+
+    roles.forEach((role) => role.addEventListener("click", () => render(role.dataset.mode)));
+    render(sessionStorage.getItem(AUDIENCE_KEY) || "leader");
+  </script>
+  <script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>马斯洛需求层次 · 中国 2015 vs 2030</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100vw;height:100vh;overflow:hidden;
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+  background:#0f1117;color:#e8ebf4;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+.back-home{position:fixed;top:16px;left:16px;z-index:70;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(15,17,23,.82);color:#fff;font-size:13px;font-weight:600;backdrop-filter:blur(10px)}
+
+.slide{width:100vw;height:100vh;display:flex;flex-direction:column;padding:32px 56px 24px;position:relative;overflow:hidden}
+
+.bg-glow{position:absolute;width:500px;height:500px;border-radius:50%;filter:blur(160px);opacity:.1;pointer-events:none}
+.g1{background:#3b82f6;top:-150px;left:-100px}
+.g2{background:#ef4444;bottom:-150px;right:-100px}
+
+/* 标题 */
+.header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px;position:relative;z-index:1}
+.header h1{font-size:24px;font-weight:800;margin:0}
+.header h1 .y2015{color:#64748b}
+.header h1 .arrow{color:rgba(255,255,255,.3);margin:0 12px;font-weight:300}
+.header h1 .y2030{background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.header .subtitle{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.06em;text-align:right;line-height:1.5}
+
+/* 主体 */
+.compare-wrap{flex:1;display:flex;gap:0;align-items:center;position:relative;z-index:1}
+
+/* 左列标签 */
+.left-labels{flex:0 0 140px;display:flex;flex-direction:column;gap:6px;text-align:right;padding-right:16px}
+.left-labels .lbl{height:72px;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.left-labels .lbl .pop{font-size:22px;font-weight:900;color:rgba(255,255,255,.85)}
+.left-labels .lbl .desc{font-size:10px;color:rgba(255,255,255,.35);line-height:1.3}
+
+/* 左侧条形 */
+.bars-left{flex:1;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.bars-left .bar-row{height:72px;display:flex;align-items:center;justify-content:flex-end;width:100%}
+.bars-left .bar{height:100%;border-radius:6px 2px 2px 6px;display:flex;align-items:center;justify-content:flex-end;
+  padding:0 14px;transition:all .3s ease;min-width:50px;position:relative}
+.bars-left .bar:hover{filter:brightness(1.15);transform:scaleX(1.03)}
+.bars-left .bar .pct{font-size:20px;font-weight:900;color:rgba(255,255,255,.95)}
+.bars-left .bar .sub{font-size:10px;color:rgba(255,255,255,.6);margin-right:6px}
+
+/* 中间标签列 */
+.center-col{flex:0 0 120px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.center-item{height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0}
+.center-item .icon{font-size:20px}
+.center-item .name{font-size:13px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.04em}
+.center-item .en{font-size:8px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase}
+
+/* 右侧条形 */
+.bars-right{flex:1;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.bars-right .bar-row{height:72px;display:flex;align-items:center;width:100%}
+.bars-right .bar{height:100%;border-radius:2px 6px 6px 2px;display:flex;align-items:center;
+  padding:0 14px;transition:all .3s ease;min-width:50px;position:relative}
+.bars-right .bar:hover{filter:brightness(1.15);transform:scaleX(1.03)}
+.bars-right .bar .pct{font-size:20px;font-weight:900;color:rgba(255,255,255,.95)}
+.bars-right .bar .sub{font-size:10px;color:rgba(255,255,255,.6);margin-left:6px}
+
+/* 右列标签 */
+.right-labels{flex:0 0 140px;display:flex;flex-direction:column;gap:6px;text-align:left;padding-left:16px}
+.right-labels .lbl{height:72px;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.right-labels .lbl .pop{font-size:22px;font-weight:900}
+.right-labels .lbl .desc{font-size:10px;color:rgba(255,255,255,.35);line-height:1.3}
+
+/* 颜色 */
+.c1{background:linear-gradient(135deg,#a855f7,#7c3aed)}
+.c2{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.c3{background:linear-gradient(135deg,#eab308,#ca8a04)}
+.c4{background:linear-gradient(135deg,#f97316,#ea580c)}
+.c5{background:linear-gradient(135deg,#ef4444,#dc2626)}
+.tc1{color:#a855f7}.tc2{color:#22c55e}.tc3{color:#eab308}.tc4{color:#f97316}.tc5{color:#ef4444}
+
+/* 年份标题 */
+.year-row{display:flex;align-items:center;gap:0;margin-bottom:8px;position:relative;z-index:1}
+.year-row .spacer-left{flex:0 0 140px}
+.year-row .bar-space{flex:1;text-align:center}
+.year-row .center-space{flex:0 0 120px}
+.year-row .yr{font-size:18px;font-weight:800;letter-spacing:.06em}
+.year-row .yr.dim{color:#64748b}
+.year-row .yr.hot{background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.year-row .spacer-right{flex:0 0 140px}
+
+/* 底部洞察 */
+.insights{display:flex;gap:16px;margin-top:16px;position:relative;z-index:1}
+.insight-card{flex:1;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.insight-card h4{font-size:11px;font-weight:700;margin:0 0 3px;color:rgba(255,255,255,.65)}
+.insight-card p{font-size:10px;line-height:1.5;color:rgba(255,255,255,.35);margin:0}
+.insight-card .num{font-size:18px;font-weight:900;margin-bottom:2px}
+.num.green{color:#22c55e}.num.red{color:#ef4444}.num.gold{color:#eab308}
+
+.footer{display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.18);letter-spacing:.06em;margin-top:10px;position:relative;z-index:1}
+</style>
+</head>
+<body data-feedback-page="1" data-audience-label="单版本条目">
+<a class="back-home" href="/">返回线上知识库</a>
+<div class="slide">
+  <div class="bg-glow g1"></div>
+  <div class="bg-glow g2"></div>
+
+  <div class="header">
+    <h1>马斯洛需求层次 · <span class="y2015">2015 中国</span><span class="arrow">→</span><span class="y2030">2030 中国</span></h1>
+    <div class="subtitle">从金字塔到橄榄形：14亿人的需求重心从生存层向成长层跃迁</div>
+  </div>
+
+  <!-- 年份行 -->
+  <div class="year-row">
+    <div class="spacer-left"></div>
+    <div class="bar-space"><span class="yr dim">2015</span></div>
+    <div class="center-space"></div>
+    <div class="bar-space"><span class="yr hot">2030</span></div>
+    <div class="spacer-right"></div>
+  </div>
+
+  <div class="compare-wrap">
+    <!-- 2015 人口标签 -->
+    <div class="left-labels">
+      <div class="lbl"><span class="pop">5,600万</span><span class="desc">创业者 / 艺术家 / 自由职业</span></div>
+      <div class="lbl"><span class="pop">2.1亿</span><span class="desc">白领 / 管理层 / 专业人士</span></div>
+      <div class="lbl"><span class="pop">4.6亿</span><span class="desc">城镇工薪阶层</span></div>
+      <div class="lbl"><span class="pop">5.3亿</span><span class="desc">农民工 / 低保 / 非正规就业</span></div>
+      <div class="lbl"><span class="pop">1.4亿</span><span class="desc">绝对贫困 / 极端困难</span></div>
+    </div>
+
+    <!-- 2015 条形 -->
+    <div class="bars-left">
+      <div class="bar-row"><div class="bar c1" style="width:20%"><span class="pct">4%</span></div></div>
+      <div class="bar-row"><div class="bar c2" style="width:35%"><span class="pct">15%</span></div></div>
+      <div class="bar-row"><div class="bar c3" style="width:60%"><span class="pct">33%</span></div></div>
+      <div class="bar-row"><div class="bar c4" style="width:72%"><span class="pct">38%</span></div></div>
+      <div class="bar-row"><div class="bar c5" style="width:30%"><span class="pct">10%</span></div></div>
+    </div>
+
+    <!-- 中间层级名 -->
+    <div class="center-col">
+      <div class="center-item"><span class="icon">✨</span><span class="name">自我实现</span><span class="en">Self-actualization</span></div>
+      <div class="center-item"><span class="icon">🏆</span><span class="name">尊重需求</span><span class="en">Esteem</span></div>
+      <div class="center-item"><span class="icon">❤️</span><span class="name">社交需求</span><span class="en">Belonging</span></div>
+      <div class="center-item"><span class="icon">🛡️</span><span class="name">安全需求</span><span class="en">Safety</span></div>
+      <div class="center-item"><span class="icon">🍞</span><span class="name">生理需求</span><span class="en">Physiological</span></div>
+    </div>
+
+    <!-- 2030 条形 -->
+    <div class="bars-right">
+      <div class="bar-row"><div class="bar c1" style="width:42%"><span class="pct">18%</span></div></div>
+      <div class="bar-row"><div class="bar c2" style="width:65%"><span class="pct">32%</span></div></div>
+      <div class="bar-row"><div class="bar c3" style="width:58%"><span class="pct">30%</span></div></div>
+      <div class="bar-row"><div class="bar c4" style="width:38%"><span class="pct">17%</span></div></div>
+      <div class="bar-row"><div class="bar c5" style="width:14%"><span class="pct">3%</span></div></div>
+    </div>
+
+    <!-- 2030 人口标签 -->
+    <div class="right-labels">
+      <div class="lbl"><span class="pop tc1">2.5亿</span><span class="desc">创造者经济大爆发</span></div>
+      <div class="lbl"><span class="pop tc2">4.5亿</span><span class="desc">新中产阶层主力</span></div>
+      <div class="lbl"><span class="pop tc3">4.2亿</span><span class="desc">稳定但略有下移</span></div>
+      <div class="lbl"><span class="pop tc4">2.4亿</span><span class="desc">社保覆盖后大幅缩减</span></div>
+      <div class="lbl"><span class="pop tc5">4,200万</span><span class="desc">低保兜底人群</span></div>
+    </div>
+  </div>
+
+  <!-- 底部洞察 -->
+  <div class="insights">
+    <div class="insight-card"><div class="num green">+4.5x</div><h4>自我实现人口暴增</h4><p>5,600万→2.5亿，创业/创作/自由职业大爆发</p></div>
+    <div class="insight-card"><div class="num gold">48%→20%</div><h4>底层需求大幅收缩</h4><p>生理+安全从48%降至20%，脱贫+社保+城镇化</p></div>
+    <div class="insight-card"><div class="num green">橄榄形</div><h4>金字塔→橄榄形社会</h4><p>尊重+社交占62%，中产成为社会主体</p></div>
+    <div class="insight-card"><div class="num red">情绪经济</div><h4>功能过剩，情绪稀缺</h4><p>7亿人的关键词：被看见、被尊重、被理解</p></div>
+  </div>
+
+  <div class="footer">
+    <span>数据基于国家统计局、麦肯锡中国消费者调研、世界银行等综合估算 · 2030为趋势预测</span>
+    <span>马斯洛需求层次理论 · Abraham Maslow, 1943</span>
+  </div>
+</div>
+<script src="/assets/kb-feedback.js" defer></script>
+</body></html>

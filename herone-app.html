@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HerOne App Preview</title>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d48b;
+      --blue: #4a7cf7;
+      --coral: #e85d4a;
+      --text: #e8e4dc;
+      --text-dim: rgba(232, 228, 220, 0.58);
+      --line: rgba(232, 228, 220, 0.08);
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.44);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 15% 14%, rgba(201, 168, 76, 0.14), transparent 22%),
+        radial-gradient(circle at 88% 12%, rgba(74, 124, 247, 0.06), transparent 20%),
+        linear-gradient(180deg, #09090d 0%, #0a0a0f 56%, #0e0e14 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+      background-size: 88px 88px;
+      opacity: 0.24;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at center, black 58%, transparent 96%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .back {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 20;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(20, 20, 25, 0.8);
+      backdrop-filter: blur(10px);
+      color: rgba(232, 228, 220, 0.8);
+      font-size: 13px;
+    }
+
+    .shell {
+      width: min(1320px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 34px 0 72px;
+    }
+
+    .hero,
+    .panel,
+    .device {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 8px);
+      background: linear-gradient(180deg, rgba(20, 20, 25, 0.94), rgba(12, 12, 16, 0.9));
+      box-shadow: var(--shadow);
+    }
+
+    .hero,
+    .panel {
+      padding: 34px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(201, 168, 76, 0.14), transparent 24%),
+        radial-gradient(circle at 100% 0%, rgba(74, 124, 247, 0.06), transparent 22%);
+      pointer-events: none;
+    }
+
+    .hero > * { position: relative; z-index: 1; }
+
+    .eyebrow,
+    .tag,
+    .audience-tab {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      color: var(--gold-light);
+      opacity: 0.84;
+    }
+
+    .tag,
+    .audience-tab {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(232, 228, 220, 0.74);
+    }
+
+    .tag { color: rgba(232, 212, 139, 0.82); }
+
+    h1,
+    h2,
+    h3,
+    .screen-title {
+      margin: 0;
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      line-height: 1.32;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(46px, 6vw, 68px);
+      max-width: 8.6em;
+    }
+
+    h2 {
+      font-size: clamp(30px, 4vw, 40px);
+    }
+
+    h3 { font-size: 22px; }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.72;
+      color: var(--text-dim);
+    }
+
+    .hero-lead {
+      max-width: 40em;
+      font-size: 18px;
+      color: rgba(232, 228, 220, 0.8);
+    }
+
+    .audience-switch,
+    .panels,
+    .devices {
+      display: grid;
+      gap: 18px;
+    }
+
+    .audience-switch {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .audience-tab {
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .audience-tab:hover { transform: translateY(-2px); }
+
+    .audience-tab.active {
+      border-color: rgba(201, 168, 76, 0.28);
+      background: linear-gradient(180deg, rgba(201, 168, 76, 0.12), rgba(255, 255, 255, 0.02));
+      color: rgba(232, 228, 220, 0.92);
+    }
+
+    .panels {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 24px;
+    }
+
+    .panel {
+      display: grid;
+      gap: 14px;
+      min-height: 220px;
+    }
+
+    .devices {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 24px;
+    }
+
+    .device-wrap {
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+    }
+
+    .device-caption {
+      text-align: center;
+      color: rgba(232, 228, 220, 0.68);
+      font-size: 14px;
+    }
+
+    .device-caption strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 18px;
+      color: rgba(232, 228, 220, 0.92);
+    }
+
+    .device {
+      width: 100%;
+      max-width: 360px;
+      min-height: 720px;
+      padding: 14px;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 16% 10%, rgba(201, 168, 76, 0.16), transparent 24%),
+        radial-gradient(circle at 84% 18%, rgba(74, 124, 247, 0.08), transparent 22%),
+        linear-gradient(180deg, #111218 0%, #0b0c12 100%);
+      transition: transform 180ms ease;
+    }
+
+    .device:hover { transform: translateY(-4px); }
+
+    .screen {
+      height: 100%;
+      border-radius: 26px;
+      padding: 18px 18px 80px;
+      background: linear-gradient(180deg, rgba(17, 18, 24, 0.98), rgba(12, 12, 16, 0.98));
+      display: grid;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen::after {
+      content: "";
+      position: absolute;
+      inset: auto -18% -8% auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201, 168, 76, 0.14), transparent 72%);
+      pointer-events: none;
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: rgba(232, 228, 220, 0.5);
+    }
+
+    .screen-title {
+      font-size: 38px;
+      color: rgba(232, 228, 220, 0.94);
+      line-height: 1.18;
+    }
+
+    .subtle {
+      color: rgba(232, 228, 220, 0.48);
+      font-size: 14px;
+    }
+
+    .card,
+    .voice,
+    .bubble {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      display: grid;
+      gap: 8px;
+    }
+
+    .voice {
+      grid-template-columns: 56px 1fr;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .voice-dot {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #111218;
+      font-weight: 800;
+    }
+
+    .token-row,
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .token {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line);
+      color: rgba(232, 228, 220, 0.62);
+      font-size: 12px;
+    }
+
+    .token.gold {
+      color: rgba(232, 212, 139, 0.84);
+      background: rgba(201, 168, 76, 0.08);
+      border-color: rgba(201, 168, 76, 0.14);
+    }
+
+    .token.blue {
+      color: rgba(153, 183, 255, 0.88);
+      background: rgba(74, 124, 247, 0.1);
+      border-color: rgba(74, 124, 247, 0.16);
+    }
+
+    .token.coral {
+      color: rgba(255, 177, 166, 0.88);
+      background: rgba(232, 93, 74, 0.1);
+      border-color: rgba(232, 93, 74, 0.16);
+    }
+
+    .orb {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, rgba(232, 228, 220, 0.9) 0 10%, transparent 10%),
+        radial-gradient(circle at center, rgba(201, 168, 76, 0.9) 0 34%, transparent 34%),
+        radial-gradient(circle at center, rgba(201, 168, 76, 0.18) 0 58%, transparent 58%),
+        radial-gradient(circle at center, rgba(74, 124, 247, 0.08) 0 100%);
+    }
+
+    .bars { display: grid; gap: 10px; }
+
+    .bars div {
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(201, 168, 76, 0.9), rgba(74, 124, 247, 0.68));
+    }
+
+    .bars div:nth-child(2) { width: 84%; }
+    .bars div:nth-child(3) { width: 66%; }
+    .bars div:nth-child(4) { width: 76%; }
+
+    .search {
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      color: rgba(232, 228, 220, 0.48);
+      font-size: 14px;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid-two .card.large { grid-row: span 2; }
+
+    .bubble.self { background: rgba(201, 168, 76, 0.08); }
+
+    .nav {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      padding: 8px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(17, 18, 24, 0.92);
+      justify-content: space-between;
+    }
+
+    .nav span {
+      flex: 1;
+      text-align: center;
+      padding: 8px 0;
+      border-radius: 12px;
+      font-size: 12px;
+      color: rgba(232, 228, 220, 0.44);
+    }
+
+    .nav span.active {
+      background: rgba(201, 168, 76, 0.1);
+      color: rgba(232, 212, 139, 0.88);
+    }
+
+    @media (max-width: 1140px) {
+      .audience-switch,
+      .panels,
+      .devices {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100vw - 24px, 100%);
+        padding: 72px 0 36px;
+      }
+
+      .hero,
+      .panel {
+        padding: 22px;
+      }
+
+      .device { min-height: 680px; }
+    }
+  </style>
+</head>
+<body data-feedback-page="1">
+  <a class="back" href="/">返回线上知识库</a>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">HerOne App Preview</div>
+      <div class="tag" id="heroTag">领导视角</div>
+      <h1>同一组核心屏，也要分三个角度去看。</h1>
+      <p class="hero-lead" id="heroLead"></p>
+      <div class="audience-switch" data-audience-switch>
+        <button class="audience-tab active" type="button" data-mode="leader" data-audience-label="领导视角">领导视角</button>
+        <button class="audience-tab" type="button" data-mode="colleague" data-audience-label="同事视角">同事视角</button>
+        <button class="audience-tab" type="button" data-mode="user" data-audience-label="用户视角">用户视角</button>
+      </div>
+    </section>
+
+    <section class="panels">
+      <article class="panel">
+        <div class="eyebrow" id="panel1Eyebrow"></div>
+        <h2 id="panel1Title"></h2>
+        <p id="panel1Body"></p>
+      </article>
+      <article class="panel">
+        <div class="eyebrow" id="panel2Eyebrow"></div>
+        <h2 id="panel2Title"></h2>
+        <p id="panel2Body"></p>
+      </article>
+      <article class="panel">
+        <div class="eyebrow" id="panel3Eyebrow"></div>
+        <h2 id="panel3Title"></h2>
+        <p id="panel3Body"></p>
+      </article>
+    </section>
+
+    <section class="devices">
+      <article class="device-wrap">
+        <div class="device-caption"><strong>01 启动页</strong><span id="cap1"></span></div>
+        <div class="device">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span>5G · 100%</span></div>
+            <div class="tag">AI Native Memory System</div>
+            <div class="screen-title">接住你<br />每一个瞬间</div>
+            <p>你只管说出来。HerOne 会替你记住、整理，并在对的时候还给你。</p>
+            <div class="orb"></div>
+            <div class="card">
+              <strong>品牌语气</strong>
+              <p>不是“我很聪明”，而是“我会接住你，而且我记得”。</p>
+            </div>
+            <div class="card" style="background: linear-gradient(135deg, rgba(201, 168, 76, 0.16), rgba(255, 255, 255, 0.03));">
+              <strong>开始体验</strong>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="device-wrap">
+        <div class="device-caption"><strong>02 今天</strong><span id="cap2"></span></div>
+        <div class="device">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span>5G · 100%</span></div>
+            <div class="subtle">晚上好，Mia</div>
+            <div class="screen-title">今天我替你接住了 6 条重要内容</div>
+            <div class="voice">
+              <div class="voice-dot">说</div>
+              <div>
+                <strong>按住说一句</strong>
+                <p>剩下的我来整理</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="token-row"><span class="token gold">待回应</span></div>
+              <p>你这周第 4 次提到想休息。今晚要不要先给自己留一小时？</p>
+            </div>
+            <div class="card">
+              <div class="token-row"><span class="token blue">待执行</span></div>
+              <p>答应妈妈的电话还没打。继续拖，可能又会跨到下周。</p>
+            </div>
+            <div class="card">
+              <div class="token-row"><span class="token coral">被记住</span></div>
+              <p>你收藏了那家想和小雨一起去的布丁店。</p>
+            </div>
+            <div class="nav"><span class="active">今天</span><span>记忆</span><span>陪伴</span><span>空间</span><span>我</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="device-wrap">
+        <div class="device-caption"><strong>03 语音记录</strong><span id="cap3"></span></div>
+        <div class="device">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span>5G · 100%</span></div>
+            <div class="tag">正在记录</div>
+            <div class="screen-title">我在听你说</div>
+            <p>说完松开，我会把这句话变成更有用的东西。</p>
+            <div class="orb"></div>
+            <div class="bars"><div></div><div></div><div></div><div></div></div>
+            <div class="card">
+              <p>“我周三前要把方案发给王总，想到这里就有点紧张。”</p>
+            </div>
+            <div class="token-row">
+              <span class="token gold">任务</span>
+              <span class="token blue">关系信息</span>
+              <span class="token coral">情绪</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="device-wrap">
+        <div class="device-caption"><strong>04 记忆</strong><span id="cap4"></span></div>
+        <div class="device">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span>5G · 100%</span></div>
+            <div class="subtle">记忆</div>
+            <div class="screen-title">你的私人记忆宇宙</div>
+            <div class="search">搜索人、事、情绪、地点...</div>
+            <div class="token-row">
+              <span class="token">人</span>
+              <span class="token">事</span>
+              <span class="token gold">情绪</span>
+              <span class="token">灵感</span>
+              <span class="token">生活</span>
+            </div>
+            <div class="grid-two">
+              <div class="card large">
+                <strong>关于妈妈</strong>
+                <p>8 条共同记忆</p>
+                <p>你想带她去吃那家店，也怕总是忙忘了。</p>
+              </div>
+              <div class="card">
+                <strong>最近反复出现</strong>
+                <p>“想休息” 这周出现 4 次</p>
+              </div>
+              <div class="card">
+                <strong>愿望线</strong>
+                <p>关于看海，正在长成一个真实计划。</p>
+              </div>
+            </div>
+            <div class="nav"><span>今天</span><span class="active">记忆</span><span>陪伴</span><span>空间</span><span>我</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="device-wrap">
+        <div class="device-caption"><strong>05 陪伴</strong><span id="cap5"></span></div>
+        <div class="device">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span>5G · 100%</span></div>
+            <div class="subtle">陪伴</div>
+            <div class="screen-title">不是会说话，<br />而是记得你</div>
+            <div class="bubble">
+              <strong>Her</strong>
+              <p>你上周说过想辞职，这周又提到 3 次了。要不要认真聊一次？</p>
+            </div>
+            <div class="bubble self">
+              <p>那你陪我把这件事理清楚，好吗？</p>
+            </div>
+            <div class="token-row">
+              <span class="token">只想被听见</span>
+              <span class="token blue">陪我复盘</span>
+              <span class="token gold">帮我理清楚</span>
+            </div>
+            <div class="card">
+              <strong>今晚被记住</strong>
+              <p>你完成了 1 个承诺，也提到了 2 次压力。但你还记得妈妈，和那家想一起去的店。</p>
+            </div>
+            <div class="nav"><span>今天</span><span>记忆</span><span class="active">陪伴</span><span>空间</span><span>我</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="device-wrap">
+        <div class="device-caption"><strong>06 我的</strong><span id="cap6"></span></div>
+        <div class="device">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span>5G · 100%</span></div>
+            <div class="subtle">我</div>
+            <div class="screen-title">你说过的话，<br />只属于你</div>
+            <div class="card">
+              <strong>隐私与记忆</strong>
+              <p>长期记忆已开启，敏感内容默认私密，删除与导出始终可见。</p>
+            </div>
+            <div class="card">
+              <strong>陪伴风格</strong>
+              <div class="token-row">
+                <span class="token gold">温柔稳定</span>
+                <span class="token">成熟理性</span>
+                <span class="token">俏皮一点</span>
+              </div>
+            </div>
+            <div class="card">
+              <strong>安全设置</strong>
+              <p>SOS、危机支持、AI 身份透明提示，都在这里清楚可见。</p>
+            </div>
+            <div class="nav"><span>今天</span><span>记忆</span><span>陪伴</span><span>空间</span><span class="active">我</span></div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const AUDIENCE_KEY = "kb_audience_mode";
+    const content = {
+      leader: {
+        tag: "领导视角",
+        lead: "这一版重点不是“界面好不好看”，而是看这组页面有没有在支撑一个成立的产品入口，是否把长期记忆和高频使用真正组织起来。",
+        panels: [
+          { eyebrow: "01 Product Shape", title: "它像入口，不像单点功能", body: "页面的任务是让用户自然进入“长期记忆系统”，而不是只停留在一次记录或一次聊天。" },
+          { eyebrow: "02 Retention Logic", title: "高频打开理由要清楚", body: "今天页、记忆页、陪伴页分别承担回流、沉淀和黏性的职责，决定产品有没有持续复访。" },
+          { eyebrow: "03 Trust Boundary", title: "可信感要在页面里直接成立", body: "我的页面不是附属设置页，而是隐私、安全和数据控制的核心落点。" }
+        ],
+        captions: [
+          "品牌先建立“会记得你”的入口认知",
+          "首页直接展示系统对今天的价值回流",
+          "语音页证明输入门槛足够低",
+          "记忆页证明长期壁垒可以成立",
+          "陪伴页证明情感黏性不是空话",
+          "我的页证明信任和边界是产品能力"
+        ]
+      },
+      colleague: {
+        tag: "同事视角",
+        lead: "这一版重点是看每个页面在信息架构里负责什么。先判断输入、记忆、回流、陪伴、边界五段有没有被清楚拆开，再讨论细节表现。",
+        panels: [
+          { eyebrow: "01 Information Architecture", title: "页面是模块映射", body: "今天、记忆、陪伴、我，不只是导航，而是分别承接不同类型的数据回流和交互目标。" },
+          { eyebrow: "02 Voice + Memory", title: "语音和记忆是共用底座", body: "录音页不是孤岛，它直接决定后续分类、检索、提醒和陪伴质量，所以它是主链路起点。" },
+          { eyebrow: "03 State Handling", title: "每页都要能解释边界", body: "好的预览不是多漂亮，而是用户在每一步都知道：我现在在哪，这句话会去哪，之后会怎么回来。" }
+        ],
+        captions: [
+          "启动页负责定义系统语气和入口认知",
+          "今天页负责把回流价值直接抬到台前",
+          "语音页负责把输入门槛降到最低",
+          "记忆页负责组织长期记忆结构",
+          "陪伴页负责承接情绪和共同历史",
+          "我的页负责权限、隐私和边界说明"
+        ]
+      },
+      user: {
+        tag: "用户视角",
+        lead: "这一版重点不是设计术语，而是这套界面会不会让你愿意打开、敢继续用、并且真的觉得它记住了你说过的话。",
+        panels: [
+          { eyebrow: "01 First Feeling", title: "先让人觉得被接住", body: "打开时先看到的是理解和回应，而不是复杂的任务结构和硬邦邦的工具感。" },
+          { eyebrow: "02 Daily Use", title: "每一页都在降低使用负担", body: "想到就说、说完就被整理、之后还能再回来，这才会让人形成每天都想开的习惯。" },
+          { eyebrow: "03 Safety", title: "边界感要让人安心", body: "如果用户看不见隐私控制和删除出口，再温柔的陪伴也会变得不可信。" }
+        ],
+        captions: [
+          "第一眼先让人想继续待下去",
+          "首页要让人立刻感觉到有用",
+          "说话时要像被听见，不像在填表",
+          "记忆页要让人想回看，不想逃开",
+          "陪伴页要像懂你，不像客服",
+          "我的页要让人确信数据归自己"
+        ]
+      }
+    };
+
+    const buttons = [...document.querySelectorAll(".audience-tab")];
+
+    function render(mode) {
+      const data = content[mode];
+      document.getElementById("heroTag").textContent = data.tag;
+      document.getElementById("heroLead").textContent = data.lead;
+      data.panels.forEach((panel, index) => {
+        document.getElementById(`panel${index + 1}Eyebrow`).textContent = panel.eyebrow;
+        document.getElementById(`panel${index + 1}Title`).textContent = panel.title;
+        document.getElementById(`panel${index + 1}Body`).textContent = panel.body;
+      });
+      data.captions.forEach((caption, index) => {
+        document.getElementById(`cap${index + 1}`).textContent = caption;
+      });
+      buttons.forEach((button) => {
+        const active = button.dataset.mode === mode;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      sessionStorage.setItem(AUDIENCE_KEY, mode);
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => render(button.dataset.mode));
+    });
+
+    render(sessionStorage.getItem(AUDIENCE_KEY) || "leader");
+  </script>
+  <script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="swiss-grid">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI产品经理 2026 · 三大核心能力</title>
+<style>
+/* === base.css (inlined) === */
+:root{--bg:#fff;--bg-soft:#f7f7f8;--surface:#fff;--surface-2:#f2f2f4;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.16);--text-1:#111216;--text-2:#55596a;--text-3:#8a8f9e;--accent:#3b6cff;--accent-2:#7a5cff;--accent-3:#ff5c8a;--good:#1aaf6c;--warn:#f5a524;--bad:#e0445a;--grad:linear-gradient(135deg,#3b6cff,#7a5cff 55%,#ff5c8a);--grad-soft:linear-gradient(135deg,#eef2ff,#f5ecff 55%,#ffeef5);--radius:18px;--radius-sm:12px;--radius-lg:26px;--shadow:0 10px 30px rgba(18,24,40,.08),0 2px 6px rgba(18,24,40,.04);--shadow-lg:0 24px 60px rgba(18,24,40,.14),0 6px 16px rgba(18,24,40,.06);--font-sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;--font-serif:"Songti SC","STSong","Source Han Serif SC","Noto Serif SC",serif;--font-mono:Consolas,"SFMono-Regular",Menlo,Monaco,monospace;--font-display:var(--font-sans);--letter-tight:-.03em;--letter-normal:-.01em;--ease:cubic-bezier(.4,0,.2,1)}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text-1);font-family:var(--font-sans);font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;letter-spacing:var(--letter-normal)}
+img,svg,video{max-width:100%;display:block}a{color:var(--accent);text-decoration:none}
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--bg)}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:56px 80px 64px;box-sizing:border-box;opacity:0;pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease);transform:translateX(30px);overflow:hidden}
+.slide.is-active{opacity:1;pointer-events:auto;transform:translateX(0);z-index:2}
+.slide.is-prev{transform:translateX(-30px)}
+.eyebrow{font-size:13px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3)}
+.kicker{font-size:14px;font-weight:600;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+h1.title,.h1{font-family:var(--font-display);font-size:80px;line-height:1.02;font-weight:800;letter-spacing:var(--letter-tight);margin:0 0 18px;color:var(--text-1)}
+h2.title,.h2{font-family:var(--font-display);font-size:60px;line-height:1.08;font-weight:700;letter-spacing:var(--letter-tight);margin:0 0 14px}
+h3,.h3{font-size:36px;line-height:1.2;font-weight:600;margin:0 0 10px}
+h4,.h4{font-size:24px;line-height:1.3;font-weight:600;margin:0 0 8px}
+.lede{font-size:24px;line-height:1.6;color:var(--text-2);font-weight:300;max-width:70ch}
+.dim{color:var(--text-2)}.dim2{color:var(--text-3)}
+.gradient-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.row{display:flex;gap:24px;align-items:center}.row.wrap{flex-wrap:wrap}
+.grid{display:grid;gap:24px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+.center{display:flex;align-items:center;justify-content:center;text-align:center}
+.mt-s{margin-top:8px}.mt-m{margin-top:18px}.mt-l{margin-top:32px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px 28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:500;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+.pill-accent{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 28%,transparent)}
+.divider-accent{height:3px;width:72px;background:var(--accent);border-radius:2px}
+.deck-header{position:absolute;top:24px;left:40px;right:40px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;z-index:10;pointer-events:none}
+.deck-footer{position:absolute;bottom:24px;left:40px;right:40px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text-3);z-index:10;pointer-events:none}
+.slide-number::before{content:attr(data-current)}.slide-number::after{content:" / " attr(data-total)}
+.progress-bar{position:fixed;left:0;right:0;bottom:0;height:3px;background:transparent;z-index:20}
+.progress-bar>span{display:block;height:100%;width:0;background:var(--accent);transition:width .3s var(--ease)}
+.notes-overlay{position:fixed;inset:auto 0 0 0;max-height:42vh;background:rgba(20,22,30,.95);color:#e8ebf4;padding:20px 32px;font-size:16px;line-height:1.6;border-top:1px solid rgba(255,255,255,.1);transform:translateY(100%);transition:transform .3s var(--ease);z-index:40;overflow:auto}
+.notes-overlay.open{transform:translateY(0)}
+.overview{position:fixed;inset:0;background:rgba(10,12,18,.92);backdrop-filter:blur(12px);z-index:50;display:none;padding:40px;overflow:auto}
+.overview.open{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-content:start}
+.overview .thumb{background:var(--surface);border:1px solid var(--border);border-radius:12px;aspect-ratio:16/9;overflow:hidden;cursor:pointer;position:relative;color:var(--text-1);padding:16px;font-size:11px;transition:transform .2s var(--ease)}
+.overview .thumb:hover{transform:scale(1.04)}
+.overview .thumb .n{position:absolute;top:8px;left:10px;font-weight:700;font-size:14px;color:var(--text-3)}
+.overview .thumb .t{position:absolute;bottom:10px;left:14px;right:14px;font-weight:600;color:var(--text-1)}
+.tc{text-align:center}
+@media print{.slide{position:relative;opacity:1!important;transform:none!important;page-break-after:always;height:100vh}.deck-header,.deck-footer,.progress-bar,.notes-overlay,.overview{display:none!important}}
+
+/* === swiss-grid theme (inlined) === */
+:root{--bg:#fff;--bg-soft:#f4f4f4;--surface:#fff;--surface-2:#f4f4f4;--border:#111;--border-strong:#111;--text-1:#111;--text-2:#444;--text-3:#888;--accent:#d6001c;--accent-2:#111;--accent-3:#888;--good:#0f8a2f;--warn:#d38a00;--bad:#d6001c;--grad:linear-gradient(135deg,#d6001c,#111);--grad-soft:linear-gradient(135deg,#f4f4f4,#fff);--radius:0;--radius-sm:0;--radius-lg:0;--shadow:none;--shadow-lg:none;--font-sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;--font-display:var(--font-sans);--letter-tight:-.04em}
+.card{border-top:2px solid #111;border-bottom:1px solid #111;border-left:none;border-right:none;box-shadow:none;background:#fff}
+.slide{background-image:linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);background-size:calc(100%/12) 100%}
+
+/* === animations.css (inlined) === */
+:root{--anim-dur:.7s;--anim-ease:cubic-bezier(.4,0,.2,1)}
+@keyframes kf-fade-up{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+@keyframes kf-fade-down{from{opacity:0;transform:translateY(-32px)}to{opacity:1;transform:none}}
+@keyframes kf-fade-left{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@keyframes kf-fade-right{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+.anim-fade-up{animation:kf-fade-up var(--anim-dur) var(--anim-ease) both}
+.anim-fade-down{animation:kf-fade-down var(--anim-dur) var(--anim-ease) both}
+.anim-fade-left{animation:kf-fade-left var(--anim-dur) var(--anim-ease) both}
+.anim-fade-right{animation:kf-fade-right var(--anim-dur) var(--anim-ease) both}
+@keyframes kf-rise{from{opacity:0;transform:translateY(60px) scale(.97);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+.anim-rise-in{animation:kf-rise .9s var(--anim-ease) both}
+.anim-stagger-list>*{opacity:0;animation:kf-rise .65s var(--anim-ease) both}
+.anim-stagger-list>*:nth-child(1){animation-delay:.05s}
+.anim-stagger-list>*:nth-child(2){animation-delay:.15s}
+.anim-stagger-list>*:nth-child(3){animation-delay:.25s}
+.anim-stagger-list>*:nth-child(4){animation-delay:.35s}
+.anim-stagger-list>*:nth-child(5){animation-delay:.45s}
+.anim-stagger-list>*:nth-child(6){animation-delay:.55s}
+.counter{font-variant-numeric:tabular-nums}
+@media(prefers-reduced-motion:reduce){[class*="anim-"]{animation:none!important;transition:none!important}}
+
+/* === page-specific === */
+.notes{display:none!important}
+.flywheel{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:28px;margin-top:40px;max-width:none;width:100%}
+.flywheel .step{padding:30px 28px;position:relative;min-height:190px}
+.flywheel .step .num{font-size:56px;font-weight:900;opacity:.15;position:absolute;top:12px;right:16px;line-height:1}
+.flywheel .step h4{font-size:24px;margin-bottom:10px}
+.flywheel .step p{font-size:16px;line-height:1.78;color:var(--text-2)}
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:44px}
+.tri .pillar{text-align:center;padding:34px 26px 36px;position:relative;overflow:hidden}
+.tri .pillar::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:40px;height:3px;background:var(--accent)}
+.tri .pillar .icon{font-size:44px;margin-bottom:12px}
+.tri .pillar h4{font-size:22px;margin-bottom:6px}
+.tri .pillar .en{font-size:13px;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase}
+.tri .pillar p{font-size:15px;line-height:1.85;color:var(--text-2);margin-top:12px}
+.action-list{list-style:none;padding:0;margin-top:40px;max-width:1040px}
+.action-list li{display:flex;align-items:flex-start;gap:18px;padding:24px 0;border-bottom:1px solid var(--border)}
+.action-list li:last-child{border-bottom:none}
+.action-list .step-num{font-size:42px;font-weight:900;color:var(--accent);line-height:1;min-width:48px}
+.action-list h4{font-size:24px;margin-bottom:6px}
+.action-list p{font-size:16px;color:var(--text-2);line-height:1.76}
+.dead-tag{display:inline-block;background:var(--bad);color:#fff;font-size:14px;font-weight:700;padding:4px 12px;border-radius:4px;margin-right:8px;text-decoration:line-through}
+.alive-tag{display:inline-block;background:var(--accent);color:#fff;font-size:14px;font-weight:700;padding:4px 12px;border-radius:4px}
+.detail-card{padding:40px 44px;margin-top:34px;width:100%}
+.detail-card h3{font-size:34px;margin-bottom:8px}
+.detail-card .subtitle{font-size:18px;color:var(--text-3);margin-bottom:24px}
+.detail-card ul{padding-left:24px;font-size:17px;line-height:2;color:var(--text-2)}
+.detail-card .highlight{background:var(--bg-soft);border-left:3px solid var(--accent);padding:16px 20px;margin-top:22px;font-size:16px;line-height:1.8;color:var(--text-2)}
+.tip-row{display:flex;gap:16px;margin-top:34px;flex-wrap:wrap}
+.tip-chip{display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-size:15px;color:var(--text-2)}
+.back-home{position:fixed;top:16px;left:16px;z-index:70;padding:10px 14px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:rgba(255,255,255,.92);color:#111;font-size:13px;font-weight:600;backdrop-filter:blur(8px)}
+.slide:nth-of-type(1) .anim-stagger-list{max-width:980px;transform:translateY(18px)}
+.slide:nth-of-type(1) .kicker{font-size:16px}
+.slide:nth-of-type(1) .h1{font-size:88px!important;line-height:1.08!important}
+.slide:nth-of-type(1) .lede{font-size:21px!important;max-width:760px!important}
+.slide:nth-of-type(1) .row.wrap{gap:16px}
+.slide:nth-of-type(2)>div{transform:translateY(-18px)}
+.slide:nth-of-type(2) .h1{font-size:74px!important;line-height:1.24!important}
+.slide:nth-of-type(2) .lede{font-size:22px!important;max-width:840px!important}
+.slide:nth-of-type(2) .divider-accent{width:96px!important;margin:36px auto!important}
+.slide:nth-of-type(3) .h2{font-size:44px}
+.slide:nth-of-type(4) .h2,.slide:nth-of-type(5) .h2,.slide:nth-of-type(6) .h2,.slide:nth-of-type(7) .h2,.slide:nth-of-type(8) .h2{font-size:44px;line-height:1.18}
+</style>
+</head>
+<body data-feedback-page="1">
+<a class="back-home" href="/">返回线上知识库</a>
+<div class="deck">
+
+  <!-- 1. COVER -->
+  <section class="slide" data-title="Cover">
+    <div class="deck-header"><span class="eyebrow">AI Product Management · 2026</span><span class="eyebrow">能力重构</span></div>
+    <div class="anim-stagger-list">
+      <p class="kicker" style="letter-spacing:.15em">当PRD不再是核心交付物</p>
+      <h1 class="h1 anim-fade-up" data-anim="fade-up" style="font-size:72px;line-height:1.15">
+        AI产品经理<br><span class="gradient-text">三大核心能力</span>
+      </h1>
+      <p class="lede" style="margin:24px auto 0;max-width:640px;font-size:18px;line-height:1.8">
+        原型 · 标准 · 评测<br>
+        从文档驱动到飞轮驱动的范式转移
+      </p>
+      <div class="row wrap mt-l">
+        <span class="pill pill-accent">Prototyping</span>
+        <span class="pill">Benchmark</span>
+        <span class="pill">Eval</span>
+        <span class="pill">OAEI 飞轮</span>
+      </div>
+    </div>
+    <div class="deck-footer"><span class="dim2">2026</span><span class="slide-number" data-current="1" data-total="8"></span></div>
+  </section>
+
+  <!-- 2. 核心转变 -->
+  <section class="slide tc center" data-title="范式转移">
+    <div style="max-width:800px;margin:0 auto">
+      <p class="kicker anim-fade-down" data-anim="fade-down" style="letter-spacing:.2em">范式转移</p>
+      <h1 class="h1 anim-rise-in" data-anim="rise-in" style="font-size:56px;line-height:1.3">
+        <span class="dead-tag">PRD</span> → <span class="alive-tag">原型</span> + <span class="alive-tag">标准</span> + <span class="alive-tag">评测</span>
+      </h1>
+      <div class="divider-accent" style="margin:32px auto"></div>
+      <p class="lede" style="margin:0 auto;font-size:17px;line-height:1.8;max-width:600px">
+        AI 的输出是<b>非确定性</b>的——同一个 Prompt，每次结果不同。<br>
+        传统的"写清楚需求→验收"模式彻底失效。<br>
+        取而代之的是：<b>快速原型 → 定义好坏 → 持续度量</b>。
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. 三大能力总览 -->
+  <section class="slide" data-title="三大能力">
+    <p class="kicker" style="letter-spacing:.15em">能力体系</p>
+    <h2 class="h2" style="font-size:34px">三个能力，一个飞轮</h2>
+    <div class="tri anim-stagger-list" data-anim-target>
+      <div class="card pillar">
+        <div class="icon">🛠️</div>
+        <h4>原型</h4>
+        <div class="en">Prototyping</div>
+        <p>用 Vibe Coding 快速出 MVP，<br>跨越设计与开发的鸿沟。<br><b>把想法变成可触摸的东西。</b></p>
+      </div>
+      <div class="card pillar">
+        <div class="icon">📐</div>
+        <h4>标准</h4>
+        <div class="en">Benchmark</div>
+        <p>为每个场景定义"好"的维度。<br>格式、准确、完整、安全……<br><b>相当于考试大纲。</b></p>
+      </div>
+      <div class="card pillar">
+        <div class="icon">🧪</div>
+        <h4>评测</h4>
+        <div class="en">Eval</div>
+        <p>结构化、可重复、自动化的测试。<br>取代 PRD 成为核心交付物。<br><b>相当于试卷+阅卷系统。</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 原型详解 -->
+  <section class="slide" data-title="原型 Prototyping">
+    <p class="kicker" style="letter-spacing:.15em">能力一</p>
+    <h2 class="h2" style="font-size:34px">🛠️ 原型 — 从 PRD 到 <span class="gradient-text">Vibe Coding</span></h2>
+    <div class="card detail-card anim-fade-up" data-anim="fade-up">
+      <h3>产品经理自己写代码？</h3>
+      <p class="subtitle">不是写代码，是用 AI 把想法变成可交互的原型</p>
+      <ul>
+        <li>利用 Dify / LangChain / Cursor 等工具<b>快速构建 MVP</b></li>
+        <li>跨越"PM画原型→设计师出稿→开发写码"的漫长链路</li>
+        <li>原型代码可直接交给 Coding Agent 参考，提升协作效率</li>
+        <li>从"写文档说服别人"变成"做出来让人体验"</li>
+      </ul>
+      <div class="highlight">
+        <b>关键转变：</b>传统PM的武器是Word，AI PM的武器是一个跑得起来的Demo。<br>不是效率工具，是与产研团队配合的<b>基本功</b>。
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 标准详解 -->
+  <section class="slide" data-title="标准 Benchmark">
+    <p class="kicker" style="letter-spacing:.15em">能力二</p>
+    <h2 class="h2" style="font-size:34px">📐 标准 — 定义<span class="gradient-text">"好"</span>的维度</h2>
+    <div class="card detail-card anim-fade-up" data-anim="fade-up">
+      <h3>没有标准，就没有方向</h3>
+      <p class="subtitle">Benchmark = 考试大纲，告诉团队"我们追求什么"</p>
+      <ul>
+        <li>根据产品类型定义评价维度：格式规范性 · 信息完整性 · 准确性 · 可读性 · 安全性</li>
+        <li>不同场景标准不同：高管报告追求<b>"精简精炼"</b>，调研报告追求<b>"全面广度"</b></li>
+        <li>不同用户标准不同：小白需要"手把手引导"，专家需要"极简高密度"</li>
+        <li>Benchmark 是产品战略的起点，直接决定迭代方向</li>
+      </ul>
+      <div class="highlight">
+        <b>核心洞察：</b>AI 产品最大的坑不是"做不出来"，是"不知道什么算好"。<br>先定标准，再动手——这是区分 junior 和 senior AI PM 的分水岭。
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 评测详解 -->
+  <section class="slide" data-title="评测 Eval">
+    <p class="kicker" style="letter-spacing:.15em">能力三 · 最核心</p>
+    <h2 class="h2" style="font-size:34px">🧪 评测 — AI PM 的<span class="gradient-text">核心交付物</span></h2>
+    <div class="card detail-card anim-fade-up" data-anim="fade-up">
+      <h3>Eval 取代 PRD</h3>
+      <p class="subtitle">一份好的 Eval 同时扮演三个角色</p>
+      <ul>
+        <li>📋 <b>产品规格</b> — 定义功能边界和质量标准</li>
+        <li>✅ <b>验收标准</b> — 可自动化执行，不依赖人工判断</li>
+        <li>🗺️ <b>产品路线图</b> — Eval 没过的case = 下一步要做的事</li>
+      </ul>
+      <div class="highlight">
+        <b>实例：</b>"从视频生成食谱"功能的 Eval →<br>
+        · 食材是否全部列出？（字符串匹配）<br>
+        · 步骤是否简洁？（AI 评审员打分）<br>
+        · 过敏原是否标注？（规则校验）<br>
+        每一条都是<b>可执行、可重复、可自动化</b>的测试信号。
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. OAEI 飞轮 -->
+  <section class="slide" data-title="OAEI 飞轮">
+    <p class="kicker" style="letter-spacing:.15em">核心工作流</p>
+    <h2 class="h2" style="font-size:34px">Observe → Analyze → Evaluate → Improve <span class="gradient-text">飞轮</span></h2>
+    <div class="flywheel anim-stagger-list" data-anim-target>
+      <div class="card step">
+        <div class="num">1</div>
+        <h4>👀 观察 Observe</h4>
+        <p>监控线上数据，收集用户输入、<br>模型输出及失败案例（Bad Case）</p>
+      </div>
+      <div class="card step">
+        <div class="num">2</div>
+        <h4>🔍 分析 Analyze</h4>
+        <p>识别问题模式，判断是 Prompt、<br>模型还是流程导致的问题</p>
+      </div>
+      <div class="card step">
+        <div class="num">3</div>
+        <h4>🧪 评测 Evaluate</h4>
+        <p>将问题转化为新的 Eval 测试用例，<br>必要时调整 Benchmark 标准</p>
+      </div>
+      <div class="card step">
+        <div class="num">4</div>
+        <h4>⚡ 改进 Improve</h4>
+        <p>优化 Prompt / 微调模型 / 改进工作流，<br>上线后重新观察，飞轮加速</p>
+      </div>
+    </div>
+    <p class="dim" style="margin-top:20px;font-size:14px;text-align:center">更多数据 → 更好的评测 → 更精准的改进 → 产品持续进化 🔄</p>
+  </section>
+
+  <!-- 8. 行动建议 -->
+  <section class="slide" data-title="行动建议">
+    <p class="kicker" style="letter-spacing:.15em">从今天开始</p>
+    <h2 class="h2" style="font-size:34px">给从业者的<span class="gradient-text">行动清单</span></h2>
+    <ol class="action-list anim-stagger-list" data-anim-target>
+      <li>
+        <div class="step-num">1</div>
+        <div><h4>用 Vibe Coding 做一个简单原型</h4><p>挑一个具体功能，用 Cursor / Dify / Claude 快速出 Demo。不求完美，求"跑得起来"。</p></div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div><h4>为该功能设计清晰的 Benchmark</h4><p>写清楚评价维度：准确性？完整性？格式？安全？不同用户群有不同标准。</p></div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div><h4>创建第一个 Eval Suite</h4><p>哪怕最初只是 20 个测试用例的表格，手动评估通过率。坚持把每个线上问题转化为测试用例。</p></div>
+      </li>
+    </ol>
+    <div class="tip-row">
+      <div class="tip-chip">📝 多记录，多留文档</div>
+      <div class="tip-chip">🎥 有精力录视频（参考张咋啦 Zara 风格）</div>
+      <div class="tip-chip">🔍 AI 行业缺新型 PM，多展示自己</div>
+    </div>
+  </section>
+
+</div>
+<script>
+/* === runtime.js (inlined) === */
+(function(){'use strict';function ready(fn){if(document.readyState!='loading')fn();else document.addEventListener('DOMContentLoaded',fn)}ready(function(){const deck=document.querySelector('.deck');if(!deck)return;const slides=Array.from(deck.querySelectorAll('.slide'));if(!slides.length)return;let idx=0;const total=slides.length;let bar=document.querySelector('.progress-bar');if(!bar){bar=document.createElement('div');bar.className='progress-bar';bar.innerHTML='<span></span>';document.body.appendChild(bar)}const barFill=bar.querySelector('span');let notes=document.querySelector('.notes-overlay');if(!notes){notes=document.createElement('div');notes.className='notes-overlay';document.body.appendChild(notes)}let overview=document.querySelector('.overview');if(!overview){overview=document.createElement('div');overview.className='overview';slides.forEach((s,i)=>{const t=document.createElement('div');t.className='thumb';const title=s.getAttribute('data-title')||(s.querySelector('h1,h2,h3')||{}).textContent||('Slide '+(i+1));t.innerHTML='<div class="n">'+(i+1)+'</div><div class="t">'+title.trim().slice(0,80)+'</div>';t.addEventListener('click',()=>{go(i);toggleOverview(false)});overview.appendChild(t)});document.body.appendChild(overview)}function go(n){n=Math.max(0,Math.min(total-1,n));slides.forEach((s,i)=>{s.classList.toggle('is-active',i===n);s.classList.toggle('is-prev',i<n)});idx=n;barFill.style.width=((n+1)/total*100)+'%';const numEl=document.querySelector('.slide-number');if(numEl){numEl.setAttribute('data-current',n+1);numEl.setAttribute('data-total',total)}const note=slides[n].querySelector('.notes');notes.innerHTML=note?note.innerHTML:'';if(location.hash!=='#/'+(n+1))history.replaceState(null,'','#/'+(n+1));slides[n].querySelectorAll('[data-anim]').forEach(el=>{const a=el.getAttribute('data-anim');el.classList.remove('anim-'+a);void el.offsetWidth;el.classList.add('anim-'+a)});slides[n].querySelectorAll('.counter').forEach(el=>{const target=parseFloat(el.getAttribute('data-to')||el.textContent);const dur=parseInt(el.getAttribute('data-dur')||'1200',10);const start=performance.now();function tick(now){const t=Math.min(1,(now-start)/dur);const v=(target)*(1-Math.pow(1-t,3));el.textContent=(target%1===0)?Math.round(v):v.toFixed(1);if(t<1)requestAnimationFrame(tick)}requestAnimationFrame(tick)})}function toggleNotes(force){notes.classList.toggle('open',force!==undefined?force:!notes.classList.contains('open'))}function toggleOverview(force){overview.classList.toggle('open',force!==undefined?force:!overview.classList.contains('open'))}function fullscreen(){const el=document.documentElement;if(!document.fullscreenElement)el.requestFullscreen&&el.requestFullscreen();else document.exitFullscreen&&document.exitFullscreen()}document.addEventListener('keydown',function(e){if(e.metaKey||e.ctrlKey||e.altKey)return;switch(e.key){case'ArrowRight':case' ':case'PageDown':case'Enter':go(idx+1);e.preventDefault();break;case'ArrowLeft':case'PageUp':case'Backspace':go(idx-1);e.preventDefault();break;case'Home':go(0);break;case'End':go(total-1);break;case'f':case'F':fullscreen();break;case's':case'S':toggleNotes();break;case'o':case'O':toggleOverview();break;case'Escape':toggleOverview(false);toggleNotes(false);break}});function fromHash(){const m=/^#\/(\d+)/.exec(location.hash||'');if(m)go(Math.max(0,parseInt(m[1],10)-1))}window.addEventListener('hashchange',fromHash);fromHash();go(idx)})})();
+</script>
+<script src="/assets/kb-feedback.js" defer></script>
+</body></html>

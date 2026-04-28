@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent 五层闭环 Slides</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --panel: rgba(20, 20, 25, 0.82);
+      --panel-strong: rgba(14, 14, 18, 0.94);
+      --line: rgba(232, 228, 220, 0.1);
+      --text: #e8e4dc;
+      --muted: rgba(232, 228, 220, 0.58);
+      --gold: #c9a84c;
+      --teal: #e8d48b;
+      --red: #e85d4a;
+      --blue: #4a7cf7;
+      --shadow: 0 28px 84px rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(201, 168, 76, 0.16), transparent 28%),
+        radial-gradient(circle at 88% 18%, rgba(74, 124, 247, 0.08), transparent 22%),
+        linear-gradient(135deg, #09090d 0%, #0a0a0f 48%, #0f1016 100%);
+      color: var(--text);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at center, black 55%, transparent 95%);
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(rgba(255, 255, 255, 0.045) 0.8px, transparent 0.8px);
+      background-size: 6px 6px;
+      opacity: 0.18;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    .shell {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      transition: filter 280ms ease, opacity 280ms ease;
+    }
+
+    body.locked .shell {
+      filter: blur(18px) saturate(0.72);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .statusbar {
+      position: fixed;
+      top: 18px;
+      left: 24px;
+      right: 24px;
+      z-index: 30;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(244, 239, 228, 0.78);
+      pointer-events: none;
+    }
+
+    .statusbar .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(244, 239, 228, 0.12);
+      border-radius: 999px;
+      background: rgba(12, 18, 30, 0.48);
+      backdrop-filter: blur(10px);
+    }
+
+    .deck {
+      display: flex;
+      width: 600vw;
+      height: 100%;
+      transition: transform 680ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      padding: 88px 64px 96px;
+      position: relative;
+      display: grid;
+      align-items: center;
+    }
+
+    .frame {
+      position: relative;
+      width: min(1280px, calc(100vw - 128px));
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(14, 24, 41, 0.88), rgba(8, 15, 27, 0.78));
+      box-shadow: var(--shadow);
+      border-radius: 30px;
+      overflow: hidden;
+      backdrop-filter: blur(14px);
+    }
+
+    .frame::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(232, 190, 107, 0.32), transparent 28%, rgba(129, 215, 210, 0.22));
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .slide-inner {
+      position: relative;
+      padding: 44px 48px 48px;
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: var(--teal);
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(48px, 7vw, 88px);
+      font-weight: 900;
+      max-width: 9.5em;
+    }
+
+    h2 {
+      font-size: clamp(34px, 4.5vw, 56px);
+      font-weight: 800;
+    }
+
+    h3 {
+      font-size: clamp(20px, 2vw, 28px);
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.75;
+      color: var(--muted);
+      font-size: clamp(15px, 1.35vw, 18px);
+    }
+
+    .cover {
+      min-height: 74vh;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 32px;
+      align-items: end;
+    }
+
+    .cover-copy {
+      display: grid;
+      gap: 24px;
+      align-content: end;
+      padding-right: 32px;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      width: fit-content;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(129, 215, 210, 0.25);
+      background: rgba(129, 215, 210, 0.08);
+      color: #dff7f4;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    .lead {
+      max-width: 45em;
+      color: rgba(244, 239, 228, 0.84);
+      font-size: clamp(16px, 1.45vw, 20px);
+    }
+
+    .cover-panel {
+      align-self: stretch;
+      display: grid;
+      gap: 18px;
+      align-content: end;
+    }
+
+    .audience-panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .audience-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .audience-button {
+      min-width: 0;
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(244, 239, 228, 0.12);
+      background: linear-gradient(180deg, rgba(18, 29, 48, 0.9), rgba(12, 20, 36, 0.72));
+      text-align: left;
+    }
+
+    .audience-button strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .audience-button span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .audience-button.is-active {
+      border-color: rgba(232, 190, 107, 0.34);
+      background: linear-gradient(180deg, rgba(232, 190, 107, 0.14), rgba(12, 20, 36, 0.82));
+      box-shadow: 0 0 0 1px rgba(232, 190, 107, 0.12) inset;
+    }
+
+    .audience-note {
+      padding: 16px 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(129, 215, 210, 0.18);
+      background: rgba(129, 215, 210, 0.06);
+    }
+
+    .audience-note strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .audience-note span {
+      display: block;
+      color: rgba(223, 247, 244, 0.86);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .section-focus {
+      margin-bottom: 20px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(129, 215, 210, 0.18);
+      background: linear-gradient(180deg, rgba(129, 215, 210, 0.08), rgba(10, 18, 31, 0.42));
+    }
+
+    .section-focus-label {
+      color: var(--teal);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .section-focus-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .section-focus-list li {
+      color: rgba(244, 239, 228, 0.86);
+      font-size: 14px;
+      line-height: 1.65;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .section-focus-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 14px rgba(232, 190, 107, 0.35);
+    }
+
+    .gap-chip-grid,
+    .metric-grid,
+    .gap-grid,
+    .priority-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .gap-chip-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .chip,
+    .metric,
+    .gap-card,
+    .layer-card,
+    .priority-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(18, 29, 48, 0.9), rgba(12, 20, 36, 0.72));
+      border-radius: 22px;
+    }
+
+    .chip {
+      padding: 16px 18px;
+    }
+
+    .chip strong,
+    .metric strong,
+    .gap-card strong,
+    .priority-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .chip span,
+    .metric span,
+    .gap-card span,
+    .priority-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      display: block;
+    }
+
+    .signal {
+      position: absolute;
+      right: 48px;
+      top: 38px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 1px solid rgba(232, 190, 107, 0.12);
+      background:
+        radial-gradient(circle, rgba(232, 190, 107, 0.22) 0%, rgba(232, 190, 107, 0.08) 18%, transparent 55%),
+        radial-gradient(circle, rgba(129, 215, 210, 0.12) 0%, transparent 58%);
+      filter: blur(1px);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .layer-card {
+      display: grid;
+      grid-template-columns: 110px 1.1fr 1.2fr 0.9fr;
+      gap: 18px;
+      align-items: center;
+      padding: 18px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .layer-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent 18%, transparent 82%, rgba(255, 255, 255, 0.025));
+      pointer-events: none;
+    }
+
+    .layer-index {
+      font-size: 34px;
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      color: rgba(232, 190, 107, 0.92);
+      line-height: 1;
+    }
+
+    .layer-card h3 {
+      font-size: 26px;
+    }
+
+    .layer-card .focus {
+      color: rgba(244, 239, 228, 0.82);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .layer-card .tech {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .layer-card .gap {
+      justify-self: end;
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 123, 114, 0.08);
+      border: 1px solid rgba(255, 123, 114, 0.18);
+      color: #ffd8d3;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .section-head p {
+      max-width: 38em;
+    }
+
+    .metric-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .metric {
+      padding: 20px 22px;
+      min-height: 180px;
+    }
+
+    .metric .label {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .metric .title {
+      color: var(--text);
+      font-size: 28px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+    }
+
+    .gap-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gap-card {
+      padding: 22px 22px 20px;
+      min-height: 236px;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .gap-card .tag {
+      display: inline-flex;
+      width: fit-content;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(232, 190, 107, 0.1);
+      border: 1px solid rgba(232, 190, 107, 0.2);
+      color: #f6d79b;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .gap-card h3 {
+      font-size: 24px;
+    }
+
+    .gap-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .gap-card li {
+      color: rgba(244, 239, 228, 0.82);
+      font-size: 14px;
+      line-height: 1.65;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .gap-card li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 12px rgba(129, 215, 210, 0.48);
+    }
+
+    .feedback-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .loop-card,
+    .priority-panel {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(17, 27, 45, 0.9), rgba(10, 16, 29, 0.78));
+      padding: 26px;
+      min-height: 430px;
+    }
+
+    .loop {
+      position: relative;
+      min-height: 308px;
+      margin-top: 24px;
+      border: 1px dashed rgba(244, 239, 228, 0.12);
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(201, 168, 76, 0.12), transparent 36%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+    }
+
+    .loop-node {
+      position: absolute;
+      width: 180px;
+      padding: 18px 16px;
+      border-radius: 20px;
+      background: rgba(10, 18, 31, 0.94);
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .loop-node strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .loop-node span {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+      display: block;
+    }
+
+    .loop-node.result {
+      left: 50%;
+      top: 28px;
+      transform: translateX(-50%);
+    }
+
+    .loop-node.leave {
+      left: 42px;
+      bottom: 46px;
+    }
+
+    .loop-node.skill {
+      right: 42px;
+      bottom: 46px;
+    }
+
+    .loop svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .priority-grid {
+      margin-top: 18px;
+    }
+
+    .priority-card {
+      padding: 18px;
+    }
+
+    .priority-card .num {
+      display: inline-flex;
+      width: 30px;
+      height: 30px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(201, 168, 76, 0.14);
+      border: 1px solid rgba(201, 168, 76, 0.18);
+      color: #f2e4b6;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .formula {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px;
+      background: linear-gradient(180deg, rgba(18, 28, 44, 0.9), rgba(10, 17, 29, 0.78));
+      display: grid;
+      gap: 18px;
+      align-content: center;
+      min-height: 420px;
+    }
+
+    .formula-line {
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      font-size: clamp(28px, 3vw, 42px);
+      line-height: 1.28;
+      color: var(--text);
+    }
+
+    .formula-line .accent {
+      color: var(--gold);
+    }
+
+    .note-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .voice-fab {
+      position: fixed;
+      right: 24px;
+      bottom: 98px;
+      z-index: 36;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background: linear-gradient(180deg, rgba(201, 168, 76, 0.24), rgba(201, 168, 76, 0.1));
+      border: 1px solid rgba(201, 168, 76, 0.26);
+      box-shadow: 0 22px 44px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(16px);
+    }
+
+    .voice-fab::before {
+      content: "";
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(244, 239, 228, 0.9);
+      position: absolute;
+      opacity: 0.85;
+    }
+
+    .voice-fab .voice-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #f3e2ac;
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.58);
+    }
+
+    .voice-fab.is-recording {
+      background: linear-gradient(180deg, rgba(255, 123, 114, 0.18), rgba(255, 123, 114, 0.08));
+      border-color: rgba(255, 123, 114, 0.28);
+    }
+
+    .voice-fab.is-recording .voice-dot {
+      background: #ff8b84;
+      box-shadow: 0 0 18px rgba(255, 123, 114, 0.7);
+      animation: pulse 1s infinite ease-in-out;
+    }
+
+    .voice-fab.is-recording::before {
+      border-color: rgba(255, 242, 239, 0.94);
+    }
+
+    .voice-fab:disabled {
+      opacity: 0.56;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.45);
+      }
+    }
+
+    .voice-status {
+      position: fixed;
+      right: 24px;
+      bottom: 182px;
+      z-index: 36;
+      max-width: 220px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(244, 239, 228, 0.1);
+      background: rgba(10, 16, 28, 0.74);
+      color: rgba(244, 239, 228, 0.76);
+      font-size: 12px;
+      line-height: 1.55;
+      backdrop-filter: blur(14px);
+    }
+
+    .access-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(129, 215, 210, 0.16), transparent 32%),
+        radial-gradient(circle at 82% 16%, rgba(232, 190, 107, 0.14), transparent 28%),
+        rgba(6, 10, 18, 0.88);
+      backdrop-filter: blur(18px);
+      transition: opacity 220ms ease, visibility 220ms ease;
+    }
+
+    body:not(.locked) .access-overlay {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .access-card {
+      width: min(460px, 100%);
+      padding: 28px;
+      border-radius: 28px;
+      border: 1px solid rgba(244, 239, 228, 0.12);
+      background: linear-gradient(180deg, rgba(13, 22, 37, 0.96), rgba(8, 14, 26, 0.92));
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.44);
+    }
+
+    .access-copy {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .access-copy h2 {
+      font-size: clamp(30px, 4vw, 42px);
+    }
+
+    .access-copy p {
+      font-size: 15px;
+    }
+
+    .access-role-grid {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .access-hint {
+      min-height: 22px;
+      margin-bottom: 14px;
+      color: rgba(223, 247, 244, 0.84);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .access-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+    }
+
+    .access-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(244, 239, 228, 0.12);
+      background: rgba(7, 13, 24, 0.82);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      letter-spacing: 0.2em;
+    }
+
+    .access-input:focus {
+      border-color: rgba(232, 190, 107, 0.36);
+      box-shadow: 0 0 0 3px rgba(232, 190, 107, 0.1);
+    }
+
+    .access-submit {
+      min-width: 110px;
+      background: linear-gradient(180deg, rgba(232, 190, 107, 0.18), rgba(232, 190, 107, 0.08));
+      border-color: rgba(232, 190, 107, 0.28);
+    }
+
+    .access-error {
+      min-height: 24px;
+      margin-top: 12px;
+      color: #ffb6ae;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .access-note {
+      margin-top: 6px;
+      color: rgba(151, 165, 190, 0.84);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      position: fixed;
+      left: 24px;
+      right: 24px;
+      bottom: 24px;
+      z-index: 30;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      min-width: 0;
+      padding: 0;
+      border-radius: 50%;
+      background: rgba(244, 239, 228, 0.2);
+      border: 1px solid rgba(244, 239, 228, 0.18);
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .dot.active {
+      background: var(--gold);
+      box-shadow: 0 0 24px rgba(232, 190, 107, 0.4);
+      transform: scale(1.15);
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      border: 1px solid rgba(244, 239, 228, 0.14);
+      background: rgba(9, 16, 27, 0.78);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 999px;
+      font: inherit;
+      cursor: pointer;
+      min-width: 88px;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      backdrop-filter: blur(10px);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(232, 190, 107, 0.36);
+      background: rgba(15, 23, 38, 0.92);
+    }
+
+    .hint {
+      color: rgba(244, 239, 228, 0.58);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1080px) {
+      .slide {
+        padding: 78px 20px 88px;
+      }
+
+      .frame {
+        width: min(1280px, calc(100vw - 40px));
+      }
+
+      .slide-inner {
+        padding: 28px 24px 24px;
+      }
+
+      .cover,
+      .feedback-layout,
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .layer-card,
+      .metric-grid,
+      .gap-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .layer-card {
+        gap: 10px;
+      }
+
+      .layer-card .gap {
+        justify-self: start;
+      }
+
+      .statusbar {
+        left: 16px;
+        right: 16px;
+      }
+
+      .voice-fab {
+        right: 16px;
+        bottom: 88px;
+      }
+
+      .voice-status {
+        right: 16px;
+        bottom: 170px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      html,
+      body {
+        overflow: auto;
+      }
+
+      .shell {
+        overflow: auto;
+      }
+
+      .deck {
+        width: 100%;
+        height: auto;
+        display: grid;
+        transform: none !important;
+      }
+
+      .slide {
+        width: 100%;
+        min-height: 100vh;
+        height: auto;
+        padding: 72px 14px 84px;
+      }
+
+      .frame {
+        width: 100%;
+        border-radius: 24px;
+      }
+
+      .cover-copy {
+        padding-right: 0;
+      }
+
+      .gap-chip-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .statusbar,
+      .nav {
+        position: absolute;
+      }
+
+      .nav {
+        bottom: 14px;
+        left: 14px;
+        right: 14px;
+      }
+
+      .voice-fab {
+        right: 14px;
+        bottom: 94px;
+        width: 64px;
+        height: 64px;
+      }
+
+      .voice-status {
+        right: 14px;
+        bottom: 160px;
+        max-width: 180px;
+      }
+
+      .access-form {
+        grid-template-columns: 1fr;
+      }
+
+      .hint {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body class="locked">
+  <div class="shell">
+    <div class="statusbar">
+      <div class="pill">Agent Architecture / 体系蓝图</div>
+      <div class="pill"><span id="counter">01</span> / 06</div>
+    </div>
+
+    <main class="deck" id="deck">
+      <section class="slide">
+        <div class="frame">
+          <div class="signal"></div>
+          <div class="slide-inner">
+            <div class="cover">
+              <div class="cover-copy">
+                <div class="kicker">Presentation Setup</div>
+                <h1>这套演示，做给谁看？</h1>
+                <p class="lead">
+                  先定受众，再定讲法。对象不同，重点就不同。
+                </p>
+                <p>
+                  这套内容的核心只有一句：
+                  <strong style="color: var(--text);">Agent 的竞争，在闭环完成度。</strong>
+                  <br />
+                  五层框架：
+                  <strong style="color: var(--gold);">感知 / 记忆 / 决策 / 执行 / 评估</strong>
+                </p>
+              </div>
+
+              <div class="cover-panel">
+                <div class="audience-panel">
+                  <div class="audience-grid" id="audienceGrid">
+                    <button class="audience-button" type="button" data-audience="leader">
+                      <strong>我是领导</strong>
+                      <span>看战略价值、ROI、风险</span>
+                    </button>
+                    <button class="audience-button" type="button" data-audience="colleague">
+                      <strong>我是同事</strong>
+                      <span>看落地、接口、协作</span>
+                    </button>
+                    <button class="audience-button" type="button" data-audience="user">
+                      <strong>我是用户</strong>
+                      <span>看好不好用、值不值得信任</span>
+                    </button>
+                  </div>
+
+                  <div class="audience-note">
+                    <strong id="audienceTitle">建议先选一个受众对象</strong>
+                    <span id="audienceSummary">我会按对象切入这套五层闭环：讲机会、讲产品、讲技术，或讲落地价值。</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="slide-inner">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">System Blueprint</div>
+                <h2>成熟 Agent 只有五层，而且必须闭环。</h2>
+              </div>
+              <p>先理解，再记住，再决策，再执行，最后校验并成长。</p>
+            </div>
+
+            <div class="section-focus" data-focus-index="1">
+              <div class="section-focus-label">当前版本重点</div>
+              <ul class="section-focus-list"></ul>
+            </div>
+
+            <div class="timeline">
+              <article class="layer-card">
+                <div class="layer-index">01</div>
+                <div>
+                  <h3>感知层</h3>
+                  <div class="focus">看见环境，理解意图</div>
+                </div>
+                <div class="tech">文本、图像、语音、OCR、多模态识别</div>
+                <div class="gap">UX Gap<br />入口还像聊天框，不像系统能力。</div>
+              </article>
+
+              <article class="layer-card">
+                <div class="layer-index">02</div>
+                <div>
+                  <h3>记忆层</h3>
+                  <div class="focus">记住上下文与长期偏好</div>
+                </div>
+                <div class="tech">Context Window、RAG、向量库、知识图谱</div>
+                <div class="gap">Data Gap<br />私有数据还不能放心交给 Agent。</div>
+              </article>
+
+              <article class="layer-card">
+                <div class="layer-index">03</div>
+                <div>
+                  <h3>决策层</h3>
+                  <div class="focus">拆任务，定策略，做判断</div>
+                </div>
+                <div class="tech">CoT、规划、编排、反思、约束推理</div>
+                <div class="gap">Prompt Gap<br />人说得模糊，机器还接不稳。</div>
+              </article>
+
+              <article class="layer-card">
+                <div class="layer-index">04</div>
+                <div>
+                  <h3>执行层</h3>
+                  <div class="focus">调用工具，把事做完</div>
+                </div>
+                <div class="tech">API、Function Calling、浏览器、App 自动化</div>
+                <div class="gap">Action Gap<br />会建议，不一定真能做完。</div>
+              </article>
+
+              <article class="layer-card">
+                <div class="layer-index">05</div>
+                <div>
+                  <h3>评估层</h3>
+                  <div class="focus">校验结果，并持续进化</div>
+                </div>
+                <div class="tech">Guardrails、评测、反馈、记忆更新、Skill 沉淀</div>
+                <div class="gap">Feedback Gap<br />结果结束后，反馈没有留下来。</div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="slide-inner">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Gap 01 - 03</div>
+                <h2>前三层的难点，是入口、数据、翻译。</h2>
+              </div>
+              <p>不是模型不够强，而是用户还进不来，数据还接不上，意图还翻不准。</p>
+            </div>
+
+            <div class="section-focus" data-focus-index="2">
+              <div class="section-focus-label">当前版本重点</div>
+              <ul class="section-focus-list"></ul>
+            </div>
+
+            <div class="metric-grid">
+              <article class="metric">
+                <span class="label">UX Gap</span>
+                <div class="title">入口不自然</div>
+                <strong>现状</strong>
+                <span>用户先找聊天框，再想怎么提问，这一步已经太重。</span>
+              </article>
+
+              <article class="metric">
+                <span class="label">Data Gap</span>
+                <div class="title">有智无家</div>
+                <strong>现状</strong>
+                <span>没有安全、可控的私域记忆，Agent 很难真正懂你。</span>
+              </article>
+
+              <article class="metric">
+                <span class="label">Prompt Gap</span>
+                <div class="title">翻译障碍</div>
+                <strong>现状</strong>
+                <span>用户说的是愿望，系统需要的是计划，中间还缺一层翻译。</span>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="slide">
+        <div class="frame">
+          <div class="slide-inner">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Gap 04 - 05</div>
+                <h2>后两层决定它是会说，还是会做。</h2>
+              </div>
+              <p>没有执行，只有建议。没有评估，就不会成长。</p>
+            </div>
+
+            <div class="section-focus" data-focus-index="3">
+              <div class="section-focus-label">当前版本重点</div>
+              <ul class="section-focus-list"></ul>
+            </div>
+
+            <div class="gap-grid">
+              <article class="gap-card">
+                <div class="tag">Action Gap</div>
+                <h3>执行层的断点</h3>
+                <strong>会规划，不等于会完成。</strong>
+                <ul>
+                  <li>能给方案，但跨系统执行仍不稳定。</li>
+                  <li>浏览器、App、企业系统之间还缺闭环动作能力。</li>
+                </ul>
+              </article>
+
+              <article class="gap-card">
+                <div class="tag">Feedback Gap</div>
+                <h3>评估层的断点</h3>
+                <strong>结果结束了，系统没学到东西。</strong>
+                <ul>
+                  <li>满意没有沉淀，失败也没有回写。</li>
+                  <li>只有高手会把经验做成 skill。</li>
+                </ul>
+              </article>
+
+              <article class="gap-card">
+                <div class="tag">Guardrails</div>
+                <h3>为什么必须有评估层</h3>
+                <strong>这不是附加项，是上线条件。</strong>
+                <ul>
+                  <li>保证安全。</li>
+                  <li>校验结果。</li>
+                  <li>回写经验。</li>
+                </ul>
+              </article>
+
+              <article class="gap-card">
+                <div class="tag">Closed Loop</div>
+                <h3>成熟 Agent 的标准</h3>
+                <strong>每次任务都能反哺下一次。</strong>
+                <ul>
+                  <li>记忆被更新。</li>
+                  <li>路径能复用。</li>
+                  <li>失败不再重演。</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="slide-inner">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Feedback System</div>
+                <h2>没有反馈，系统就不会长大。</h2>
+              </div>
+              <p>一次回答不难，持续变强才难。</p>
+            </div>
+
+            <div class="section-focus" data-focus-index="4">
+              <div class="section-focus-label">当前版本重点</div>
+              <ul class="section-focus-list"></ul>
+            </div>
+
+            <div class="feedback-layout">
+              <div class="loop-card">
+                <strong style="display: block; font-size: 18px; color: var(--text);">当前现实</strong>
+                <div class="loop">
+                  <div class="loop-node result">
+                    <strong>拿到结果</strong>
+                    <span>满意离开，原因没沉淀。</span>
+                  </div>
+
+                  <div class="loop-node leave">
+                    <strong>拿不到结果</strong>
+                    <span>失望离开，失败没记录。</span>
+                  </div>
+
+                  <div class="loop-node skill">
+                    <strong>高手改造成 Skill</strong>
+                    <span>少数人沉淀经验，多数反馈流失。</span>
+                  </div>
+
+                  <svg viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true">
+                    <defs>
+                      <marker id="arrow" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto-start-reverse">
+                        <path d="M0,0 L12,6 L0,12 z" fill="rgba(232, 190, 107, 0.72)"></path>
+                      </marker>
+                    </defs>
+                    <path d="M500 122 C 320 160, 210 240, 180 328" fill="none" stroke="rgba(232, 190, 107, 0.62)" stroke-width="2.2" marker-end="url(#arrow)"></path>
+                    <path d="M500 122 C 680 160, 790 240, 820 328" fill="none" stroke="rgba(129, 215, 210, 0.62)" stroke-width="2.2" marker-end="url(#arrow)"></path>
+                    <path d="M260 392 C 430 470, 610 470, 740 392" fill="none" stroke="rgba(255, 123, 114, 0.48)" stroke-width="2" stroke-dasharray="8 8"></path>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="priority-panel">
+                <strong style="display: block; font-size: 18px; color: var(--text);">下一步补什么</strong>
+                <div class="priority-grid">
+                  <div class="priority-card">
+                    <div class="num">01</div>
+                    <strong>结果评价接口</strong>
+                    <span>把满意、失败、复用变成结构化信号。</span>
+                  </div>
+                  <div class="priority-card">
+                    <div class="num">02</div>
+                    <strong>过程回放与追踪</strong>
+                    <span>知道它做了什么，卡在了哪里。</span>
+                  </div>
+                  <div class="priority-card">
+                    <div class="num">03</div>
+                    <strong>Skill 沉淀机制</strong>
+                    <span>把高质量路径变成可复用能力。</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="frame">
+          <div class="slide-inner">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Takeaway</div>
+                <h2>Agent 的竞争，不在参数，在闭环。</h2>
+              </div>
+              <p>能回答问题，是助手。能持续完成任务并成长，才是 Agent。</p>
+            </div>
+
+            <div class="section-focus" data-focus-index="5">
+              <div class="section-focus-label">当前版本重点</div>
+              <ul class="section-focus-list"></ul>
+            </div>
+
+            <div class="summary">
+              <div class="formula">
+                <div class="formula-line">
+                  Agent =
+                  <span class="accent">感知</span>
+                  ×
+                  <span class="accent">记忆</span>
+                  ×
+                  <span class="accent">决策</span>
+                  ×
+                  <span class="accent">执行</span>
+                  ×
+                  <span class="accent">评估</span>
+                </div>
+                <p>少一层，闭环就断。真正的机会在补断层，不在单点变强。</p>
+                <p style="color: rgba(244, 239, 228, 0.84);">
+                  五大缺口：
+                  <strong style="color: var(--gold);">UX Gap / Data Gap / Prompt Gap / Action Gap / Feedback Gap</strong>
+                </p>
+              </div>
+
+              <div class="note-stack">
+                <div class="priority-card">
+                  <strong>一句话定义</strong>
+                  <span>Agent 不是聊天框，而是执行系统。</span>
+                </div>
+                <div class="priority-card">
+                  <strong>产品重点</strong>
+                  <span>入口、记忆、翻译、执行、反馈，五项缺一不可。</span>
+                </div>
+                <div class="priority-card">
+                  <strong>适合收尾页 / 演讲结论</strong>
+                  <span>下一代 Agent 的关键，是更像系统做事。</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="nav">
+      <div class="dots" id="dots" aria-label="slide navigation"></div>
+      <div class="hint">Arrow Keys / Mouse Wheel / Tap Dots</div>
+      <div class="nav-controls">
+        <button id="prev" type="button">上一页</button>
+        <button id="next" type="button">下一页</button>
+      </div>
+    </div>
+
+    <div class="voice-status" id="feedbackStatus" aria-live="polite">按住右下角语音按钮，说完自动发送。</div>
+    <button class="voice-fab" id="voiceTrigger" type="button" aria-label="语音反馈">
+      <span class="voice-dot" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="access-overlay" id="accessOverlay">
+    <div class="access-card">
+      <div class="access-copy">
+        <div class="eyebrow">Access Gate</div>
+        <h2>先选对象，再输入口令</h2>
+        <p>每个版本都对应不同的讲法。先选“我是领导 / 我是同事 / 我是用户”，再输入对应口令进入。</p>
+      </div>
+
+      <div class="access-role-grid">
+        <button class="audience-button" type="button" data-audience="leader">
+          <strong>我是领导</strong>
+          <span>结论先行，看战略价值、投入产出、风险控制</span>
+        </button>
+        <button class="audience-button" type="button" data-audience="colleague">
+          <strong>我是同事</strong>
+          <span>看落地性、逻辑闭环、接口协作与边界处理</span>
+        </button>
+        <button class="audience-button" type="button" data-audience="user">
+          <strong>我是用户</strong>
+          <span>看痛点有没有解决、价值是否直观、体验是否可信</span>
+        </button>
+      </div>
+
+      <div class="access-hint" id="accessHint">先选择一个身份版本。</div>
+
+      <form class="access-form" id="accessForm">
+        <input
+          class="access-input"
+          id="accessInput"
+          type="password"
+          inputmode="numeric"
+          maxlength="3"
+          autocomplete="off"
+          placeholder="输入对应口令"
+          aria-label="访问口令"
+        />
+        <button class="access-submit" type="submit">进入</button>
+      </form>
+
+      <div class="access-error" id="accessError" aria-live="polite"></div>
+      <div class="access-note">Front-end only / local demo gate</div>
+    </div>
+  </div>
+
+  <script>
+    const ACCESS_SESSION_KEY = "agent-slides-access";
+    const AUDIENCE_SESSION_KEY = "agent-slides-audience";
+    const KB_AUDIENCE_SESSION_KEY = "kb_audience_mode";
+    const TRANSCRIPT_STORAGE_PREFIX = "agent-slides-transcript-";
+    const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const AUDIENCE_PRESETS = {
+      leader: {
+        code: "111",
+        button: "我是领导",
+        title: "领导版本",
+        summary: "先讲结果。重点看战略价值、ROI、资源投入和风险控制。",
+        accessHint: "已选领导版本。请输入对应口令进入。",
+        focus: {
+          1: [
+            "这是能力地图，不是功能堆砌。",
+            "先看哪几层决定平台级战略价值。",
+            "再看缺哪层会直接卡住公司机会。"
+          ],
+          2: [
+            "入口、数据、翻译，是最先形成壁垒的三层。",
+            "现在做，是为了抢系统入口和用户心智。",
+            "重点不是算法名词，而是能否占住关键闭环。"
+          ],
+          3: [
+            "执行能力决定 ROI 能不能兑现。",
+            "评估能力决定风险能不能收住。",
+            "没有闭环，所有投入都容易停在 demo。"
+          ],
+          4: [
+            "反馈系统决定产品能不能持续变强。",
+            "这直接影响复用率、留存和组织资产沉淀。",
+            "要把经验留在系统里，而不是留在人身上。"
+          ],
+          5: [
+            "结论先行：值得做，但必须按闭环优先级投入。",
+            "资源上先补最短板，不做平均发力。",
+            "细节可以后谈，方向先定。"
+          ]
+        }
+      },
+      colleague: {
+        code: "222",
+        button: "我是同事",
+        title: "同事版本",
+        summary: "先讲怎么落地。重点看接口、数据流、协作点、边界和排期。",
+        accessHint: "已选同事版本。请输入对应口令进入。",
+        focus: {
+          1: [
+            "先把五层拆成能力模块和接口边界。",
+            "明确哪层先做 MVP，哪层后补。",
+            "每一层都要能接到真实任务流。"
+          ],
+          2: [
+            "入口、权限、记忆写回是最容易卡实现的地方。",
+            "要提前定义数据流向和责任归属。",
+            "用户模糊意图如何转成结构化计划，是产品和算法共同点。"
+          ],
+          3: [
+            "执行层要考虑权限失败、第三方不稳定、重试与回滚。",
+            "评估层要定义成功标准、日志和人工兜底。",
+            "边缘情况不补，闭环就会在真实环境里断。"
+          ],
+          4: [
+            "反馈接口、过程回放、skill 沉淀都要有具体 owner。",
+            "这里会影响运营、产品、研发怎么协作。",
+            "没有结构化反馈，后续优化会失焦。"
+          ],
+          5: [
+            "落地顺序要清晰，协作边界要提前说透。",
+            "每层都要明确输入、输出、异常处理。",
+            "讲清楚就能排期，不清楚就会反复返工。"
+          ]
+        }
+      },
+      user: {
+        code: "333",
+        button: "我是用户",
+        title: "用户版本",
+        summary: "先讲获得感。重点看能不能解决你的麻烦、值不值得信任、是不是足够简单。",
+        accessHint: "已选用户版本。请输入对应口令进入。",
+        focus: {
+          1: [
+            "你最关心的不是架构，而是它能不能听懂并帮你做完。",
+            "这五层决定它是聊天工具，还是能办事的助手。",
+            "重点看最后是不是更省心。"
+          ],
+          2: [
+            "你不用学 prompt，也不用反复解释自己。",
+            "系统会更懂你，也更容易接住你的真实需求。",
+            "重点是减少麻烦，而不是增加学习成本。"
+          ],
+          3: [
+            "它不该只会建议，而要能帮你把事推进下去。",
+            "你也不该承担系统出错后的全部成本。",
+            "重点是稳定、可用、可信。"
+          ],
+          4: [
+            "你每次使用，都应该让它下一次更好用。",
+            "满意和失败都该被系统记住。",
+            "重点是越用越顺，而不是每次重新开始。"
+          ],
+          5: [
+            "结论很简单：这个产品应该让你更省时、更省心、更有把握。",
+            "如果只会回答，不会执行，就不够好用。",
+            "如果越用越懂你，它才真正有价值。"
+          ]
+        }
+      }
+    };
+
+    const deck = document.getElementById("deck");
+    const counter = document.getElementById("counter");
+    const dotsWrap = document.getElementById("dots");
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const audienceButtons = Array.from(document.querySelectorAll(".audience-button"));
+    const audienceTitle = document.getElementById("audienceTitle");
+    const audienceSummary = document.getElementById("audienceSummary");
+    const accessHint = document.getElementById("accessHint");
+    const focusPanels = Array.from(document.querySelectorAll(".section-focus"));
+    const accessForm = document.getElementById("accessForm");
+    const accessInput = document.getElementById("accessInput");
+    const accessError = document.getElementById("accessError");
+    const feedbackStatus = document.getElementById("feedbackStatus");
+    const voiceTrigger = document.getElementById("voiceTrigger");
+
+    const total = slides.length;
+    const transcriptBySlide = Array.from({ length: total }, (_, slideIndex) => readStoredTranscript(slideIndex));
+
+    let index = 0;
+    let touchStartX = 0;
+    let wheelLock = false;
+    let recognition = null;
+    let recognizing = false;
+    let submitInFlight = false;
+    let interimTranscript = "";
+    let selectedAudience = null;
+
+    function padNumber(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function applyAudiencePreset(audienceKey) {
+      selectedAudience = audienceKey && AUDIENCE_PRESETS[audienceKey] ? audienceKey : null;
+      const preset = selectedAudience ? AUDIENCE_PRESETS[selectedAudience] : null;
+
+      audienceButtons.forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.audience === selectedAudience);
+      });
+
+      audienceTitle.textContent = preset ? preset.title : "建议先选一个身份版本";
+      audienceSummary.textContent = preset
+        ? preset.summary
+        : "我会按身份切入这套五层闭环：领导看结果，同事看落地，用户看获得感。";
+      accessHint.textContent = preset ? preset.accessHint : "先选择一个身份版本。";
+      accessInput.placeholder = preset ? `输入${preset.title}口令` : "输入对应口令";
+      accessError.textContent = "";
+
+      focusPanels.forEach((panel) => {
+        const list = panel.querySelector(".section-focus-list");
+        const focusIndex = Number(panel.dataset.focusIndex);
+        const items = preset?.focus?.[focusIndex] || [
+          "先选身份版本。",
+          "不同对象，重点不同。",
+          "这样演示才更有针对性。"
+        ];
+        list.innerHTML = items.map((item) => `<li>${item}</li>`).join("");
+      });
+
+      try {
+        if (preset) {
+          sessionStorage.setItem(AUDIENCE_SESSION_KEY, selectedAudience);
+          sessionStorage.setItem(KB_AUDIENCE_SESSION_KEY, selectedAudience);
+        } else {
+          sessionStorage.removeItem(AUDIENCE_SESSION_KEY);
+          sessionStorage.removeItem(KB_AUDIENCE_SESSION_KEY);
+        }
+      } catch (error) {
+        // Ignore session storage failures in local preview mode.
+      }
+    }
+
+    function isLocked() {
+      return document.body.classList.contains("locked");
+    }
+
+    function isTypingContext() {
+      const active = document.activeElement;
+      return active && active.tagName === "INPUT";
+    }
+
+    function readStoredTranscript(slideIndex) {
+      try {
+        return localStorage.getItem(`${TRANSCRIPT_STORAGE_PREFIX}${slideIndex}`) || "";
+      } catch (error) {
+        return "";
+      }
+    }
+
+    function writeStoredTranscript(slideIndex, value) {
+      transcriptBySlide[slideIndex] = value;
+      try {
+        localStorage.setItem(`${TRANSCRIPT_STORAGE_PREFIX}${slideIndex}`, value);
+      } catch (error) {
+        // Ignore storage write failures in local preview mode.
+      }
+    }
+
+    function setFeedbackStatus(message) {
+      feedbackStatus.textContent = message;
+    }
+
+    function setSubmitBusy(isBusy) {
+      submitInFlight = isBusy;
+      voiceTrigger.disabled = isBusy;
+    }
+
+    function appendTranscript(text) {
+      const nextTranscript = transcriptBySlide[index]
+        ? `${transcriptBySlide[index].trimEnd()}\n${text}`
+        : text;
+      writeStoredTranscript(index, nextTranscript);
+    }
+
+    async function submitCurrentFeedback(comment) {
+      if (isLocked()) {
+        return;
+      }
+
+      if (!selectedAudience || !AUDIENCE_PRESETS[selectedAudience]) {
+        setFeedbackStatus("请先选择身份并输入口令后再提交。");
+        return;
+      }
+
+      const finalComment = (comment || "").trim();
+      if (!finalComment) {
+        setFeedbackStatus("没有识别到语音，请再试一次。");
+        return;
+      }
+
+      if (submitInFlight) {
+        return;
+      }
+
+      setSubmitBusy(true);
+      setFeedbackStatus("正在提交到飞书表格...");
+
+      try {
+        const response = await fetch("/api/feedback", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8"
+          },
+          body: JSON.stringify({
+            audience: AUDIENCE_PRESETS[selectedAudience].title,
+            page: index + 1,
+            comment: finalComment,
+            transcript: transcriptBySlide[index] || finalComment,
+            sourceUrl: `${window.location.href.split("#")[0]}#slide-${index + 1}`,
+            userAgent: navigator.userAgent
+          })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.message || payload.error || "请求失败");
+        }
+
+        setFeedbackStatus(`已发送：第 ${padNumber(index + 1)} 页`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "未知错误";
+        setFeedbackStatus(`提交失败：${message}`);
+      } finally {
+        setSubmitBusy(false);
+      }
+    }
+
+    function updateVoiceButton() {
+      voiceTrigger.classList.toggle("is-recording", recognizing);
+    }
+
+    function stopRecognition() {
+      if (recognition && recognizing) {
+        recognition.stop();
+      }
+    }
+
+    function ensureRecognition() {
+      if (recognition || !SpeechRecognitionCtor) {
+        return;
+      }
+
+      recognition = new SpeechRecognitionCtor();
+      recognition.lang = "zh-CN";
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        recognizing = true;
+        updateVoiceButton();
+        interimTranscript = "";
+        setFeedbackStatus(`正在收听：第 ${padNumber(index + 1)} 页`);
+      };
+
+      recognition.onresult = (event) => {
+        let finalChunk = "";
+        let interimChunk = "";
+
+        for (let resultIndex = event.resultIndex; resultIndex < event.results.length; resultIndex += 1) {
+          const result = event.results[resultIndex];
+          const transcript = result[0].transcript.trim();
+          if (!transcript) {
+            continue;
+          }
+
+          if (result.isFinal) {
+            finalChunk += finalChunk ? `\n${transcript}` : transcript;
+          } else {
+            interimChunk += interimChunk ? ` ${transcript}` : transcript;
+          }
+        }
+
+        if (finalChunk) {
+          appendTranscript(finalChunk);
+        }
+
+        interimTranscript = interimChunk;
+      };
+
+      recognition.onerror = (event) => {
+        const errorMessages = {
+          "audio-capture": "没有检测到麦克风输入。",
+          "not-allowed": "麦克风权限被拒绝，无法转写语音。",
+          "service-not-allowed": "当前环境不允许使用语音识别服务。",
+          "no-speech": "没有识别到语音，请再试一次。",
+          aborted: "语音转写已中断。"
+        };
+        setFeedbackStatus(errorMessages[event.error] || "语音转写暂时不可用，请稍后重试。");
+      };
+
+      recognition.onend = async () => {
+        recognizing = false;
+        updateVoiceButton();
+        if (!SpeechRecognitionCtor) {
+          return;
+        }
+        const finalTranscript = `${transcriptBySlide[index] || ""}${interimTranscript ? `${transcriptBySlide[index] ? "\n" : ""}${interimTranscript}` : ""}`.trim();
+        interimTranscript = "";
+        if (finalTranscript) {
+          writeStoredTranscript(index, finalTranscript);
+          await submitCurrentFeedback(finalTranscript);
+        } else if (!submitInFlight) {
+          setFeedbackStatus("没有识别到语音，请再试一次。");
+        }
+      };
+    }
+
+    function startRecognition() {
+      if (isLocked()) {
+        return;
+      }
+
+      if (!SpeechRecognitionCtor) {
+        voiceTrigger.disabled = true;
+        setFeedbackStatus("当前浏览器不支持语音转写，请改用 Chrome 或 Edge。");
+        return;
+      }
+
+      ensureRecognition();
+
+      if (recognizing) {
+        return;
+      }
+
+      try {
+        recognition.start();
+      } catch (error) {
+        setFeedbackStatus("麦克风正在初始化，请稍后再试。");
+      }
+    }
+
+    function unlockSlides() {
+      document.body.classList.remove("locked");
+      sessionStorage.setItem(ACCESS_SESSION_KEY, "1");
+      accessError.textContent = "";
+      accessInput.value = "";
+      setFeedbackStatus(
+        SpeechRecognitionCtor
+          ? "按住右下角语音按钮，说完自动发送。"
+          : "当前浏览器不支持语音转写，请改用 Chrome 或 Edge。"
+      );
+    }
+
+    function sync() {
+      if (window.innerWidth > 720) {
+        deck.style.transform = `translateX(-${index * 100}vw)`;
+      } else {
+        slides[index].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      counter.textContent = padNumber(index + 1);
+      Array.from(dotsWrap.children).forEach((dot, dotIndex) => {
+        dot.classList.toggle("active", dotIndex === index);
+      });
+    }
+
+    function go(nextIndex) {
+      if (isLocked()) {
+        return;
+      }
+
+      stopRecognition();
+      index = Math.max(0, Math.min(total - 1, nextIndex));
+      interimTranscript = "";
+      setFeedbackStatus(
+        SpeechRecognitionCtor
+          ? "按住右下角语音按钮，说完自动发送。"
+          : "当前浏览器不支持语音转写，请改用 Chrome 或 Edge。"
+      );
+      sync();
+    }
+
+    function step(direction) {
+      go(index + direction);
+    }
+
+    slides.forEach((_, slideIndex) => {
+      const dot = document.createElement("button");
+      dot.className = "dot";
+      dot.type = "button";
+      dot.setAttribute("aria-label", `Go to slide ${slideIndex + 1}`);
+      dot.addEventListener("click", () => go(slideIndex));
+      dotsWrap.appendChild(dot);
+    });
+
+    audienceButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        applyAudiencePreset(button.dataset.audience);
+      });
+    });
+
+    accessForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!selectedAudience) {
+        accessError.textContent = "请先选择一个身份版本。";
+        return;
+      }
+
+      if (accessInput.value === AUDIENCE_PRESETS[selectedAudience].code) {
+        unlockSlides();
+        return;
+      }
+
+      accessError.textContent = `${AUDIENCE_PRESETS[selectedAudience].title}口令错误，请重新输入。`;
+      accessInput.select();
+    });
+
+    voiceTrigger.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0 && event.pointerType === "mouse") {
+        return;
+      }
+      event.preventDefault();
+      startRecognition();
+    });
+
+    window.addEventListener("pointerup", () => {
+      stopRecognition();
+    });
+
+    window.addEventListener("pointercancel", () => {
+      stopRecognition();
+    });
+
+    voiceTrigger.addEventListener("keydown", (event) => {
+      if (event.key === " " || event.key === "Enter") {
+        event.preventDefault();
+        startRecognition();
+      }
+    });
+
+    voiceTrigger.addEventListener("keyup", (event) => {
+      if (event.key === " " || event.key === "Enter") {
+        event.preventDefault();
+        stopRecognition();
+      }
+    });
+
+    document.getElementById("prev").addEventListener("click", () => step(-1));
+    document.getElementById("next").addEventListener("click", () => step(1));
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        stopRecognition();
+      }
+
+      if (isLocked() || isTypingContext()) {
+        return;
+      }
+
+      if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+        event.preventDefault();
+        step(1);
+      }
+
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        step(-1);
+      }
+
+      if (event.key === "Home") {
+        go(0);
+      }
+
+      if (event.key === "End") {
+        go(total - 1);
+      }
+    });
+
+    window.addEventListener(
+      "wheel",
+      (event) => {
+        if (window.innerWidth <= 720 || wheelLock || isLocked()) {
+          return;
+        }
+
+        const delta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+        if (Math.abs(delta) < 16) {
+          return;
+        }
+
+        wheelLock = true;
+        step(delta > 0 ? 1 : -1);
+        window.setTimeout(() => {
+          wheelLock = false;
+        }, 720);
+      },
+      { passive: true }
+    );
+
+    window.addEventListener(
+      "touchstart",
+      (event) => {
+        touchStartX = event.changedTouches[0].clientX;
+      },
+      { passive: true }
+    );
+
+    window.addEventListener(
+      "touchend",
+      (event) => {
+        if (isLocked()) {
+          return;
+        }
+        const deltaX = event.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(deltaX) < 42) {
+          return;
+        }
+        step(deltaX < 0 ? 1 : -1);
+      },
+      { passive: true }
+    );
+
+    window.addEventListener("resize", sync);
+
+    const storedAudience = (() => {
+      try {
+        return sessionStorage.getItem(AUDIENCE_SESSION_KEY) || sessionStorage.getItem(KB_AUDIENCE_SESSION_KEY);
+      } catch (error) {
+        return null;
+      }
+    })();
+
+    applyAudiencePreset(storedAudience);
+
+    if (!SpeechRecognitionCtor) {
+      voiceTrigger.disabled = true;
+    }
+
+    if (sessionStorage.getItem(ACCESS_SESSION_KEY) === "1") {
+      unlockSlides();
+    } else {
+      accessInput.focus();
+      if (!SpeechRecognitionCtor) {
+        setFeedbackStatus("当前浏览器不支持语音转写，请改用 Chrome 或 Edge。");
+      }
+    }
+
+    updateVoiceButton();
+    sync();
+  </script>
+</body>
+</html>
