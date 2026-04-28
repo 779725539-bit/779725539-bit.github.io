@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>从 Chat 到 Agent — 罗福莉认知框架</title>
+<style>
+/* ===== base inline (self-contained) ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{overflow:hidden;background:#0d1117}
+.deck{width:100vw;height:100vh;position:relative}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center}
+.slide.is-active{display:flex}
+.mt-s{margin-top:8px}.mt-m{margin-top:16px}.mt-l{margin-top:32px}.mt-xl{margin-top:48px}
+.tc{text-align:center}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.slide.is-active .anim-fade-up{animation:fadeUp .6s ease both}
+.slide.is-active .anim-fade-in{animation:fadeIn .5s ease both}
+.slide.is-active .anim-d1{animation-delay:.1s}
+.slide.is-active .anim-d2{animation-delay:.2s}
+.slide.is-active .anim-d3{animation-delay:.3s}
+.slide.is-active .anim-d4{animation-delay:.4s}
+.slide.is-active .anim-d5{animation-delay:.5s}
+
+/* Nav hint */
+.nav-hint{position:fixed;bottom:16px;right:24px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:11px;color:rgba(255,255,255,.2);z-index:999;pointer-events:none}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#a78bfa,#60a5fa,#34d399);z-index:999;transition:width .3s ease}
+.back-home{position:fixed;top:18px;left:22px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid rgba(230,237,243,.18);background:rgba(13,17,23,.72);backdrop-filter:blur(14px);color:rgba(230,237,243,.86);font:600 13px/1 "PingFang SC","Microsoft YaHei",sans-serif;text-decoration:none;box-shadow:0 14px 40px rgba(0,0,0,.32)}
+.back-home:hover{border-color:rgba(167,139,250,.52);color:#fff}
+</style>
+<style>
+/* agent-era — 从Chat到Agent，罗福莉认知框架 */
+.tpl-agent-era{
+  --bg:#0d1117;--bg-soft:#161b22;--surface:#161b22;--surface-2:#1c2230;
+  --border:rgba(139,148,158,.22);--border-strong:rgba(139,148,158,.4);
+  --text-1:#e6edf3;--text-2:#8b949e;--text-3:#6e7681;
+  --accent:#a78bfa;--accent-2:#60a5fa;--accent-3:#34d399;
+  --grad:linear-gradient(120deg,#a78bfa 0%,#60a5fa 50%,#34d399 100%);
+  --radius:14px;--radius-lg:20px;
+  --shadow:0 20px 60px rgba(0,0,0,.5);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+}
+.tpl-agent-era{background:#0d1117;color:var(--text-1)}
+.tpl-agent-era .slide{padding:72px 96px;background:#0d1117;color:var(--text-1);position:relative;overflow:hidden}
+.tpl-agent-era .slide::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 50% at 85% 15%,rgba(167,139,250,.1),transparent 60%),
+  radial-gradient(50% 50% at 15% 85%,rgba(96,165,250,.07),transparent 60%);
+  pointer-events:none;z-index:0}
+.tpl-agent-era .slide>*{position:relative;z-index:1}
+.tpl-agent-era .h1{font-size:72px;line-height:1.05;font-weight:800;letter-spacing:-.03em;color:#fff}
+.tpl-agent-era .h2{font-size:48px;font-weight:700;letter-spacing:-.025em;color:#fff}
+.tpl-agent-era .h3{font-size:32px;font-weight:600;color:#fff}
+.tpl-agent-era h4{color:#fff;font-size:20px;font-weight:600}
+.tpl-agent-era .kicker{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;font-weight:600;text-transform:none;letter-spacing:.02em}
+.tpl-agent-era .kicker::before{content:"◆ "}
+.tpl-agent-era .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.tpl-agent-era .lede{color:var(--text-2);font-size:20px;line-height:1.6}
+.tpl-agent-era .dim{color:var(--text-2);font-size:16px;line-height:1.6}
+
+/* Grid */
+.tpl-agent-era .grid{display:grid;gap:24px}
+.tpl-agent-era .g2{grid-template-columns:1fr 1fr}
+.tpl-agent-era .g3{grid-template-columns:1fr 1fr 1fr}
+.tpl-agent-era .g4{grid-template-columns:1fr 1fr 1fr 1fr}
+
+/* Cards */
+.tpl-agent-era .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px}
+.tpl-agent-era .card-purple{border-left:3px solid #a78bfa}
+.tpl-agent-era .card-blue{border-left:3px solid #60a5fa}
+.tpl-agent-era .card-green{border-left:3px solid #34d399}
+.tpl-agent-era .card-orange{border-left:3px solid #f59e0b}
+.tpl-agent-era .card-red{border-left:3px solid #f87171}
+.tpl-agent-era .card-accent{border-top:3px solid var(--accent)}
+
+/* Tags */
+.tpl-agent-era .tag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-2)}
+.tpl-agent-era .tag-accent{background:rgba(167,139,250,.12);color:var(--accent);border-color:rgba(167,139,250,.35)}
+
+/* Quote block */
+.tpl-agent-era .quote-block{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;padding:24px 28px;margin:20px 0;font-size:18px;line-height:1.7;color:var(--text-1);font-style:italic}
+.tpl-agent-era .quote-block .src{display:block;margin-top:12px;font-size:13px;font-style:normal;color:var(--text-3);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+
+/* Versus table */
+.tpl-agent-era .vs-table{width:100%;border-collapse:collapse;font-size:15px;margin-top:24px}
+.tpl-agent-era .vs-table th{text-align:left;padding:12px 16px;color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;font-weight:600;border-bottom:2px solid var(--border-strong)}
+.tpl-agent-era .vs-table td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--text-2);line-height:1.5}
+.tpl-agent-era .vs-table td:first-child{color:#fff;font-weight:500;width:120px}
+.tpl-agent-era .vs-table tr:hover td{background:rgba(167,139,250,.04)}
+
+/* Agenda rows */
+.tpl-agent-era .agenda-row{display:flex;align-items:baseline;gap:24px;padding:16px 0;border-bottom:1px dashed var(--border)}
+.tpl-agent-era .agenda-row .num{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-weight:700;font-size:28px;width:48px;flex:none}
+.tpl-agent-era .agenda-row .t{color:#fff;font-size:22px;flex:1;font-weight:600}
+.tpl-agent-era .agenda-row .sub{color:var(--text-3);font-size:14px}
+
+/* Stack list */
+.tpl-agent-era .stack{display:flex;flex-direction:column;gap:8px}
+
+/* Pill highlight */
+.tpl-agent-era .hl{background:rgba(167,139,250,.15);color:#a78bfa;padding:2px 8px;border-radius:4px;font-weight:600}
+.tpl-agent-era .hl-blue{background:rgba(96,165,250,.15);color:#60a5fa}
+.tpl-agent-era .hl-green{background:rgba(52,211,153,.15);color:#34d399}
+
+/* Center slide */
+.tpl-agent-era .center{display:flex;align-items:center;justify-content:center;text-align:center}
+
+/* Speaker */
+.tpl-agent-era .speaker{display:flex;align-items:center;gap:14px;margin-top:28px}
+.tpl-agent-era .speaker .av{width:48px;height:48px;border-radius:50%;background:var(--grad)}
+.tpl-agent-era .speaker b{display:block;color:#fff;font-size:16px}
+.tpl-agent-era .speaker span{color:var(--text-3);font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+
+/* Footer */
+.tpl-agent-era .deck-footer{position:absolute;bottom:32px;left:96px;right:96px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-3);z-index:2}
+
+/* Timeline */
+.tpl-agent-era .timeline{display:flex;align-items:stretch;gap:0;margin-top:32px}
+.tpl-agent-era .timeline .step{flex:1;padding:20px;border-top:3px solid var(--border);position:relative}
+.tpl-agent-era .timeline .step.active{border-top-color:var(--accent)}
+.tpl-agent-era .timeline .step::before{content:"";position:absolute;top:-8px;left:20px;width:12px;height:12px;border-radius:50%;background:var(--surface-2);border:2px solid var(--border)}
+.tpl-agent-era .timeline .step.active::before{background:var(--accent);border-color:var(--accent)}
+.tpl-agent-era .timeline .step h4{font-size:16px;margin-bottom:8px}
+.tpl-agent-era .timeline .step p{font-size:13px;color:var(--text-3);line-height:1.5}
+
+/* Responsive slide scaling (for mobile preview) */
+@media(max-width:1000px){.tpl-agent-era .slide{padding:40px 48px}.tpl-agent-era .h1{font-size:48px}.tpl-agent-era .h2{font-size:36px}}
+
+</style>
+</head>
+<body class="tpl-agent-era" data-feedback-page="agent-era-slides">
+<a class="back-home" href="/" onclick="event.stopPropagation()">← 返回程翔的个人知识库</a>
+<div class="progress-bar" id="progress"></div>
+<div class="nav-hint">← → 导航 · 共 10 页</div>
+<div class="deck" id="deck">
+
+  <!-- ====== 1. Cover ====== -->
+  <section class="slide" data-title="Cover">
+    <p class="kicker anim-fade-up">认知框架 · 罗福莉 3.5h 深度访谈提炼</p>
+    <h1 class="h1 anim-fade-up" style="margin-top:24px">从 <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent">Chat</span> 到 <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent">Agent</span></h1>
+    <p class="lede mt-m anim-fade-up anim-d2">一份关于 Agent 时代范式切换的长期文档。<br>不是行业快讯，是可长期成立的认知底稿。</p>
+    <div class="row mt-l anim-fade-up anim-d3">
+      <span class="tag tag-accent">Agent 框架</span>
+      <span class="tag tag-accent">Long-context</span>
+      <span class="tag tag-accent">Post-train</span>
+      <span class="tag tag-accent">Skills & Memory</span>
+      <span class="tag tag-accent">组织范式</span>
+    </div>
+    <div class="deck-footer"><span class="mono">2026.04 · 湃启科技内部分享</span><span>1 / 10</span></div>
+  </section>
+
+  <!-- ====== 2. 核心判断：不是卷Chat而是卷Agent ====== -->
+  <section class="slide" data-title="核心判断">
+    <p class="kicker anim-fade-up">核心判断</p>
+    <h2 class="h2 anim-fade-up" style="margin-top:16px">不是卷 Chat，而是卷 Agent。</h2>
+    <div class="grid g2 mt-l">
+      <div class="anim-fade-up anim-d1">
+        <div class="card card-purple" style="height:100%">
+          <h4>Chat 时代</h4>
+          <p class="dim mt-s">比的是谁<span class="hl">更会回答</span></p>
+          <p class="dim mt-s">单位 = 单轮回答</p>
+          <p class="dim mt-s">指标 = 回答质量、表达、体感</p>
+          <p class="dim mt-s">护城河 = 模型本身</p>
+        </div>
+      </div>
+      <div class="anim-fade-up anim-d2">
+        <div class="card card-green" style="height:100%">
+          <h4>Agent 时代</h4>
+          <p class="dim mt-s">比的是谁<span class="hl-green">更会执行</span></p>
+          <p class="dim mt-s">单位 = 整条任务链路</p>
+          <p class="dim mt-s">指标 = 完成率、稳定性、返工率、总成本</p>
+          <p class="dim mt-s">护城河 = 模型 + 框架 + tools + memory + 生态</p>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block mt-l anim-fade-up anim-d3">
+      真正正确的事，不是做一个"更复杂一点的 Chat"，而是在复杂 Agent 框架上端到端完成高复杂度任务。
+      <span class="src">— 罗福莉 · 03:04:09</span>
+    </div>
+    <div class="deck-footer"><span></span><span>2 / 10</span></div>
+  </section>
+
+  <!-- ====== 3. Chat vs Agent 对比表 ====== -->
+  <section class="slide" data-title="对比表">
+    <p class="kicker anim-fade-up">范式对比</p>
+    <h2 class="h2 anim-fade-up" style="margin-top:16px">Chat 时代 vs Agent 时代</h2>
+    <table class="vs-table anim-fade-up anim-d1">
+      <thead><tr><th>维度</th><th>Chat 时代</th><th>Agent 时代</th></tr></thead>
+      <tbody>
+        <tr><td>核心问题</td><td>回得像不像一个聪明人</td><td>能不能把复杂任务做完</td></tr>
+        <tr><td>任务单位</td><td>单轮回答</td><td>整条任务链路</td></tr>
+        <tr><td>数据重点</td><td>文本、对话、代码</td><td>任务轨迹、工具调用、环境交互</td></tr>
+        <tr><td>训练重点</td><td>SFT、RLHF、表达对齐</td><td>Post-train、Agent RL、执行能力</td></tr>
+        <tr><td>关键能力</td><td>知识表达、推理、写作</td><td>规划、调用工具、记忆、纠错</td></tr>
+        <tr><td>评估方式</td><td>benchmark、问答感受</td><td>真实任务接入后的可用性</td></tr>
+        <tr><td>成本关注</td><td>单次回答成本</td><td>全任务链路成本</td></tr>
+        <tr><td>护城河</td><td>模型单点</td><td>模型 + 框架 + tools + memory + 生态</td></tr>
+      </tbody>
+    </table>
+    <div class="deck-footer"><span></span><span>3 / 10</span></div>
+  </section>
+
+  <!-- ====== 4. Agent框架是分水岭 ====== -->
+  <section class="slide" data-title="Agent框架">
+    <p class="kicker anim-fade-up">关键判断 #2</p>
+    <h2 class="h2 anim-fade-up" style="margin-top:16px">Agent 框架是分水岭，不是附属品。</h2>
+    <p class="lede mt-m anim-fade-up anim-d1">框架不是 UI 壳，不是产品皮，不是单个 prompt。<br>它是人和模型之间的<span class="hl">厚中间层</span>。</p>
+    <div class="grid g3 mt-l">
+      <div class="card card-purple anim-fade-up anim-d2">
+        <h4>交互层</h4>
+        <p class="dim mt-s">定义你怎么和 Agent 对话</p>
+      </div>
+      <div class="card card-blue anim-fade-up anim-d3">
+        <h4>编排层</h4>
+        <p class="dim mt-s">定义 Agent 怎么跟模型沟通、调度工具、管理记忆</p>
+        <p class="dim mt-s" style="color:var(--accent)">← 这一层可以做得非常厚重</p>
+      </div>
+      <div class="card card-green anim-fade-up anim-d4">
+        <h4>展示层</h4>
+        <p class="dim mt-s">前端 UI 反而是最薄的一层</p>
+      </div>
+    </div>
+    <div class="quote-block mt-l anim-fade-up anim-d5">
+      我自己其实会把 OpenClaw 当作一个划时代的 Agent 框架。真正发生一个转变，是我去用它那一刻。
+      <span class="src">— 罗福莉 · 02:25 / 03:28</span>
+    </div>
+    <div class="deck-footer"><span></span><span>4 / 10</span></div>
+  </section>
+
+  <!-- ====== 5. 框架在补模型的行动缺陷 ====== -->
+  <section class="slide" data-title="补行动缺陷">
+    <p class="kicker anim-fade-up">深层洞察</p>
+    <h2 class="h2 anim-fade-up" style="margin-top:16px">框架在补模型的「行动缺陷」。</h2>
+    <div class="grid g2 mt-l" style="align-items:start">
+      <div class="anim-fade-up anim-d1">
+        <p class="lede">模型会说，但不一定会做。</p>
+        <p class="dim mt-m">框架通过编排、记忆、调度和执行规范，<br>把模型从「会回答」提升到「会执行」。</p>
+        <div class="stack mt-l">
+          <div class="card card-purple" style="padding:16px 20px"><span style="color:var(--accent)">✦</span> 任务编排 → 拆解复杂链路</div>
+          <div class="card card-blue" style="padding:16px 20px"><span style="color:var(--accent-2)">✦</span> 工具调度 → 调用外部能力</div>
+          <div class="card card-green" style="padding:16px 20px"><span style="color:var(--accent-3)">✦</span> 记忆管理 → 跨回合状态保持</div>
+          <div class="card card-orange" style="padding:16px 20px"><span style="color:#f59e0b">✦</span> 执行规范 → 提升复杂任务正确率</div>
+        </div>
+      </div>
+      <div class="anim-fade-up anim-d2">
+        <div class="quote-block" style="margin-top:0">
+          我认为 OpenClaw 框架的设计之初，它其实是想尽量地通过 Agent 的整套编排，来弥补模型的短板。
+          <span class="src">— 罗福莉 · 298</span>
+        </div>
+        <div class="quote-block">
+          它是补齐了模型在复杂任务上完成的正确率。
+          <span class="src">— 罗福莉 · 2490</span>
+        </div>
+        <p class="dim mt-m" style="font-size:18px;color:var(--accent)"><b>更准确的说法：<br>框架在把模型能力组织成可执行能力。</b></p>
+      </div>
+    </div>
+    <div class="deck-footer"><span></span><span>5 / 10</span></div>
+  </section>
+
+  <!-- ====== 6. Long-context ====== -->
+  <section class="slide" data-title="Long-context">
+    <p class="kicker anim-fade-up">Long-context</p>
+    <h2 class="h2 anim-fade-up" style="margin-top:16px">Long-context 的价值不在「更长」。</h2>
+    <div class="grid g2 mt-l" style="align-items:start">
+      <div class="anim-fade-up anim-d1">
+        <h4 style="color:var(--accent-3)">大众理解 ❌</h4>
+        <div class="stack mt-m">
+          <p class="dim">• 上下文越长越强</p>
+          <p class="dim">• 能塞更多文档就更厉害</p>
+          <p class="dim">• 窗口够大，复杂任务自然变好</p>
+        </div>
+      </div>
+      <div class="anim-fade-up anim-d2">
+        <h4 style="color:var(--accent)">罗福莉判断 ✅</h4>
+        <div class="stack mt-m">
+          <p class="dim">• 真正超长上下文任务大多是复杂任务</p>
+          <p class="dim">• 关键不是塞满，而是<span class="hl">有效利用</span></p>
+          <p class="dim">• 要低幻觉理解 + 持续状态 + 推理效率</p>
+          <p class="dim">• 成本够低，速度够快</p>
+        </div>
+      </div>
+    </div>
+    <div class="card mt-l anim-fade-up anim-d3" style="text-align:center;padding:32px;border-color:var(--accent)">
+      <p style="font-size:22px;color:#fff;font-weight:600">未来最稀缺的能力，不是更长的 context，<br>而是<span class="hl">可负担、可持续、可引用</span>的长任务理解能力。</p>
+    </div>
+    <div class="deck-footer"><span></span><span>6 / 10</span></div>
+  </section>
+
+  <!-- ====== 7. Post-train + Skills & Memory ====== -->
+  <section class="slide" data-title="Post-train & Skills">
+    <p class="kicker anim-fade-up">训练范式 + 系统接口</p>
+    <h2 class="h2 anim-fade-up" style="margin-top:16px">Post-train 变重，Skills & Memory 是关键。</h2>
+    <div class="grid g3 mt-l">
+      <div class="card card-purple anim-fade-up anim-d1" style="height:100%">
+        <h4>Post-train</h4>
+        <p class="dim mt-s">不只是对齐，更像：</p>
+        <div class="stack mt-m">
+          <span class="tag">行动能力训练</span>
+          <span class="tag">环境适应</span>
+          <span class="tag">执行规范形成</span>
+          <span class="tag">复杂任务稳定性</span>
+        </div>
+        <p class="dim mt-m" style="font-size:13px;color:var(--text-3)">这些执行规范通常不在互联网预训练数据里</p>
+      </div>
+      <div class="card card-blue anim-fade-up anim-d2" style="height:100%">
+        <h4>Skills</h4>
+        <p class="dim mt-s">人和 Agent 共创的关键接口</p>
+        <div class="stack mt-m">
+          <span class="tag">隐性经验 → 外显化</span>
+          <span class="tag">人的经验 → 可调用规范</span>
+          <span class="tag">互联网外的另类信息</span>
+        </div>
+        <p class="dim mt-m" style="font-size:13px;color:var(--accent-2)">人和 Agent 共同沉淀工作方法</p>
+      </div>
+      <div class="card card-green anim-fade-up anim-d3" style="height:100%">
+        <h4>Memory</h4>
+        <p class="dim mt-s">让 Agent 越用越聪明</p>
+        <div class="stack mt-m">
+          <span class="tag">分层持久记忆</span>
+          <span class="tag">人物画像</span>
+          <span class="tag">任务状态沉淀</span>
+          <span class="tag">跨窗口上下文</span>
+        </div>
+        <p class="dim mt-m" style="font-size:13px;color:var(--accent-3)">Memory 做得好 = 模型能力强的表现</p>
+      </div>
+    </div>
+    <div class="deck-footer"><span></span><span>7 / 10</span></div>
+  </section>
+
+  <!-- ====== 8. 1T是入场券 ====== -->
+  <section class="slide" data-title="1T门槛">
+    <p class="kicker anim-fade-up">竞争格局</p>
+    <h2 class="h2 anim-fade-up" style="margin-top:16px">1T 是入场券，不是终局。</h2>
+    <div class="timeline mt-xl anim-fade-up anim-d1">
+      <div class="step">
+        <h4>基座模型</h4>
+        <p>≥ 1T + 强 code 能力<br>= 站上同一条竞争线</p>
+      </div>
+      <div class="step">
+        <h4>Post-train</h4>
+        <p>Agent RL + 执行能力<br>= 让模型会「做」</p>
+      </div>
+      <div class="step">
+        <h4>Agent 框架</h4>
+        <p>编排 + 工具 + 记忆<br>= 组织执行能力</p>
+      </div>
+      <div class="step active">
+        <h4>生态整合</h4>
+        <p>模型 + 框架 + tools + memory<br>= <b>真正的护城河</b></p>
+      </div>
+    </div>
+    <div class="quote-block mt-l anim-fade-up anim-d2">
+      只要具备大于 1T、且 code 能力很强的基座模型，大家就基本站上了同一条竞争线。
+      <span class="src">— 罗福莉 · 56:21</span>
+    </div>
+    <p class="dim mt-m anim-fade-up anim-d3" style="font-size:20px;text-align:center;color:var(--accent)"><b>基座不能错，但胜负不再只由基座决定。</b></p>
+    <div class="deck-footer"><span></span><span>8 / 10</span></div>
+  </section>
+
+  <!-- ====== 9. 组织判断 ====== -->
+  <section class="slide" data-title="组织范式">
+    <p class="kicker anim-fade-up">组织与用人</p>
+    <h2 class="h2 anim-fade-up" style="margin-top:16px">环境比经验更重要。</h2>
+    <div class="grid g2 mt-l" style="align-items:start">
+      <div class="anim-fade-up anim-d1">
+        <div class="card card-purple" style="padding:32px">
+          <h4 style="font-size:24px">她的三个组织判断</h4>
+          <div class="stack mt-l" style="gap:20px">
+            <div>
+              <p style="color:var(--accent);font-weight:700;font-size:18px">1. 固定分工会扼杀创造力</p>
+              <p class="dim mt-s">不该按 Pre-train / Post-train 硬切<br>组织方式会被范式重塑</p>
+            </div>
+            <div>
+              <p style="color:var(--accent-2);font-weight:700;font-size:18px">2. 最有效的管理是热爱驱动</p>
+              <p class="dim mt-s">不是层层汇报，是找到热爱这件事的人<br>然后给他们空间</p>
+            </div>
+            <div>
+              <p style="color:var(--accent-3);font-weight:700;font-size:18px">3. 环境比经验更重要</p>
+              <p class="dim mt-s">很多能力 1-4 个月就能快速习得<br>决定成长的是环境，不是资历</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="anim-fade-up anim-d2">
+        <div class="quote-block" style="margin-top:0">
+          这些能力最多一两个月，慢的话三四个月，确实都可以被快速习得。所以环境反而比经验更重要。
+          <span class="src">— 罗福莉 · 01:15</span>
+        </div>
+        <div class="quote-block">
+          最有效的管理方式是热爱驱动。
+          <span class="src">— 罗福莉 · 02:01:26</span>
+        </div>
+        <div class="card mt-m" style="text-align:center;padding:24px;border-color:var(--accent-3)">
+          <p style="font-size:18px;color:#fff"><b>对我们的启示：</b></p>
+          <p class="dim mt-s">2人团队 + 6个Agent = 最极致的「环境>经验」实践<br>不招有经验的，招有热爱的。</p>
+        </div>
+      </div>
+    </div>
+    <div class="deck-footer"><span></span><span>9 / 10</span></div>
+  </section>
+
+  <!-- ====== 10. 总结 ====== -->
+  <section class="slide center" data-title="总结">
+    <div class="anim-fade-up">
+      <p class="kicker">总结 · 10 条长期判断</p>
+      <h2 class="h2" style="margin-top:24px;font-size:42px;line-height:1.4">
+        <span style="color:var(--accent)">①</span> 真正的变化是 Agent 开始可用<br>
+        <span style="color:var(--accent-2)">②</span> 框架是厚中间层，不是壳<br>
+        <span style="color:var(--accent-3)">③</span> 框架在把模型能力组织成可执行能力<br>
+        <span style="color:#f59e0b">④</span> Long-context 关键在有效利用<br>
+        <span style="color:#f87171">⑤</span> Post-train 在 Agent 时代显著变重<br>
+        <span style="color:var(--accent)">⑥</span> Skills & Memory 让 Agent 持续有用<br>
+        <span style="color:var(--accent-2)">⑦</span> 竞争是模型+框架+生态的整体战<br>
+        <span style="color:var(--accent-3)">⑧</span> 1T 是入场券不是终局<br>
+        <span style="color:#f59e0b">⑨</span> 组织方式会被范式重塑<br>
+        <span style="color:#f87171">⑩</span> 环境比经验更重要
+      </h2>
+      <div class="row mt-xl" style="justify-content:center">
+        <span class="tag tag-accent">湃启科技</span>
+        <span class="tag">← → 导航</span>
+      </div>
+    </div>
+    <div class="deck-footer"><span class="mono">基于罗福莉 3.5h 深度访谈 · 2026.04</span><span>10 / 10</span></div>
+  </section>
+
+</div>
+
+<script>
+// Minimal runtime — keyboard nav + progress bar
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const progress = document.getElementById('progress');
+  let cur = 0;
+  function go(i){
+    if(i<0||i>=slides.length) return;
+    slides[cur].classList.remove('is-active');
+    cur = i;
+    slides[cur].classList.add('is-active');
+    progress.style.width = ((cur+1)/slides.length*100)+'%';
+    location.hash = '#/'+(cur+1);
+  }
+  // Init from hash
+  const h = parseInt((location.hash.match(/\d+/)||[])[0]);
+  go(h?Math.min(h-1,slides.length-1):0);
+  // Keyboard
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') go(cur+1);
+    else if(e.key==='ArrowLeft'||e.key==='PageUp') go(cur-1);
+    else if(e.key==='Home') go(0);
+    else if(e.key==='End') go(slides.length-1);
+  });
+  // Touch swipe
+  let tx=0;
+  document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX});
+  document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){dx<0?go(cur+1):go(cur-1)}});
+  // Click left/right halves
+  document.addEventListener('click',e=>{if(e.clientX>window.innerWidth*.6)go(cur+1);else if(e.clientX<window.innerWidth*.4)go(cur-1)});
+})();
+</script>
+<script src="/assets/kb-feedback.js" defer></script>
+</body></html>

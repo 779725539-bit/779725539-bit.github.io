@@ -46,9 +46,9 @@
     a { color: inherit; text-decoration: none; }
 
     .shell {
-      width: min(1240px, calc(100vw - 48px));
+      width: min(1480px, calc(100vw - 48px));
       margin: 0 auto;
-      padding: 28px 0 72px;
+      padding: 24px 0 56px;
     }
 
     .topbar,
@@ -62,11 +62,41 @@
     }
 
     .topbar {
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       font-size: 12px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--text-dim);
+    }
+
+    .library-title {
+      letter-spacing: 0.14em;
+      text-transform: none;
+    }
+
+    .library-tools {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .search-box {
+      width: min(420px, 42vw);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 11px 16px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.035);
+      outline: none;
+      font: 600 13px/1.2 inherit;
+      transition: border-color 160ms ease, background 160ms ease;
+    }
+
+    .search-box::placeholder { color: rgba(232, 228, 220, 0.38); }
+
+    .search-box:focus {
+      border-color: rgba(201, 168, 76, 0.38);
+      background: rgba(255, 255, 255, 0.055);
     }
 
     .pill,
@@ -161,6 +191,11 @@
       color: var(--text-dim);
     }
 
+    .card p {
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
     .highlight {
       background: linear-gradient(135deg, var(--gold-light), var(--gold));
       -webkit-background-clip: text;
@@ -201,15 +236,16 @@
     }
 
     .entries {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      margin-top: 24px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
     }
 
     .card {
-      min-height: 286px;
-      padding: 30px;
+      min-height: 238px;
+      padding: 24px;
       display: grid;
-      gap: 14px;
+      gap: 12px;
       transition: transform 180ms ease, border-color 180ms ease;
     }
 
@@ -219,7 +255,7 @@
     }
 
     .card-no {
-      font-size: 40px;
+      font-size: 34px;
       line-height: 1;
       color: rgba(201, 168, 76, 0.34);
     }
@@ -242,10 +278,33 @@
       font-weight: 600;
     }
 
+    .entry-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 9px 14px;
+      border: 1px solid rgba(201, 168, 76, 0.26);
+      background: linear-gradient(180deg, rgba(201, 168, 76, 0.14), rgba(255, 255, 255, 0.03));
+      color: rgba(232, 228, 220, 0.88);
+    }
+
+    .no-results {
+      display: none;
+      grid-column: 1 / -1;
+      padding: 28px;
+      border: 1px dashed rgba(232, 228, 220, 0.16);
+      border-radius: calc(var(--radius) + 4px);
+      color: var(--text-dim);
+      text-align: center;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
     @media (max-width: 980px) {
       .audience-switch,
       .entries {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -265,13 +324,25 @@
         display: grid;
         gap: 10px;
       }
+
+      .library-tools,
+      .search-box {
+        width: 100%;
+      }
+
+      .entries {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body data-feedback-page="1">
   <main class="shell">
     <div class="topbar">
-      <div class="pill">Online Knowledge Base</div>
+      <div class="pill library-title">程翔的个人知识库</div>
+      <div class="library-tools">
+        <input class="search-box" type="search" placeholder="搜索标题、标签、关键词" aria-label="搜索知识库条目" data-entry-search />
+      </div>
     </div>
 
     <section class="hero">
@@ -290,7 +361,22 @@
     </section>
 
     <section class="entries">
-      <a class="card" href="/maslow-china.html">
+      <a class="card" href="/agent-era-slides.html" data-search-text="07 agent chat 罗福莉 认知框架 agent 时代 slide slides 内部分享 long context post train skills memory 组织范式 语音反馈">
+        <div class="card-top">
+          <div class="tag">Agent Era</div>
+          <div class="card-no">07</div>
+        </div>
+        <h3>从 Chat 到 Agent：罗福莉认知框架</h3>
+        <p>基于 3.5h 深度访谈提炼 Agent 时代的范式切换：框架、长上下文、Post-train、Skills、Memory 与组织判断。</p>
+        <div>
+          <span class="chip time-chip">2026-04-28 19:20</span>
+          <span class="chip">直接加</span>
+          <span class="chip">语音反馈</span>
+        </div>
+        <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
+      </a>
+
+      <a class="card" href="/maslow-china.html" data-search-text="06 trend compare 马斯洛 需求层次 中国 2015 2030 情绪价值 尊重 自我实现 语音反馈">
         <div class="card-top">
           <div class="tag">Trend Compare</div>
           <div class="card-no">06</div>
@@ -301,10 +387,10 @@
           <span class="chip time-chip">2026-04-16 12:55</span>
           <span class="chip">语音反馈</span>
         </div>
-        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+        <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
       </a>
 
-      <a class="card" href="/ai-pm-2026-capability.html">
+      <a class="card" href="/ai-pm-2026-capability.html" data-search-text="05 ai pm ai 产品经理 2026 prd 原型 benchmark eval 飞轮 语音反馈">
         <div class="card-top">
           <div class="tag">AI PM</div>
           <div class="card-no">05</div>
@@ -315,10 +401,10 @@
           <span class="chip time-chip">2026-04-16 11:58</span>
           <span class="chip">语音反馈</span>
         </div>
-        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+        <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
       </a>
 
-      <a class="card" href="/book-slides.html">
+      <a class="card" href="/book-slides.html" data-search-text="04 reading slides 因为独特 真需求 读书 战略 判断 框架 三视角 语音反馈">
         <div class="card-top">
           <div class="tag">Reading Slides</div>
           <div class="card-no">04</div>
@@ -330,10 +416,10 @@
           <span class="chip">三视角</span>
           <span class="chip">语音反馈</span>
         </div>
-        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+        <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
       </a>
 
-      <a class="card" href="/human-ai-love.html">
+      <a class="card" href="/human-ai-love.html" data-search-text="03 essay 人机恋 ai 情感 情绪价值 依赖 关系 风险 三视角 语音反馈">
         <div class="card-top">
           <div class="tag">Essay</div>
           <div class="card-no">03</div>
@@ -345,10 +431,10 @@
           <span class="chip">三视角</span>
           <span class="chip">语音反馈</span>
         </div>
-        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+        <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
       </a>
 
-      <a class="card" href="/herone.html">
+      <a class="card" href="/herone.html" data-search-text="02 product system herone 语音 记忆 陪伴 ai native app 三视角 语音反馈">
         <div class="card-top">
           <div class="tag">Product System</div>
           <div class="card-no">02</div>
@@ -360,10 +446,10 @@
           <span class="chip">三视角</span>
           <span class="chip">语音反馈</span>
         </div>
-        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+        <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
       </a>
 
-      <a class="card" href="/slides.html">
+      <a class="card" href="/slides.html" data-search-text="01 system framing agent 五层闭环 行业缺口 能力闭环 三视角 语音反馈">
         <div class="card-top">
           <div class="tag">System Framing</div>
           <div class="card-no">01</div>
@@ -375,8 +461,9 @@
           <span class="chip">三视角</span>
           <span class="chip">语音反馈</span>
         </div>
-        <div class="card-foot"><span>进入条目</span><span>→</span></div>
+        <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
       </a>
+      <div class="no-results" data-no-results>没搜到匹配条目，换个关键词试试。</div>
     </section>
   </main>
 
@@ -435,6 +522,23 @@
       button.addEventListener("click", () => render(button.dataset.mode));
     });
 
+    const searchInput = document.querySelector("[data-entry-search]");
+    const cards = [...document.querySelectorAll(".entries .card")];
+    const noResults = document.querySelector("[data-no-results]");
+
+    function filterEntries() {
+      const query = searchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+      cards.forEach((card) => {
+        const text = `${card.textContent} ${card.dataset.searchText || ""}`.toLowerCase();
+        const visible = !query || text.includes(query);
+        card.style.display = visible ? "" : "none";
+        if (visible) visibleCount += 1;
+      });
+      noResults.style.display = visibleCount ? "" : "block";
+    }
+
+    searchInput.addEventListener("input", filterEntries);
     render(sessionStorage.getItem(AUDIENCE_KEY) || "leader");
   </script>
   <script src="/assets/kb-feedback.js" defer></script>
