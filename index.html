@@ -290,6 +290,21 @@
       color: rgba(232, 228, 220, 0.88);
     }
 
+    .entry-button.muted {
+      border-color: rgba(232, 228, 220, 0.12);
+      background: rgba(255, 255, 255, 0.025);
+      color: rgba(232, 228, 220, 0.48);
+    }
+
+    .topic-card {
+      box-shadow: 0 18px 54px rgba(0, 0, 0, 0.36);
+    }
+
+    .topic-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(201, 168, 76, 0.2);
+    }
+
     .no-results {
       display: none;
       grid-column: 1 / -1;
@@ -299,6 +314,45 @@
       color: var(--text-dim);
       text-align: center;
       background: rgba(255, 255, 255, 0.02);
+    }
+
+    .section-divider {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 0 4px;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.22), transparent);
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.66;
+      white-space: nowrap;
+    }
+
+    .badge-new {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font: 700 10px/1 inherit;
+      letter-spacing: 0.12em;
+      color: #09090d;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      margin-left: 8px;
+      vertical-align: middle;
     }
 
     @media (max-width: 980px) {
@@ -361,6 +415,156 @@
     </section>
 
     <section class="entries">
+      <div class="section-divider">
+        <span class="section-label">2026-05 · 近期主题</span>
+      </div>
+
+      <article class="card topic-card" data-search-text="17 蓝海 差异化 韩寒 李想 能力 壁垒 营销 赚钱 产品突围 融资 种田 AI海啸 注意力 personal philosophy">
+        <div class="card-top">
+          <div class="tag">Personal Philosophy</div>
+          <div class="card-no">17</div>
+        </div>
+        <h3>蓝海突围：AI 时代靠什么活 <span class="badge-new">NEW</span></h3>
+        <p>技术不是壁垒，能力正在被重新定义。与其从融资突围，不如从产品突围；先找到真实差异化，先赚钱。</p>
+        <div>
+          <span class="chip time-chip">2026-05-10</span>
+          <span class="chip">产品哲学</span>
+          <span class="chip">生存策略</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <article class="card topic-card" data-search-text="16 agent 物理化 桌搭 可穿戴 emo companion dock 赛博 工业风 实体 硬件 physical agent">
+        <div class="card-top">
+          <div class="tag">Agent Hardware</div>
+          <div class="card-no">16</div>
+        </div>
+        <h3>Agent 物理化：从虚拟到实体</h3>
+        <p>把 AI Agent 从屏幕搬到物理世界：桌搭与可穿戴两条形态并行。重点不是萌系陪伴，而是帅、未来感和存在感。</p>
+        <div>
+          <span class="chip time-chip">2026-05-07</span>
+          <span class="chip">产品构想</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <article class="card topic-card" data-search-text="15 everything coding 白领 word excel ppt cursor ai coding 通用能力 终局">
+        <div class="card-top">
+          <div class="tag">Insight</div>
+          <div class="card-no">15</div>
+        </div>
+        <h3>Everything is Coding</h3>
+        <p>白领三件套都是编程的 GUI 壳。如果一切都是 Coding，AI Coding 能力就不只是开发工具，而是 AI 通用能力的终局形态。</p>
+        <div>
+          <span class="chip time-chip">2026-05-06</span>
+          <span class="chip">认知框架</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <article class="card topic-card" data-search-text="14 北极星 组织 ai化 战略 产品矩阵 记小宝 倾听者 palink memorion north star">
+        <div class="card-top">
+          <div class="tag">North Star</div>
+          <div class="card-no">14</div>
+        </div>
+        <h3>北极星：组织的 AI 化</h3>
+        <p>所有战略决策服务于一个方向：帮助更多人更深入地 AI 化。每个产品都是这个使命的不同切面。</p>
+        <div>
+          <span class="chip time-chip">2026-05-05</span>
+          <span class="chip">战略</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <article class="card topic-card" data-search-text="13 独立生活 自进化 ai agent 好奇心 品味 立场 inner life 审美 daemon">
+        <div class="card-top">
+          <div class="tag">Agent Design</div>
+          <div class="card-no">13</div>
+        </div>
+        <h3>AI 的独立生活</h3>
+        <p>从“让 AI 表现得像人”转向“让 AI 真的有内在生活”：好奇心、品味、立场和审美偏好，构成更真实的存在感。</p>
+        <div>
+          <span class="chip time-chip">2026-05-05</span>
+          <span class="chip">Agent 哲学</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <article class="card topic-card" data-search-text="12 产品矩阵 记小宝 倾听者 palink memorion 桌搭 硬件 软件 app product matrix">
+        <div class="card-top">
+          <div class="tag">Product System</div>
+          <div class="card-no">12</div>
+        </div>
+        <h3>五产品矩阵定稿</h3>
+        <p>记小宝、倾听者穿戴、倾听者桌搭、PAlink、Memorion 共同构成产品矩阵；硬件是载体，差异化在 AI。</p>
+        <div>
+          <span class="chip time-chip">2026-05-05</span>
+          <span class="chip">产品架构</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <article class="card topic-card" data-search-text="11 融资 谈恋爱 创业 心态 竞争 小米 价值 一技之长 funding startup">
+        <div class="card-top">
+          <div class="tag">Startup</div>
+          <div class="card-no">11</div>
+        </div>
+        <h3>融资三条 & 创业心态</h3>
+        <p>“找融资就像谈恋爱。”真正的吸引来自价值，而不是用力讨好；创业心态也可以从赚钱焦虑转向推动一点真实进步。</p>
+        <div>
+          <span class="chip time-chip">2026-05-01</span>
+          <span class="chip">创业</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <article class="card topic-card" data-search-text="10 活人感 alive feeling daemon 脉冲 新型关系 主动 ai 人机关系 cron 陪伴">
+        <div class="card-top">
+          <div class="tag">Alive Feeling</div>
+          <div class="card-no">10</div>
+        </div>
+        <h3>活人感系统设计</h3>
+        <p>零号原则：她是独立的人，不是为我活着的人。主动分享、精准观察、纯乐和新知，是活人感的四个来源。</p>
+        <div>
+          <span class="chip time-chip">2026-04-30</span>
+          <span class="chip">Agent 设计</span>
+          <span class="chip">新型关系</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <article class="card topic-card" data-search-text="09 对话 流动 知识 沉淀 架构 daemon session hermes 记忆 context conversation knowledge">
+        <div class="card-top">
+          <div class="tag">Architecture</div>
+          <div class="card-no">09</div>
+        </div>
+        <h3>对话流动，知识沉淀</h3>
+        <p>个人 AI 架构的核心思想：不要让对话变整齐，让知识沉淀变整齐。对话层自然流动，知识层按主题归档。</p>
+        <div>
+          <span class="chip time-chip">2026-04-29</span>
+          <span class="chip">系统架构</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <article class="card topic-card" data-search-text="08 10秒 30秒 法则 心流 交互 响应 异步 agent 体验 response time ux">
+        <div class="card-top">
+          <div class="tag">UX Principle</div>
+          <div class="card-no">08</div>
+        </div>
+        <h3>10 秒 / 30 秒法则</h3>
+        <p>简单任务 10 秒内反馈，复杂任务 30 秒内反馈，超过就该异步。不确定性比慢更致命，会把 Agent 从助手变成打断者。</p>
+        <div>
+          <span class="chip time-chip">2026-04-29</span>
+          <span class="chip">交互设计</span>
+        </div>
+        <div class="card-foot"><span class="entry-button muted">主题卡片</span></div>
+      </article>
+
+      <div class="section-divider">
+        <span class="section-label">2026-04 · 已发布条目</span>
+      </div>
+
       <a class="card" href="/agent-era-slides.html" data-search-text="07 agent chat 罗福莉 认知框架 agent 时代 slide slides 内部分享 long context post train skills memory 组织范式 语音反馈">
         <div class="card-top">
           <div class="tag">Agent Era</div>
@@ -525,6 +729,7 @@
     const searchInput = document.querySelector("[data-entry-search]");
     const cards = [...document.querySelectorAll(".entries .card")];
     const noResults = document.querySelector("[data-no-results]");
+    const sectionDividers = [...document.querySelectorAll(".section-divider")];
 
     function filterEntries() {
       const query = searchInput.value.trim().toLowerCase();
@@ -534,6 +739,9 @@
         const visible = !query || text.includes(query);
         card.style.display = visible ? "" : "none";
         if (visible) visibleCount += 1;
+      });
+      sectionDividers.forEach((divider) => {
+        divider.style.display = query ? "none" : "";
       });
       noResults.style.display = visibleCount ? "" : "block";
     }
