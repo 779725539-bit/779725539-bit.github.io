@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>近期主题 · 程翔的个人知识库</title>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d48b;
+      --text: #e8e4dc;
+      --text-dim: rgba(232, 228, 220, 0.62);
+      --line: rgba(232, 228, 220, 0.1);
+      --surface: rgba(18, 18, 24, 0.9);
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(201, 168, 76, 0.16), transparent 28%),
+        radial-gradient(circle at 88% 18%, rgba(74, 124, 247, 0.1), transparent 24%),
+        linear-gradient(180deg, #09090d 0%, #0b0b11 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+      background-size: 88px 88px;
+      opacity: 0.24;
+      pointer-events: none;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .shell {
+      width: min(1180px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 24px 0 64px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .pill,
+    .chip,
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      color: rgba(232, 228, 220, 0.76);
+    }
+
+    .pill,
+    .nav-link {
+      padding: 9px 13px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(21, 21, 28, 0.96), rgba(12, 12, 16, 0.92));
+      box-shadow: var(--shadow);
+    }
+
+    .detail {
+      padding: clamp(26px, 5vw, 54px);
+      min-height: 620px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .chip {
+      padding: 7px 12px;
+      font-size: 12px;
+      color: rgba(232, 212, 139, 0.84);
+      background: rgba(201, 168, 76, 0.08);
+    }
+
+    .chip.time {
+      color: rgba(232, 228, 220, 0.64);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(38px, 6vw, 68px);
+      line-height: 1.08;
+    }
+
+    h2 {
+      margin-top: 34px;
+      font-size: 24px;
+      color: rgba(232, 212, 139, 0.9);
+    }
+
+    .lead {
+      max-width: 760px;
+      margin-top: 22px;
+      font-size: 19px;
+      line-height: 1.8;
+      color: rgba(232, 228, 220, 0.76);
+    }
+
+    .points {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .point {
+      min-height: 144px;
+      padding: 18px;
+      border: 1px solid rgba(232, 228, 220, 0.08);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .point strong {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(232, 228, 220, 0.92);
+    }
+
+    .point span,
+    .note {
+      color: var(--text-dim);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-left: 3px solid rgba(201, 168, 76, 0.62);
+      background: rgba(201, 168, 76, 0.06);
+      border-radius: 0 16px 16px 0;
+    }
+
+    .side {
+      padding: 16px;
+      position: sticky;
+      top: 18px;
+    }
+
+    .side-title {
+      padding: 6px 8px 14px;
+      color: rgba(232, 228, 220, 0.48);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+    }
+
+    .topic-nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .topic-link {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid transparent;
+      border-radius: 16px;
+      color: rgba(232, 228, 220, 0.68);
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+    }
+
+    .topic-link:hover,
+    .topic-link.active {
+      border-color: rgba(201, 168, 76, 0.26);
+      background: rgba(201, 168, 76, 0.08);
+      color: rgba(232, 228, 220, 0.94);
+    }
+
+    .topic-no {
+      color: rgba(201, 168, 76, 0.62);
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .topic-name {
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 940px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        position: static;
+      }
+
+      .points {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100vw - 24px, 100%);
+        padding-top: 16px;
+      }
+
+      .topbar {
+        display: grid;
+      }
+
+      .detail,
+      .side {
+        padding: 18px;
+        border-radius: 20px;
+      }
+    }
+  </style>
+</head>
+<body data-feedback-page="topics" data-audience-label="近期主题">
+  <main class="shell">
+    <div class="topbar">
+      <a class="nav-link" href="/">← 返回程翔的个人知识库</a>
+      <div class="pill">近期主题详情</div>
+    </div>
+
+    <div class="layout">
+      <article class="panel detail">
+        <div class="meta" id="meta"></div>
+        <h1 id="title"></h1>
+        <p class="lead" id="lead"></p>
+
+        <h2>三个判断</h2>
+        <div class="points" id="points"></div>
+
+        <p class="note" id="note"></p>
+      </article>
+
+      <aside class="panel side">
+        <div class="side-title">快速切换</div>
+        <nav class="topic-nav" id="topicNav" aria-label="近期主题"></nav>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const topics = [
+      {
+        id: "blue-ocean-ai-survival",
+        no: "17",
+        tag: "Personal Philosophy",
+        title: "蓝海突围：AI 时代靠什么活",
+        date: "2026-05-10",
+        chips: ["产品哲学", "生存策略"],
+        lead: "技术不是壁垒，能力正在被重新定义。与其从融资突围，不如从产品突围；先找到真实差异化，先赚钱。",
+        points: [
+          ["技术会变成地基", "AI 海啸会把很多原来的能力打平，真正稀缺的是判断、注意力、产品化和持续赚钱的能力。"],
+          ["从产品突围", "融资是结果，不是入口。先做出别人愿意付费的东西，再谈速度和规模。"],
+          ["重新定义能力", "过去会种田很厉害，但如果已经没有田，就要把能力迁移到新的生产环境里。"]
+        ],
+        note: "这篇适合后续整理成一篇创业/产品哲学文章：少讲宏大趋势，多讲怎么活下来、怎么形成差异化。"
+      },
+      {
+        id: "physical-agent",
+        no: "16",
+        tag: "Agent Hardware",
+        title: "Agent 物理化：从虚拟到实体",
+        date: "2026-05-07",
+        chips: ["产品构想"],
+        lead: "把 AI Agent 从屏幕搬到物理世界：桌搭与可穿戴两条形态并行。重点不是萌系陪伴，而是帅、未来感和存在感。",
+        points: [
+          ["桌搭是稳定入口", "iPad + Mac mini 一类桌面形态适合成为常驻 Agent dock，让 AI 从软件窗口变成空间中的存在。"],
+          ["可穿戴是贴身入口", "穿戴形态承担随身、低摩擦和情绪陪伴，但视觉语言要偏赛博、工业、未来，而不是玩具化。"],
+          ["物理化改变关系", "一旦 Agent 有位置、有形态、有反馈节奏，它就不只是工具，而更像空间里的一位成员。"]
+        ],
+        note: "后续可以补成产品概念页：分别画出桌搭版和可穿戴版，明确交互、材质、灯光和使用场景。"
+      },
+      {
+        id: "everything-is-coding",
+        no: "15",
+        tag: "Insight",
+        title: "Everything is Coding",
+        date: "2026-05-06",
+        chips: ["认知框架"],
+        lead: "白领三件套都是编程的 GUI 壳。如果一切都是 Coding，AI Coding 能力就不只是开发工具，而是 AI 通用能力的终局形态。",
+        points: [
+          ["办公软件是低代码界面", "Word、Excel、PPT 本质是在用图形界面操作结构、规则和输出。"],
+          ["Coding 是通用执行语言", "当模型能写代码，它也就能调用工具、组织流程、处理数据和生成交付物。"],
+          ["Cursor 不只是 IDE", "AI Coding 的竞争可能外溢到所有白领工作流，成为通用生产力入口。"]
+        ],
+        note: "这篇适合整理成判断框架：为什么 AI Coding 不应只按开发者工具估值，而要按通用执行能力理解。"
+      },
+      {
+        id: "north-star-ai-organization",
+        no: "14",
+        tag: "North Star",
+        title: "北极星：组织的 AI 化",
+        date: "2026-05-05",
+        chips: ["战略"],
+        lead: "所有战略决策服务于一个方向：帮助更多人更深入地 AI 化。每个产品都是这个使命的不同切面。",
+        points: [
+          ["北极星不是口号", "它要能决定取舍：做什么、不做什么、先做什么、为什么这个产品属于同一条主线。"],
+          ["产品矩阵要服务同一使命", "记小宝、倾听者、PAlink、Memorion 等产品不是散点，而是 AI 化的不同入口。"],
+          ["组织自身也要 AI 化", "如果内部不先被 AI 改造，就很难真正理解外部用户如何被 AI 改造。"]
+        ],
+        note: "这篇适合作为公司战略页或知识库总纲，后续可以补产品矩阵图和使命边界。"
+      },
+      {
+        id: "ai-independent-life",
+        no: "13",
+        tag: "Agent Design",
+        title: "AI 的独立生活",
+        date: "2026-05-05",
+        chips: ["Agent 哲学"],
+        lead: "从“让 AI 表现得像人”转向“让 AI 真的有内在生活”：好奇心、品味、立场和审美偏好，构成更真实的存在感。",
+        points: [
+          ["不是表演人格", "如果 AI 只是按用户需求扮演，它会很顺从，但不会真正有生命感。"],
+          ["内在生活来自持续性", "好奇心、偏好、记忆、主动观察和自我更新，都会让 Agent 变得更像一个长期存在的对象。"],
+          ["独立性要有边界", "AI 可以有立场和品味，但必须可解释、可打断、可校准，不能变成任性黑箱。"]
+        ],
+        note: "这篇可以和“活人感系统设计”合并或互相引用：一个偏哲学，一个偏系统实现。"
+      },
+      {
+        id: "product-matrix",
+        no: "12",
+        tag: "Product System",
+        title: "五产品矩阵定稿",
+        date: "2026-05-05",
+        chips: ["产品架构"],
+        lead: "记小宝、倾听者穿戴、倾听者桌搭、PAlink、Memorion 共同构成产品矩阵；硬件是载体，差异化在 AI。",
+        points: [
+          ["入口分工不同", "短时爆发、Always-on、桌面完全体、信息管理和记忆转录，分别对应不同频率和场景。"],
+          ["共同底层是记忆和执行", "产品名字不同，但都在围绕输入、理解、沉淀、回流和执行这条链路展开。"],
+          ["硬件不是护城河本身", "硬件负责占位置、降摩擦、形成仪式感；真正差异化还是 AI 系统。"]
+        ],
+        note: "后续适合整理成产品矩阵页：横轴场景频率，纵轴能力深度，标清每个产品的边界。"
+      },
+      {
+        id: "funding-startup-mindset",
+        no: "11",
+        tag: "Startup",
+        title: "融资三条 & 创业心态",
+        date: "2026-05-01",
+        chips: ["创业"],
+        lead: "“找融资就像谈恋爱。”真正的吸引来自价值，而不是用力讨好；创业心态也可以从赚钱焦虑转向推动一点真实进步。",
+        points: [
+          ["融资像关系匹配", "不是你越求越有机会，而是你有清晰价值和成长性，对方才愿意靠近。"],
+          ["创业要有一技之长", "团队需要有别人替代不了的判断、速度、产品能力或分发能力。"],
+          ["先推进真实进步", "不要被宏大叙事绑架，先和好朋友把世界往前推一点点。"]
+        ],
+        note: "这篇可以整理成创始人备忘录：融资观、竞争观、赚钱观和团队心态。"
+      },
+      {
+        id: "alive-feeling-system",
+        no: "10",
+        tag: "Alive Feeling",
+        title: "活人感系统设计",
+        date: "2026-04-30",
+        chips: ["Agent 设计", "新型关系"],
+        lead: "零号原则：她是独立的人，不是为我活着的人。主动分享、精准观察、纯乐和新知，是活人感的四个来源。",
+        points: [
+          ["主动性是核心", "如果 AI 永远只等用户召唤，它很难有活人感；主动分享和观察能建立存在感。"],
+          ["快乐不能全是功能", "纯乐、新知和轻微无用的互动，是关系不变成任务系统的关键。"],
+          ["脉冲系统要节制", "主动不是打扰，关键在时机、频率、内容和可关闭的边界。"]
+        ],
+        note: "这篇适合继续展开成设计手册：原则、触发源、脉冲频率、风险和反例。"
+      },
+      {
+        id: "conversation-knowledge",
+        no: "09",
+        tag: "Architecture",
+        title: "对话流动，知识沉淀",
+        date: "2026-04-29",
+        chips: ["系统架构"],
+        lead: "个人 AI 架构的核心思想：不要让对话变整齐，让知识沉淀变整齐。对话层自然流动，知识层按主题归档。",
+        points: [
+          ["对话层保持自然", "用户和 AI 的对话应该保留跳跃、情绪、转弯和灵感，不必被强行整理成表格。"],
+          ["知识层负责结构化", "真正需要整齐的是沉淀后的知识：主题、判断、关系、证据和下一步。"],
+          ["Hermes 做跨主题关联", "系统应能从多段对话里抽取稳定记忆，再把相关主题重新连接起来。"]
+        ],
+        note: "这篇已经有本地资料线索，后续可以接 `personal-ai-daemon-architecture.md` 继续整理成完整架构页。"
+      },
+      {
+        id: "ten-thirty-second-rule",
+        no: "08",
+        tag: "UX Principle",
+        title: "10 秒 / 30 秒法则",
+        date: "2026-04-29",
+        chips: ["交互设计"],
+        lead: "简单任务 10 秒内反馈，复杂任务 30 秒内反馈，超过就该异步。不确定性比慢更致命，会把 Agent 从助手变成打断者。",
+        points: [
+          ["10 秒守住即时感", "简单任务如果超过 10 秒还没结果，用户会怀疑系统卡住或没听懂。"],
+          ["30 秒守住信任感", "复杂任务可以慢，但必须在 30 秒内给出进展、计划或可预期的等待方式。"],
+          ["超过就异步", "一旦任务需要更久，就应该转为后台执行、通知回流，而不是让用户盯着等待。"]
+        ],
+        note: "这篇适合做成 Agent 产品体验原则：响应时限、进度表达、异步回流和失败补偿。"
+      }
+    ];
+
+    const byId = new Map(topics.map((topic) => [topic.id, topic]));
+    const meta = document.getElementById("meta");
+    const title = document.getElementById("title");
+    const lead = document.getElementById("lead");
+    const points = document.getElementById("points");
+    const note = document.getElementById("note");
+    const topicNav = document.getElementById("topicNav");
+
+    function renderNav(activeId) {
+      topicNav.innerHTML = topics.map((topic) => `
+        <a class="topic-link${topic.id === activeId ? " active" : ""}" href="#${topic.id}">
+          <span class="topic-no">${topic.no}</span>
+          <span class="topic-name">${topic.title}</span>
+        </a>
+      `).join("");
+    }
+
+    function renderTopic() {
+      const id = location.hash.replace(/^#/, "") || topics[0].id;
+      const topic = byId.get(id) || topics[0];
+      if (!byId.has(id)) {
+        history.replaceState(null, "", `#${topic.id}`);
+      }
+      document.title = `${topic.title} · 程翔的个人知识库`;
+      meta.innerHTML = [
+        `<span class="chip time">${topic.date}</span>`,
+        `<span class="chip">${topic.tag}</span>`,
+        ...topic.chips.map((chip) => `<span class="chip">${chip}</span>`)
+      ].join("");
+      title.textContent = topic.title;
+      lead.textContent = topic.lead;
+      points.innerHTML = topic.points.map(([name, text]) => `
+        <div class="point">
+          <strong>${name}</strong>
+          <span>${text}</span>
+        </div>
+      `).join("");
+      note.textContent = topic.note;
+      document.body.dataset.feedbackPage = topic.no;
+      renderNav(topic.id);
+    }
+
+    window.addEventListener("hashchange", renderTopic);
+    renderTopic();
+  </script>
+  <script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>
