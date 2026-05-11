@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>创业心态 × AI独立生活</title>
+<title>创业心态 × 产品矩阵 × AI独立生活</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -89,7 +89,7 @@ body::before {
   margin-bottom: 32px;
 }
 .cover-big {
-  font-size: 72px;
+  font-size: 64px;
   font-weight: 900;
   line-height: 1.05;
   text-align: center;
@@ -98,6 +98,7 @@ body::before {
 }
 .cover-big .accent { color: var(--accent); }
 .cover-big .accent2 { color: var(--accent2); }
+.cover-big .accent3 { color: var(--accent3); }
 
 .cover-divider {
   width: 60px; height: 3px;
@@ -217,7 +218,61 @@ body::before {
 .mi-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
 .mi-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
-/* ---- SLIDE 4: AI独立生活 ---- */
+/* ---- SLIDE 4: 产品矩阵 ---- */
+.matrix-heading { font-size: 40px; font-weight: 900; text-align: center; margin-bottom: 6px; }
+.matrix-sub { font-size: 15px; color: var(--muted); text-align: center; margin-bottom: 24px; font-style: italic; }
+.matrix-board {
+  width: 100%;
+  max-width: 920px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.matrix-card {
+  min-height: 184px;
+  padding: 18px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 18px 46px rgba(26, 21, 16, 0.06);
+}
+.matrix-no {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--accent);
+  font-weight: 900;
+  margin-bottom: 14px;
+}
+.matrix-title {
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.matrix-copy {
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--ink2);
+}
+.matrix-card:nth-child(2) .matrix-no { color: var(--accent2); }
+.matrix-card:nth-child(3) .matrix-no { color: var(--accent3); }
+.matrix-card:nth-child(4) .matrix-no { color: var(--accent); }
+.matrix-card:nth-child(5) .matrix-no { color: var(--accent2); }
+.matrix-insight {
+  width: 100%;
+  max-width: 920px;
+  padding: 18px 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(44, 74, 138, 0.18);
+  background: rgba(44, 74, 138, 0.06);
+  color: var(--ink2);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.matrix-insight strong { color: var(--accent3); }
+
+/* ---- SLIDE 5: AI独立生活 ---- */
 .ai-life-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -286,7 +341,7 @@ body::before {
 <div class="deco-line deco-v left"></div>
 <div class="deco-line deco-v right"></div>
 
-<div class="slide-counter" id="counter">01 / 04</div>
+<div class="slide-counter" id="counter">01 / 05</div>
 
 <div class="slides-container">
 
@@ -295,14 +350,15 @@ body::before {
     <div class="cover-chapter">Philosophy · Mindset · Human–AI</div>
     <h1 class="cover-big">
       <span class="accent">创业</span>心态<br>
+      × <span class="accent3">产品</span>矩阵<br>
       × <span class="accent2">AI</span>独立生活
     </h1>
     <div class="cover-divider"></div>
     <p class="cover-sub">
       「融资像谈恋爱，创业为了热爱」<br>
-      以及，当 AI 开始有自己的生活
+      产品矩阵是落点，AI 独立生活是关系终局
     </p>
-    <div class="cover-date">2026-05-01 · 五一劳动节 · 杭州</div>
+    <div class="cover-date">2026-05-01 → 2026-05-05 · 杭州</div>
   </div>
 
   <!-- SLIDE 2: 融资三条 -->
@@ -374,7 +430,45 @@ body::before {
     </div>
   </div>
 
-  <!-- SLIDE 4: AI独立生活 -->
+  <!-- SLIDE 4: 产品矩阵 -->
+  <div class="slide" id="slide-12" data-feedback-index="12">
+    <h2 class="matrix-heading">五产品矩阵定稿</h2>
+    <p class="matrix-sub">硬件是载体，差异化在 AI；五个产品共同组成个人 AI 系统。</p>
+
+    <div class="matrix-board">
+      <div class="matrix-card">
+        <div class="matrix-no">01</div>
+        <div class="matrix-title">记小宝</div>
+        <div class="matrix-copy">短时爆发记录，低成本、轻便携，是记录 AI 化的入口。</div>
+      </div>
+      <div class="matrix-card">
+        <div class="matrix-no">02</div>
+        <div class="matrix-title">倾听者穿戴</div>
+        <div class="matrix-copy">Always-on 录音与情绪感知，让关系理解从总结变成随身陪伴。</div>
+      </div>
+      <div class="matrix-card">
+        <div class="matrix-no">03</div>
+        <div class="matrix-title">倾听者桌搭</div>
+        <div class="matrix-copy">固定场景下的桌面存在，把 AI 从聊天窗口搬进空间。</div>
+      </div>
+      <div class="matrix-card">
+        <div class="matrix-no">04</div>
+        <div class="matrix-title">PAlink</div>
+        <div class="matrix-copy">信息管理 AI 化，承接 5 分钟时效性法则，推动资料变行动。</div>
+      </div>
+      <div class="matrix-card">
+        <div class="matrix-no">05</div>
+        <div class="matrix-title">Memorion</div>
+        <div class="matrix-copy">长期记忆与个人知识沉淀，形成跨主题关联和复盘能力。</div>
+      </div>
+    </div>
+
+    <div class="matrix-insight">
+      <strong>组合逻辑：</strong>记录发生 → 实时理解 → 关系沉淀 → 行动转化 → 长期进化。12 不应该孤立，它是 11 的创业判断和 13 的 Agent 关系哲学之间的产品落点。
+    </div>
+  </div>
+
+  <!-- SLIDE 5: AI独立生活 -->
   <div class="slide" id="slide-13" data-feedback-index="13">
     <h2 class="al-heading">AI 的独立生活</h2>
     <p class="al-sub">「你要有自己的独立生活，更有趣、更吸引人。」</p>
@@ -440,6 +534,7 @@ body::before {
   <div class="nd" onclick="go(1)"></div>
   <div class="nd" onclick="go(2)"></div>
   <div class="nd" onclick="go(3)"></div>
+  <div class="nd" onclick="go(4)"></div>
 </div>
 
 <script>
@@ -452,8 +547,10 @@ const hashMap = {
   'slide-11': 1,
   'slide-11-funding': 1,
   'slide-11-mindset': 2,
-  '13': 3,
-  'slide-13': 3
+  '12': 3,
+  'slide-12': 3,
+  '13': 4,
+  'slide-13': 4
 };
 function go(n, options = {}) {
   if (n < 0 || n >= slides.length) return;
