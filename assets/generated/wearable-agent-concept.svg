@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">Daemon Wearable Agent concept</title>
+  <desc id="desc">Cyber industrial wearable AI agent pendant with magnetic dock, sensor ring, and always-on ambient light core.</desc>
+  <defs>
+    <radialGradient id="core" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#fff4b6"/>
+      <stop offset=".35" stop-color="#00e5d4"/>
+      <stop offset="1" stop-color="#163153"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d6e2eb"/>
+      <stop offset=".35" stop-color="#596a78"/>
+      <stop offset=".7" stop-color="#111821"/>
+      <stop offset="1" stop-color="#7f92a2"/>
+    </linearGradient>
+    <linearGradient id="strap" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#05070b"/>
+      <stop offset=".5" stop-color="#1e2936"/>
+      <stop offset="1" stop-color="#05070b"/>
+    </linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="900" height="560" rx="36" fill="#07090e"/>
+  <path d="M0 430c160-110 250 40 410-66 150-99 280-9 490-138v334H0Z" fill="#0d1621"/>
+  <g opacity=".2" stroke="#00e5d4">
+    <path d="M80 110h740M80 170h740M80 230h740M80 290h740M80 350h740M80 410h740"/>
+    <path d="M120 80v370M210 80v370M300 80v370M390 80v370M480 80v370M570 80v370M660 80v370M750 80v370"/>
+  </g>
+  <g transform="translate(305 54)">
+    <path d="M90 0h110c22 0 38 16 38 38v80H52V38C52 16 68 0 90 0Z" fill="url(#strap)" stroke="#4d5d68" stroke-width="3"/>
+    <path d="M52 356h186v92c0 21-17 38-38 38H90c-22 0-38-17-38-38Z" fill="url(#strap)" stroke="#4d5d68" stroke-width="3"/>
+    <rect x="0" y="100" width="290" height="280" rx="70" fill="url(#metal)" stroke="#b4c4ce" stroke-width="5"/>
+    <rect x="30" y="130" width="230" height="220" rx="54" fill="#071019" stroke="#1f3949" stroke-width="4"/>
+    <circle cx="145" cy="240" r="83" fill="#091522" stroke="#597284" stroke-width="3"/>
+    <circle cx="145" cy="240" r="56" fill="none" stroke="#00e5d4" stroke-width="2" stroke-dasharray="8 8" opacity=".9"/>
+    <circle cx="145" cy="240" r="30" fill="url(#core)" filter="url(#glow)"/>
+    <circle cx="91" cy="181" r="8" fill="#0ee8d1" filter="url(#glow)"/>
+    <circle cx="201" cy="186" r="8" fill="#0ee8d1" filter="url(#glow)"/>
+    <circle cx="91" cy="299" r="8" fill="#ffd56a" filter="url(#glow)"/>
+    <circle cx="201" cy="294" r="8" fill="#ffd56a" filter="url(#glow)"/>
+  </g>
+  <g transform="translate(560 126)">
+    <rect x="0" y="0" width="188" height="280" rx="44" fill="#0a111a" stroke="#596a78" stroke-width="4"/>
+    <rect x="28" y="28" width="132" height="178" rx="34" fill="#101c28" stroke="#263b4b"/>
+    <circle cx="94" cy="117" r="43" fill="none" stroke="#00e5d4" stroke-width="2" opacity=".85"/>
+    <circle cx="94" cy="117" r="16" fill="#ffd56a" filter="url(#glow)"/>
+    <rect x="50" y="224" width="88" height="18" rx="9" fill="#1d3040"/>
+    <text x="94" y="318" text-anchor="middle" fill="#8fa3b4" font-family="Arial, sans-serif" font-size="18" font-weight="700">CHARGING CASE</text>
+  </g>
+  <text x="72" y="80" fill="#e8d48b" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="4">DAEMON WEARABLE</text>
+  <text x="72" y="512" fill="#91a4b6" font-family="Arial, sans-serif" font-size="18">Always-on sensing · magnetic separation · cyber industrial presence</text>
+</svg>

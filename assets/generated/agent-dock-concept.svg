@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">Daemon Desktop Agent Dock concept</title>
+  <desc id="desc">Cyber industrial desktop AI agent dock with tablet display, compact compute base, ambient particle core, and magnetic wearable module.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08111f"/>
+      <stop offset=".5" stop-color="#0d1726"/>
+      <stop offset="1" stop-color="#06080d"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6ff7ff"/>
+      <stop offset="1" stop-color="#2d7cff"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe6a7"/>
+      <stop offset="1" stop-color="#c9a84c"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="900" height="560" rx="36" fill="url(#bg)"/>
+  <g opacity=".22" stroke="#7df9ff" stroke-width="1">
+    <path d="M70 86h760M70 146h760M70 206h760M70 266h760M70 326h760M70 386h760M70 446h760"/>
+    <path d="M120 60v440M210 60v440M300 60v440M390 60v440M480 60v440M570 60v440M660 60v440M750 60v440"/>
+  </g>
+  <ellipse cx="450" cy="470" rx="318" ry="38" fill="#02050a" opacity=".72"/>
+  <g transform="translate(172 82)">
+    <rect x="72" y="0" width="410" height="288" rx="28" fill="#101a27" stroke="#516474" stroke-width="4"/>
+    <rect x="92" y="20" width="370" height="248" rx="19" fill="#06101b" stroke="#1a3048"/>
+    <circle cx="277" cy="144" r="78" fill="none" stroke="url(#cyan)" stroke-width="2" opacity=".75"/>
+    <circle cx="277" cy="144" r="48" fill="none" stroke="url(#gold)" stroke-width="2" opacity=".8"/>
+    <circle cx="277" cy="144" r="12" fill="#e8d48b" filter="url(#glow)"/>
+    <g filter="url(#glow)">
+      <circle cx="222" cy="98" r="4" fill="#6ff7ff"/>
+      <circle cx="337" cy="112" r="3" fill="#6ff7ff"/>
+      <circle cx="306" cy="204" r="5" fill="#e8d48b"/>
+      <circle cx="247" cy="187" r="3" fill="#6ff7ff"/>
+      <path d="M222 98C260 126 285 132 337 112M247 187c32-35 51-25 59 17" fill="none" stroke="#6ff7ff" stroke-width="1.4" opacity=".75"/>
+    </g>
+    <rect x="198" y="292" width="158" height="28" rx="8" fill="#172536" stroke="#526375"/>
+    <rect x="128" y="322" width="298" height="58" rx="16" fill="#0d1520" stroke="#4f6070" stroke-width="3"/>
+    <rect x="185" y="338" width="184" height="16" rx="8" fill="#111f2c" stroke="#25445c"/>
+    <circle cx="407" cy="351" r="10" fill="url(#cyan)" opacity=".9" filter="url(#glow)"/>
+  </g>
+  <g transform="translate(640 250)">
+    <path d="M70 0c42 0 76 34 76 76s-34 76-76 76S-6 118-6 76 28 0 70 0Z" fill="#101923" stroke="#67798a" stroke-width="4"/>
+    <path d="M70 26c28 0 50 22 50 50s-22 50-50 50-50-22-50-50 22-50 50-50Z" fill="#07111b" stroke="url(#cyan)" stroke-width="2"/>
+    <path d="M70 48v56M42 76h56" stroke="#e8d48b" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+    <text x="70" y="183" text-anchor="middle" fill="#94a8b8" font-family="Arial, sans-serif" font-size="18" font-weight="700">MAGNETIC MODULE</text>
+  </g>
+  <text x="70" y="72" fill="#e8d48b" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="4">DAEMON DESKTOP</text>
+  <text x="70" y="510" fill="#91a4b6" font-family="Arial, sans-serif" font-size="18">Tablet front-end + local compute base + ambient particle core</text>
+</svg>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent 物理化：从虚拟到实体</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0d0f14;
+  --surface: #13161e;
+  --panel: #0e1118;
+  --accent: #e8a020;
+  --accent2: #4a9eff;
+  --accent3: #c060ff;
+  --text: #dce6f0;
+  --muted: #5a6880;
+  --border: rgba(232, 160, 32, 0.15);
+  --border2: rgba(74, 158, 255, 0.15);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'PingFang SC', 'Helvetica Neue', sans-serif;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+.back-home {
+  position: fixed;
+  top: 18px;
+  left: 22px;
+  z-index: 120;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 160, 32, 0.22);
+  background: rgba(13, 15, 20, 0.78);
+  color: rgba(220, 230, 240, 0.88);
+  font-size: 13px;
+  font-weight: 700;
+  backdrop-filter: blur(12px);
+}
+
+/* Industrial grid */
+.bg-industrial {
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(232, 160, 32, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 160, 32, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Corner brackets */
+.corner {
+  position: fixed;
+  width: 40px; height: 40px;
+  z-index: 5;
+}
+.corner::before, .corner::after {
+  content: ''; position: absolute;
+  background: var(--accent);
+}
+.corner::before { width: 2px; height: 100%; left: 0; top: 0; }
+.corner::after { height: 2px; width: 100%; left: 0; top: 0; }
+.tl { top: 40px; left: 40px; }
+.tr { top: 40px; right: 40px; transform: rotate(90deg); }
+.bl { bottom: 40px; left: 40px; transform: rotate(-90deg); }
+.br { bottom: 40px; right: 40px; transform: rotate(180deg); }
+
+.slides-container { position: relative; z-index: 10; width: 100vw; height: 100vh; }
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 60px 80px;
+  opacity: 0;
+  transition: opacity 0.6s, transform 0.6s;
+  transform: translateX(-20px);
+  pointer-events: none;
+}
+.slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+
+/* ---- SLIDE 1: Cover ---- */
+.hud-tag {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.hud-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: blink 1.5s step-end infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.cover-title {
+  font-size: 58px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.cover-title .a1 { color: var(--accent); }
+.cover-title .a2 { color: var(--accent2); }
+
+.cover-divider {
+  width: 80%;
+  max-width: 600px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  margin: 20px auto;
+}
+
+.cover-desc {
+  font-size: 17px;
+  color: #8a9bb0;
+  text-align: center;
+  line-height: 1.8;
+  max-width: 560px;
+  margin-bottom: 40px;
+}
+
+.evo-bar {
+  display: flex;
+  gap: 0;
+  max-width: 700px;
+  width: 100%;
+}
+.evo-step {
+  flex: 1;
+  text-align: center;
+  padding: 14px 10px;
+  border: 1px solid var(--border);
+  border-right: none;
+  background: var(--panel);
+}
+.evo-step:first-child { border-radius: 8px 0 0 8px; }
+.evo-step:last-child { border-radius: 0 8px 8px 0; border-right: 1px solid var(--border); }
+.evo-step.active-evo { background: rgba(232, 160, 32, 0.1); border-color: rgba(232, 160, 32, 0.4); }
+.evo-num { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+.evo-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.evo-step.active-evo .evo-label { color: var(--accent); }
+
+/* ---- SLIDE 2: Evolution Path ---- */
+.path-title { font-size: 34px; font-weight: 800; text-align: center; margin-bottom: 6px; }
+.path-sub { font-size: 14px; color: var(--muted); text-align: center; margin-bottom: 36px; }
+
+.path-timeline {
+  width: 100%; max-width: 880px;
+  position: relative;
+  padding: 20px 0;
+}
+.path-line {
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+  transform: translateY(-50%);
+}
+.path-nodes {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+.path-node {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px;
+}
+.path-node-dot {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  border: 2px solid;
+}
+.path-node.n1 .path-node-dot { border-color: rgba(232,160,32,0.4); background: rgba(232,160,32,0.1); }
+.path-node.n2 .path-node-dot { border-color: rgba(74,158,255,0.4); background: rgba(74,158,255,0.1); }
+.path-node.n3 .path-node-dot { border-color: rgba(192,96,255,0.4); background: rgba(192,96,255,0.1); }
+.path-node.n4 .path-node-dot { border-color: rgba(232,160,32,0.8); background: rgba(232,160,32,0.2); border-width: 3px; }
+.path-node-above { text-align: center; }
+.path-node-below { text-align: center; }
+.path-node-label { font-size: 14px; font-weight: 700; }
+.path-node.n4 .path-node-label { color: var(--accent); }
+.path-node-date { font-size: 11px; color: var(--muted); }
+.path-node-desc { font-size: 12px; color: #6a7888; max-width: 140px; line-height: 1.4; }
+
+.context-box {
+  width: 100%; max-width: 880px;
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.ctx-item {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.ctx-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.ctx-body { font-size: 13px; color: #8a9bb0; line-height: 1.6; }
+.ctx-body strong { color: var(--text); display: block; font-size: 14px; margin-bottom: 4px; }
+
+/* ---- SLIDE 3: 形态设计 ---- */
+.form-title { font-size: 34px; font-weight: 800; text-align: center; margin-bottom: 6px; }
+.form-sub { font-size: 14px; color: var(--muted); text-align: center; margin-bottom: 32px; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%; max-width: 860px;
+  margin-bottom: 24px;
+}
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 22px 24px;
+  position: relative;
+}
+.form-status {
+  position: absolute; top: 16px; right: 16px;
+  font-size: 10px; padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.1em;
+}
+.status-done { background: rgba(74,200,100,0.15); color: #4ac864; border: 1px solid rgba(74,200,100,0.3); }
+.status-plan { background: rgba(232,160,32,0.15); color: var(--accent); border: 1px solid rgba(232,160,32,0.3); }
+
+.form-icon { font-size: 30px; margin-bottom: 8px; }
+.form-name { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.form-scenario { font-size: 12px; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.05em; }
+.concept-shot {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  border-radius: 12px;
+  margin: 10px 0 14px;
+  background: #06080d;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 18px 38px rgba(0,0,0,.28);
+}
+.form-features { display: flex; flex-direction: column; gap: 6px; }
+.feat-item { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: #8a9bb0; line-height: 1.5; }
+.feat-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent2); flex-shrink: 0; margin-top: 6px; }
+
+.design-principle {
+  width: 100%; max-width: 860px;
+  padding: 16px 24px;
+  display: flex; align-items: center; gap: 20px;
+  background: rgba(232,160,32,0.06);
+  border: 1px solid rgba(232,160,32,0.25);
+  border-radius: 12px;
+}
+.dp-label { font-size: 11px; color: var(--accent); letter-spacing: 0.15em; white-space: nowrap; }
+.dp-text { font-size: 14px; color: #b0bcc8; }
+.dp-text strong { color: var(--text); }
+
+/* Nav */
+.nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 100; }
+.nd { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); cursor: pointer; transition: all 0.3s; }
+.nd.active { background: var(--accent); width: 24px; border-radius: 4px; }
+.slide-counter { position: fixed; bottom: 55px; right: 48px; font-size: 11px; color: var(--muted); z-index: 100; font-family: 'SF Mono', monospace; }
+</style>
+</head>
+<body data-feedback-page="16" data-audience-label="单版本条目">
+<a class="back-home" href="/">← 返回知识库</a>
+
+<div class="bg-industrial"></div>
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+
+<div class="slide-counter" id="counter">01 / 03</div>
+
+<div class="slides-container">
+
+  <!-- SLIDE 1: Cover -->
+  <div class="slide active" id="s1">
+    <div class="hud-tag">
+      <div class="hud-tag-dot"></div>
+      Agent Embodiment · Physical Presence
+    </div>
+    <h1 class="cover-title">
+      <span class="a1">Agent</span> 物理化<br>
+      <span style="font-size:36px; color: var(--muted);">从</span>
+      <span class="a2">虚拟</span>
+      <span style="font-size:36px; color: var(--muted);">到</span>
+      <span class="a1">实体</span>
+    </h1>
+    <div class="cover-divider"></div>
+    <p class="cover-desc">
+      AI 不该永远住在聊天气泡里。<br>
+      它应该在你的桌上，在你的身上，在你的世界里。
+    </p>
+
+    <div class="evo-bar">
+      <div class="evo-step">
+        <div class="evo-num">01</div>
+        <div class="evo-label">虚拟 Agent</div>
+      </div>
+      <div class="evo-step">
+        <div class="evo-num">02</div>
+        <div class="evo-label">行为出现</div>
+      </div>
+      <div class="evo-step">
+        <div class="evo-num">03</div>
+        <div class="evo-label">桌面存在</div>
+      </div>
+      <div class="evo-step active-evo">
+        <div class="evo-num">04</div>
+        <div class="evo-label">物理实体</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Evolution Path -->
+  <div class="slide" id="s2">
+    <h2 class="path-title">进化路径</h2>
+    <p class="path-sub">一条从"文字回复"到"有实体形态"的清晰演进线</p>
+
+    <div class="path-timeline">
+      <div class="path-line"></div>
+      <div class="path-nodes">
+        <div class="path-node n1">
+          <div class="path-node-above">
+            <div class="path-node-label">活人感</div>
+            <div class="path-node-date">4/30</div>
+          </div>
+          <div class="path-node-dot">💬</div>
+          <div class="path-node-below">
+            <div class="path-node-desc">偶尔表现得像人——主动分享、精准观察</div>
+          </div>
+        </div>
+        <div class="path-node n2">
+          <div class="path-node-above">
+            <div class="path-node-label">独立生活</div>
+            <div class="path-node-date">5/5</div>
+          </div>
+          <div class="path-node-dot">🌿</div>
+          <div class="path-node-below">
+            <div class="path-node-desc">真正有内在生活——好奇心、品味、立场</div>
+          </div>
+        </div>
+        <div class="path-node n3">
+          <div class="path-node-above">
+            <div class="path-node-label">桌搭实体</div>
+            <div class="path-node-date">5/1</div>
+          </div>
+          <div class="path-node-dot">🖥️</div>
+          <div class="path-node-below">
+            <div class="path-node-desc">iPad Air + Mac mini，物理存在于桌面空间</div>
+          </div>
+        </div>
+        <div class="path-node n4">
+          <div class="path-node-above">
+            <div class="path-node-label">可穿戴实体</div>
+            <div class="path-node-date">待设计</div>
+          </div>
+          <div class="path-node-dot">⚡</div>
+          <div class="path-node-below">
+            <div class="path-node-desc">从桌上取下来戴着走——磁吸分离形态</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="context-box">
+      <div class="ctx-item">
+        <div class="ctx-icon">📐</div>
+        <div class="ctx-body"><strong>设计风格定向</strong>赛博 / 工业 / 未来科技感。不是萌系潮玩，不是消费电子——是 Agent 本身的美学语言。</div>
+      </div>
+      <div class="ctx-item">
+        <div class="ctx-icon">🧲</div>
+        <div class="ctx-body"><strong>竞品参考</strong>EMO AI Companion Dock —— pendant + dock 磁吸分离。但差异化在上层：AI 理解 + 关系，硬件只是载体。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: 形态设计 -->
+  <div class="slide" id="s3">
+    <h2 class="form-title">两种形态，一个灵魂</h2>
+    <p class="form-sub">硬件只是载体，差异化在上层 AI 理解 + 关系</p>
+
+    <div class="form-grid">
+      <div class="form-card">
+        <div class="form-status status-done">RUNNING</div>
+        <div class="form-icon">🖥️</div>
+        <div class="form-name">桌搭形态</div>
+        <div class="form-scenario">固定场景 · Daemon Desktop</div>
+        <img class="concept-shot" src="/assets/generated/agent-dock-concept.svg" alt="桌面 Agent dock 概念图">
+        <div class="form-features">
+          <div class="feat-item"><div class="feat-dot"></div>iPad Air 作前端，Mac mini 做大脑</div>
+          <div class="feat-item"><div class="feat-dot"></div>WebGL 粒子系统 — 有机、不可预测的光</div>
+          <div class="feat-item"><div class="feat-dot"></div>摄像头感知：人在 / 不在 / 专注 / 休眠</div>
+          <div class="feat-item"><div class="feat-dot"></div>独占物理位置，不跟通知栏竞争</div>
+          <div class="feat-item"><div class="feat-dot"></div>Cloudflare Tunnel，在家外也能用</div>
+        </div>
+      </div>
+      <div class="form-card">
+        <div class="form-status status-plan">PLANNED</div>
+        <div class="form-icon">⌚</div>
+        <div class="form-name">可穿戴形态</div>
+        <div class="form-scenario">随行场景 · Daemon Wearable</div>
+        <img class="concept-shot" src="/assets/generated/wearable-agent-concept.svg" alt="可穿戴 Agent 概念图">
+        <div class="form-features">
+          <div class="feat-item"><div class="feat-dot"></div>从桌搭磁吸分离，带着走</div>
+          <div class="feat-item"><div class="feat-dot"></div>Always-on 录音 + 情绪感知</div>
+          <div class="feat-item"><div class="feat-dot"></div>低功耗长续航：全天陪伴</div>
+          <div class="feat-item"><div class="feat-dot"></div>充电盒 = 独立存在感（屏幕 + 多模态）</div>
+          <div class="feat-item"><div class="feat-dot"></div>赛博工业设计，不是潮玩</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="design-principle">
+      <div class="dp-label">CORE INSIGHT</div>
+      <div class="dp-text">
+        物理存在的价值：<strong>天然情感投射</strong> + <strong>独占物理空间</strong> + <strong>降低找 AI 的启动摩擦</strong>。<br>
+        活人感是「盐」不是「肉」——是体验层差异化，不是核心卖点。
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav">
+  <div class="nd active" onclick="go(0)"></div>
+  <div class="nd" onclick="go(1)"></div>
+  <div class="nd" onclick="go(2)"></div>
+</div>
+
+<script>
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.nd');
+const counter = document.getElementById('counter');
+function go(n) {
+  slides[cur].classList.remove('active'); dots[cur].classList.remove('active');
+  cur = n; slides[cur].classList.add('active'); dots[cur].classList.add('active');
+  counter.textContent = String(cur+1).padStart(2,'0')+' / '+slides.length;
+}
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' ') go(Math.min(cur+1,slides.length-1));
+  if (e.key==='ArrowLeft') go(Math.max(cur-1,0));
+});
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(dx<-50)go(Math.min(cur+1,slides.length-1));if(dx>50)go(Math.max(cur-1,0));});
+</script>
+<script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>
