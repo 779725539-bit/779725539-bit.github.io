@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460" role="img" aria-labelledby="title desc">
+  <title id="title">融资如谈恋爱的手绘天平图</title>
+  <desc id="desc">纸张质感背景上，一颗心和一枚金币分别位于天平两端，中心写着 value first。</desc>
+  <defs>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="11"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.08"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="rough">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="8" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.4"/>
+    </filter>
+  </defs>
+  <rect width="720" height="460" rx="34" fill="#faf5e9"/>
+  <rect width="720" height="460" rx="34" filter="url(#paper)" opacity=".8"/>
+  <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M360 86v235" stroke="#2a2118" stroke-width="8"/>
+    <path d="M267 321h186" stroke="#2a2118" stroke-width="8"/>
+    <path d="M220 148h280" stroke="#2a2118" stroke-width="7"/>
+    <path d="M220 148l-66 112m66-112l66 112M500 148l-66 112m66-112l66 112" stroke="#6b5a48" stroke-width="4"/>
+    <path d="M118 262c30 36 152 36 204 0" stroke="#c84b0a" stroke-width="7"/>
+    <path d="M398 262c42 36 148 36 204 0" stroke="#1a6b4a" stroke-width="7"/>
+  </g>
+  <g filter="url(#rough)">
+    <path d="M216 214c-24-27-68-10-68 28 0 47 68 75 68 75s68-28 68-75c0-38-44-55-68-28z" fill="#e86f63" stroke="#2a2118" stroke-width="5"/>
+    <circle cx="500" cy="255" r="48" fill="#f2c15f" stroke="#2a2118" stroke-width="5"/>
+    <path d="M500 222v66m-24-45c10-10 48-12 48 8 0 26-51 10-51 34 0 21 42 17 55 3" stroke="#8f5a16" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </g>
+  <g font-family="Georgia, 'Noto Serif SC', serif" text-anchor="middle">
+    <text x="360" y="372" fill="#2a2118" font-size="38" font-weight="700">Value First</text>
+    <text x="360" y="407" fill="#8a7f72" font-size="24">先把价值做出来，再谈钱</text>
+  </g>
+  <path d="M80 76c70-28 172-32 248-10M420 62c54-9 118-4 190 16M74 386c96 18 174 15 244-8M420 390c86 23 158 18 224-6" fill="none" stroke="#d9cbb4" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+</svg>

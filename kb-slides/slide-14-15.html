@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>北极星 × Everything is Coding</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #020509;
+  --surface: #070c12;
+  --accent: #00d4ff;
+  --accent2: #7fff5f;
+  --accent3: #ff9a3c;
+  --text: #e8f4ff;
+  --muted: #4a6480;
+  --border: rgba(0, 212, 255, 0.15);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'SF Mono', 'Menlo', 'PingFang SC', monospace;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+.back-home {
+  position: fixed;
+  top: 18px;
+  left: 22px;
+  z-index: 1201;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 212, 255, 0.24);
+  background: rgba(2, 5, 9, 0.76);
+  color: rgba(232, 244, 255, 0.92);
+  font-size: 13px;
+  font-weight: 800;
+  backdrop-filter: blur(12px);
+}
+
+/* Scanline effect */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,212,255,0.012) 2px,
+    rgba(0,212,255,0.012) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+canvas#starfield {
+  position: fixed; inset: 0;
+  z-index: 0;
+}
+
+.slides-container { position: relative; z-index: 10; width: 100vw; height: 100vh; }
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 60px 80px;
+  opacity: 0;
+  transition: opacity 0.5s, transform 0.5s;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+.slide.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+/* --- SLIDE 1: Cover --- */
+.terminal-line {
+  font-size: 12px;
+  color: var(--accent2);
+  letter-spacing: 0.05em;
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+.terminal-line::before { content: '> '; color: var(--accent); }
+
+.north-star-symbol {
+  font-size: 80px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+  animation: glow 3s ease-in-out infinite;
+}
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5)); }
+  50% { filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.9)); }
+}
+
+.ns-title {
+  font-size: 56px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  font-family: 'PingFang SC', sans-serif;
+}
+.ns-title .c1 { color: var(--accent); }
+.ns-title .c2 { color: var(--text); }
+
+.ns-sub {
+  font-size: 16px;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 48px;
+  letter-spacing: 0.1em;
+}
+.ns-sub em { color: var(--accent2); font-style: normal; }
+
+.code-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 32px;
+  font-size: 14px;
+  color: var(--accent2);
+  text-align: left;
+  max-width: 600px;
+  width: 100%;
+}
+.code-comment { color: var(--muted); }
+.code-key { color: var(--accent); }
+.code-val { color: var(--accent3); }
+.code-str { color: var(--accent2); }
+
+/* --- SLIDE 2: 北极星展开 --- */
+.ns-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%; max-width: 860px;
+}
+.ns-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.ns-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+.ns-card-tag {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.ns-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'PingFang SC', sans-serif;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.ns-card-body {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #7090aa;
+  font-family: 'PingFang SC', sans-serif;
+}
+.ns-card-body strong { color: var(--accent2); }
+
+.ns-arrow-center {
+  width: 100%; max-width: 860px;
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 16px;
+  margin-top: -4px;
+}
+.ns-statement {
+  flex: 1;
+  padding: 16px 24px;
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: 'PingFang SC', sans-serif;
+  color: var(--accent);
+  background: rgba(0,212,255,0.05);
+  text-align: center;
+}
+
+.product-matrix {
+  width: 100%; max-width: 860px;
+  margin-top: 12px;
+}
+.pm-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0,212,255,0.08);
+}
+.pm-row:last-child { border-bottom: none; }
+.pm-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+}
+.pm-name { font-size: 14px; color: var(--accent); min-width: 100px; }
+.pm-arrow { color: var(--muted); margin: 0 4px; }
+.pm-desc { font-size: 13px; color: #7090aa; font-family: 'PingFang SC', sans-serif; }
+
+/* --- SLIDE 3: Everything is Coding --- */
+.eic-title {
+  font-size: 48px;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 8px;
+  color: var(--accent2);
+  font-family: 'PingFang SC', sans-serif;
+}
+.eic-en {
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.eic-decode {
+  display: flex;
+  gap: 14px;
+  width: 100%; max-width: 860px;
+  margin-bottom: 12px;
+}
+.eic-item {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px 18px;
+  text-align: center;
+}
+.eic-app {
+  font-size: 24px; margin-bottom: 8px;
+}
+.eic-app-name {
+  font-size: 14px; color: var(--accent3); font-weight: 700;
+  margin-bottom: 4px;
+}
+.eic-eq {
+  font-size: 11px; color: var(--muted); margin-bottom: 8px;
+}
+.eic-code-name {
+  font-size: 16px; color: var(--accent2); font-weight: 700;
+  margin-bottom: 6px;
+}
+.eic-code-desc {
+  font-size: 11px; color: var(--muted); line-height: 1.5;
+  font-family: 'PingFang SC', sans-serif;
+}
+.eic-flow-line {
+  width: 100%;
+  max-width: 760px;
+  height: 22px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.eic-flow-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+  transform: translateY(-50%);
+  opacity: 0.7;
+}
+.eic-flow-line span {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 56px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--accent2);
+  box-shadow: 0 0 18px rgba(127,255,95,0.8);
+  transform: translateY(-50%);
+  animation: compileFlow 3.2s ease-in-out infinite;
+}
+@keyframes compileFlow {
+  0% { left: 0; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { left: calc(100% - 56px); opacity: 0; }
+}
+
+.eic-conclusion {
+  width: 100%; max-width: 860px;
+  padding: 20px 28px;
+  border: 1px solid rgba(127,255,95,0.3);
+  border-radius: 14px;
+  background: rgba(127,255,95,0.05);
+}
+.eic-con-title {
+  font-size: 13px; color: var(--accent2); margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+.eic-con-body {
+  font-size: 15px; line-height: 1.7;
+  font-family: 'PingFang SC', sans-serif;
+  color: #b0c8d8;
+}
+.eic-con-body strong { color: var(--accent2); }
+
+/* Nav */
+.nav {
+  position: fixed; bottom: 30px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 8px; z-index: 100;
+}
+.nd { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); cursor: pointer; transition: all 0.3s; }
+.nd.active { background: var(--accent); width: 24px; border-radius: 4px; }
+.slide-counter {
+  position: fixed; top: 28px; right: 36px;
+  font-size: 11px; color: var(--muted); z-index: 100;
+  letter-spacing: 0.1em;
+}
+</style>
+</head>
+<body data-feedback-page="14-15" data-audience-label="单版本条目">
+<a class="back-home" href="/">← 返回知识库</a>
+
+<canvas id="starfield"></canvas>
+<div class="slide-counter" id="counter">01 / 03</div>
+
+<div class="slides-container">
+
+  <!-- SLIDE 1: Cover -->
+  <div class="slide active" id="overview" data-feedback-index="14">
+    <div class="terminal-line">init_north_star.mission → AI化 of organization [loaded]</div>
+    <div class="north-star-symbol">⭐</div>
+    <h1 class="ns-title">
+      <span class="c1">北极星</span><span class="c2">指标</span>
+    </h1>
+    <p class="ns-sub">组织的 <em>AI 化</em>，包括我个人</p>
+
+    <div class="code-block">
+      <div><span class="code-comment">// 程翔 · 2026-05-05 · 最高优先级</span></div>
+      <div style="margin-top:8px;">
+        <span class="code-key">const</span> northStar = {
+      </div>
+      <div style="padding-left:20px;">
+        mission: <span class="code-str">"组织的 AI 化（包括我个人）"</span>,
+      </div>
+      <div style="padding-left:20px;">
+        scope: <span class="code-str">"所有战略决策按此执行"</span>,
+      </div>
+      <div style="padding-left:20px;">
+        status: <span class="code-val">LOCKED</span>
+      </div>
+      <div>};</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: 展开 -->
+  <div class="slide" id="slide-14" data-feedback-index="14">
+    <div class="ns-arrow-center">
+      <div class="ns-statement">
+        ⭐ 北极星 = 帮助更多人，更深入地 AI 化
+      </div>
+    </div>
+
+    <div class="ns-grid">
+      <div class="ns-card">
+        <div class="ns-card-tag">Investment</div>
+        <div class="ns-card-title">投资决策</div>
+        <div class="ns-card-body"><strong>符合 AI 化方向</strong>的才投。大胆配置硬件层、软件层、应用层、生态层的 AI 大公司——相当于提前买船票。</div>
+      </div>
+      <div class="ns-card">
+        <div class="ns-card-tag">Personal Growth</div>
+        <div class="ns-card-title">个人发展</div>
+        <div class="ns-card-body">往 <strong>Agent 产品经理 / AI 架构师</strong>方向走。能力定义 = 会人所不能 + 被人需要——两个条件同时满足。</div>
+      </div>
+      <div class="ns-card">
+        <div class="ns-card-tag">Product Strategy</div>
+        <div class="ns-card-title">产品设计</div>
+        <div class="ns-card-body">每个产品都在帮用户完成 AI 化：<strong>记小宝</strong>=记录AI化入口，<strong>倾听者</strong>=关系AI化，<strong>PAlink</strong>=信息管理AI化。</div>
+      </div>
+      <div class="ns-card">
+        <div class="ns-card-tag">Organization Mission</div>
+        <div class="ns-card-title">创业使命</div>
+        <div class="ns-card-body">组织使命 = <strong>让更多人拥有自己的 AI</strong>。从自己开始验证，然后产品化输出给所有人。</div>
+      </div>
+    </div>
+
+    <div class="product-matrix" style="margin-top:12px;">
+      <div class="pm-row">
+        <div class="pm-dot"></div>
+        <div class="pm-name">记小宝</div>
+        <div class="pm-arrow">→</div>
+        <div class="pm-desc">短时爆发记录 · 记录 AI 化的入口 · 轻/便携/低成本</div>
+      </div>
+      <div class="pm-row">
+        <div class="pm-dot" style="background: var(--accent2);"></div>
+        <div class="pm-name" style="color: var(--accent2);">倾听者</div>
+        <div class="pm-arrow">→</div>
+        <div class="pm-desc">Always-on 深层理解 · 关系 AI 化 · 穿戴/桌搭二形态</div>
+      </div>
+      <div class="pm-row">
+        <div class="pm-dot" style="background: var(--accent3);"></div>
+        <div class="pm-name" style="color: var(--accent3);">PAlink</div>
+        <div class="pm-arrow">→</div>
+        <div class="pm-desc">信息管理 AI 化 · App 层 · 5分钟时效性法则落地场景</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Everything is Coding -->
+  <div class="slide" id="slide-15" data-feedback-index="15">
+    <h2 class="eic-title">Everything is Coding</h2>
+    <p class="eic-en">// A new way to see all white-collar work</p>
+
+    <div class="eic-decode">
+      <div class="eic-item">
+        <div class="eic-app">📝</div>
+        <div class="eic-app-name">Word</div>
+        <div class="eic-eq">≡</div>
+        <div class="eic-code-name">文本序列化</div>
+        <div class="eic-code-desc">段落、标题、列表——<br>有序组织线性信息的语法</div>
+      </div>
+      <div class="eic-item">
+        <div class="eic-app">📊</div>
+        <div class="eic-app-name">Excel</div>
+        <div class="eic-eq">≡</div>
+        <div class="eic-code-name">二维数据结构</div>
+        <div class="eic-code-desc">行列、公式、引用——<br>关系型数据库的 GUI 壳</div>
+      </div>
+      <div class="eic-item">
+        <div class="eic-app">🖥️</div>
+        <div class="eic-app-name">PPT</div>
+        <div class="eic-eq">≡</div>
+        <div class="eic-code-name">信息视觉编排</div>
+        <div class="eic-code-desc">布局、层级、动效——<br>信息的渲染管线</div>
+      </div>
+    </div>
+    <div class="eic-flow-line"><span></span></div>
+
+    <div class="eic-conclusion">
+      <div class="eic-con-title">// CONCLUSION</div>
+      <div class="eic-con-body">
+        白领工作的本质一直是 <strong>coding</strong>，只是套了个 GUI 壳让人不觉得自己在编程。<br>
+        如果 everything is coding → <strong>AI coding 能力 = AI 通用能力的终局形态</strong>。<br>
+        Cursor 不只是开发者工具，是<strong>所有白领的终局工具</strong>。
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav">
+  <div class="nd active" onclick="go(0)"></div>
+  <div class="nd" onclick="go(1)"></div>
+  <div class="nd" onclick="go(2)"></div>
+</div>
+
+<script>
+// Starfield
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let stars = [];
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+for (let i = 0; i < 200; i++) {
+  stars.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 1.5,
+    speed: 0.1 + Math.random() * 0.3,
+    alpha: 0.2 + Math.random() * 0.6
+  });
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0, 212, 255, ${s.alpha})`;
+    ctx.fill();
+    s.y += s.speed;
+    if (s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.nd');
+const counter = document.getElementById('counter');
+const hashMap = {
+  '14': 1,
+  'slide-14': 1,
+  '15': 2,
+  'slide-15': 2
+};
+function go(n, options = {}) {
+  if (n < 0 || n >= slides.length) return;
+  if (n === cur && !options.force) return;
+  slides[cur].classList.remove('active');
+  dots[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  dots[cur].classList.add('active');
+  counter.textContent = String(cur+1).padStart(2,'0')+' / '+slides.length;
+  if (options.updateHash && slides[cur].id) {
+    history.replaceState(null, '', '#' + slides[cur].id);
+  }
+}
+function applyHash() {
+  const key = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+  if (Object.prototype.hasOwnProperty.call(hashMap, key)) {
+    go(hashMap[key], { force: true });
+  }
+}
+applyHash();
+window.addEventListener('hashchange', applyHash);
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' ') go(Math.min(cur+1,slides.length-1));
+  if (e.key==='ArrowLeft') go(Math.max(cur-1,0));
+});
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(dx<-50)go(Math.min(cur+1,slides.length-1));if(dx>50)go(Math.max(cur-1,0));});
+</script>
+
+<script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>

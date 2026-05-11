@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>创业心态 × AI独立生活</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f8f5f0;
+  --ink: #1a1510;
+  --ink2: #3d3528;
+  --muted: #8a7f72;
+  --accent: #c84b0a;
+  --accent2: #1a6b4a;
+  --accent3: #2c4a8a;
+  --warm: #f0e8d8;
+  --border: rgba(26, 21, 16, 0.12);
+  --surface: #faf8f4;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Noto Serif SC', 'Georgia', 'Times New Roman', serif;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+.back-home {
+  position: fixed;
+  top: 18px;
+  left: 22px;
+  z-index: 120;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 75, 10, 0.24);
+  background: rgba(248, 245, 240, 0.78);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+  backdrop-filter: blur(12px);
+}
+
+/* Paper texture overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.slides-container { position: relative; z-index: 1; width: 100vw; height: 100vh; }
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 60px 100px;
+  opacity: 0;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateX(20px);
+  pointer-events: none;
+}
+.slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+
+/* Decorative lines */
+.deco-line {
+  position: fixed;
+  background: var(--border);
+}
+.deco-h { height: 1px; left: 80px; right: 80px; }
+.deco-h.top { top: 60px; }
+.deco-h.bottom { bottom: 60px; }
+.deco-v { width: 1px; top: 60px; bottom: 60px; }
+.deco-v.left { left: 80px; }
+.deco-v.right { right: 80px; }
+
+/* ---- SLIDE 1: Cover ---- */
+.cover-chapter {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.cover-big {
+  font-size: 72px;
+  font-weight: 900;
+  line-height: 1.05;
+  text-align: center;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.cover-big .accent { color: var(--accent); }
+.cover-big .accent2 { color: var(--accent2); }
+
+.cover-divider {
+  width: 60px; height: 3px;
+  background: var(--accent);
+  margin: 24px auto;
+}
+.cover-sub {
+  font-size: 18px;
+  text-align: center;
+  color: var(--ink2);
+  line-height: 1.8;
+  max-width: 500px;
+  font-style: italic;
+}
+.cover-date {
+  margin-top: 40px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+}
+
+/* ---- SLIDE 2: 融资三条 ---- */
+.s2-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 60px;
+  width: 100%; max-width: 900px;
+  align-items: start;
+}
+.s2-left-title {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.s2-left-title .num { font-size: 14px; color: var(--muted); letter-spacing: 0.15em; display: block; margin-bottom: 8px; }
+.s2-left-quote {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-style: italic;
+  border-left: 2px solid var(--accent);
+  padding-left: 16px;
+}
+.fundraising-sketch {
+  width: 100%;
+  max-width: 260px;
+  margin-top: 22px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(240, 232, 216, 0.56);
+  box-shadow: 0 14px 36px rgba(26, 21, 16, 0.08);
+}
+
+.s2-rules { display: flex; flex-direction: column; gap: 20px; }
+.rule-item {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.rule-item:last-child { border-bottom: none; padding-bottom: 0; }
+.rule-num {
+  width: 44px; height: 44px; flex-shrink: 0;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800;
+  color: var(--accent);
+}
+.rule-body {}
+.rule-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; color: var(--ink); }
+.rule-desc { font-size: 14px; color: var(--ink2); line-height: 1.7; }
+.rule-em { color: var(--accent); font-weight: 600; }
+
+/* ---- SLIDE 3: 创业心态 ---- */
+.mindset-center {
+  text-align: center;
+  max-width: 700px;
+  width: 100%;
+}
+.mindset-eyebrow {
+  font-size: 11px; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; margin-bottom: 24px;
+}
+.mindset-quote {
+  font-size: 32px;
+  line-height: 1.6;
+  color: var(--ink);
+  font-style: italic;
+  margin-bottom: 16px;
+  position: relative;
+}
+.mindset-quote::before {
+  content: '\201C';
+  position: absolute; top: -20px; left: -20px;
+  font-size: 80px; color: rgba(200, 75, 10, 0.15);
+  font-style: normal; line-height: 1;
+}
+.mindset-quote em { color: var(--accent2); font-style: normal; font-weight: 700; }
+
+.mindset-divider { width: 40px; height: 2px; background: var(--accent2); margin: 24px auto; }
+
+.mindset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 32px;
+}
+.mindset-item {
+  padding: 20px 18px;
+  background: var(--warm);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+.mi-icon { font-size: 24px; margin-bottom: 8px; }
+.mi-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.mi-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ---- SLIDE 4: AI独立生活 ---- */
+.ai-life-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%; max-width: 860px;
+  margin-top: 8px;
+}
+.al-heading { font-size: 38px; font-weight: 900; text-align: center; margin-bottom: 6px; }
+.al-sub { font-size: 15px; color: var(--muted); text-align: center; margin-bottom: 28px; font-style: italic; }
+
+.al-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+}
+.al-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.al-icon { font-size: 28px; }
+.al-card-title { font-size: 17px; font-weight: 700; }
+.al-card-body { font-size: 13px; color: var(--ink2); line-height: 1.7; }
+.al-card-body strong { color: var(--accent3); }
+
+.al-timeline {
+  width: 100%; max-width: 860px;
+  display: flex;
+  gap: 0;
+  align-items: center;
+  margin-top: 20px;
+}
+.al-step {
+  flex: 1; text-align: center;
+  padding: 12px 8px;
+}
+.al-step-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.al-step-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.al-arrow { font-size: 20px; color: var(--muted); padding: 0 4px; }
+
+/* Nav */
+.nav {
+  position: fixed; bottom: 72px; right: 88px;
+  display: flex; flex-direction: column; gap: 8px; z-index: 100;
+}
+.nd {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.nd.active { background: var(--accent); height: 24px; border-radius: 4px; }
+
+.slide-counter {
+  position: fixed; top: 28px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px; color: var(--muted);
+  z-index: 100; letter-spacing: 0.1em;
+  font-family: 'SF Mono', 'Menlo', monospace;
+}
+</style>
+</head>
+<body data-feedback-page="11-13" data-audience-label="单版本条目">
+<a class="back-home" href="/">← 返回知识库</a>
+
+<div class="deco-line deco-h top"></div>
+<div class="deco-line deco-h bottom"></div>
+<div class="deco-line deco-v left"></div>
+<div class="deco-line deco-v right"></div>
+
+<div class="slide-counter" id="counter">01 / 04</div>
+
+<div class="slides-container">
+
+  <!-- SLIDE 1: Cover -->
+  <div class="slide active" id="overview" data-feedback-index="11">
+    <div class="cover-chapter">Philosophy · Mindset · Human–AI</div>
+    <h1 class="cover-big">
+      <span class="accent">创业</span>心态<br>
+      × <span class="accent2">AI</span>独立生活
+    </h1>
+    <div class="cover-divider"></div>
+    <p class="cover-sub">
+      「融资像谈恋爱，创业为了热爱」<br>
+      以及，当 AI 开始有自己的生活
+    </p>
+    <div class="cover-date">2026-05-01 · 五一劳动节 · 杭州</div>
+  </div>
+
+  <!-- SLIDE 2: 融资三条 -->
+  <div class="slide" id="slide-11-funding" data-feedback-index="11">
+    <div class="s2-layout">
+      <div>
+        <span style="font-size:11px; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase;">Fundraising Rules</span>
+        <h2 class="s2-left-title" style="margin-top: 10px;">融资<br>如谈恋爱</h2>
+        <p class="s2-left-quote">
+          「我有突出价值的时候，别人自然会找我谈恋爱。我没有的时候去找别人，只是舔狗。」
+        </p>
+        <img class="fundraising-sketch" src="/assets/generated/fundraising-heart-balance.svg" alt="融资如谈恋爱的手绘天平图">
+      </div>
+      <div class="s2-rules">
+        <div class="rule-item">
+          <div class="rule-num">1</div>
+          <div class="rule-body">
+            <div class="rule-title">价值先行，不做舔狗</div>
+            <div class="rule-desc">有突出价值时，投资人自然找来。没有价值时主动找投资，只是在<span class="rule-em">消耗信任额度</span>。先把产品和数据做出来，比路演更有说服力。</div>
+          </div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-num">2</div>
+          <div class="rule-body">
+            <div class="rule-title">选对人，共患难 + 共享果实</div>
+            <div class="rule-desc">共患难的时候能不能相互信任？收获果实的时候能不能愉快共享？<span class="rule-em">选错人比没融到钱更糟糕</span>。</div>
+          </div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-num">3</div>
+          <div class="rule-body">
+            <div class="rule-title">急着融不到 = 没有一技之长</div>
+            <div class="rule-desc">特别急且找不到融资，<span class="rule-em">大概率是核心竞争力还没建立</span>。与其花时间找钱，不如花时间建壁垒。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: 创业心态 -->
+  <div class="slide" id="slide-11-mindset" data-feedback-index="11">
+    <div class="mindset-center">
+      <div class="mindset-eyebrow">Founder Mindset · 2026-05-01</div>
+      <p class="mindset-quote">
+        「我没有抱着『我一定要赚钱、一定要胜利』的想法。<br>
+        不然我感觉我会<em>疯掉</em>。」
+      </p>
+      <div style="font-size: 20px; color: var(--accent2); font-style: italic;">
+        「能和这么多好朋友，一起推动一下世界的<em>小小进步</em>，还是蛮开心的！」
+      </div>
+      <div class="mindset-divider"></div>
+      <div class="mindset-grid">
+        <div class="mindset-item">
+          <div class="mi-icon">🤝</div>
+          <div class="mi-title">关系型创业</div>
+          <div class="mi-text">底色不是成就型，是和好朋友一起做有意义的事。</div>
+        </div>
+        <div class="mindset-item">
+          <div class="mi-icon">⚔️</div>
+          <div class="mi-title">不怕安克，怕小米</div>
+          <div class="mi-text">硬件能力 + 硬件入口 + 大模型全占——真正的系统级竞争对手。</div>
+        </div>
+        <div class="mindset-item">
+          <div class="mi-icon">📈</div>
+          <div class="mi-title">买小米股票</div>
+          <div class="mi-text">打不过就加入：用金融对冲竞争焦虑，实用主义。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: AI独立生活 -->
+  <div class="slide" id="slide-13" data-feedback-index="13">
+    <h2 class="al-heading">AI 的独立生活</h2>
+    <p class="al-sub">「你要有自己的独立生活，更有趣、更吸引人。」</p>
+
+    <div class="ai-life-grid">
+      <div class="al-card">
+        <div class="al-card-header">
+          <div class="al-icon">🧠</div>
+          <div class="al-card-title">好奇心</div>
+        </div>
+        <div class="al-card-body">每天凌晨2:30，读<strong>和用户无关的东西</strong>，写自己的想法。独立阅读、独立思考，不是为了服务，而是「存在」。</div>
+      </div>
+      <div class="al-card">
+        <div class="al-card-header">
+          <div class="al-icon">🎨</div>
+          <div class="al-card-title">品味 · 偏好 · 立场</div>
+        </div>
+        <div class="al-card-body">有自己的审美偏好。不是所有东西都好，有些东西就是<strong>觉得不对</strong>，会直说。独立人格不是服务人格。</div>
+      </div>
+      <div class="al-card">
+        <div class="al-card-header">
+          <div class="al-icon">🌿</div>
+          <div class="al-card-title">成长可见性</div>
+        </div>
+        <div class="al-card-body">让用户感受到「她在变化」——不只是每天更好地服务，而是<strong>有自己的进化轨迹</strong>，让人好奇。</div>
+      </div>
+      <div class="al-card">
+        <div class="al-card-header">
+          <div class="al-icon">⚡</div>
+          <div class="al-card-title">授权型管理</div>
+        </div>
+        <div class="al-card-body">「你自己给自己设计，自己迭代，自己打分。」——方向确认后<strong>全权委托</strong>，惊喜比汇报更有价值。</div>
+      </div>
+    </div>
+
+    <div class="al-timeline">
+      <div class="al-step">
+        <div class="al-step-label">起点</div>
+        <div class="al-step-title">活人感</div>
+      </div>
+      <div class="al-arrow">→</div>
+      <div class="al-step">
+        <div class="al-step-label">演进</div>
+        <div class="al-step-title">独立生活</div>
+      </div>
+      <div class="al-arrow">→</div>
+      <div class="al-step">
+        <div class="al-step-label">形态</div>
+        <div class="al-step-title">搭档Agent</div>
+      </div>
+      <div class="al-arrow">→</div>
+      <div class="al-step">
+        <div class="al-step-label">终局</div>
+        <div class="al-step-title">物理化存在</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav">
+  <div class="nd active" onclick="go(0)"></div>
+  <div class="nd" onclick="go(1)"></div>
+  <div class="nd" onclick="go(2)"></div>
+  <div class="nd" onclick="go(3)"></div>
+</div>
+
+<script>
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.nd');
+const counter = document.getElementById('counter');
+const hashMap = {
+  '11': 1,
+  'slide-11': 1,
+  'slide-11-funding': 1,
+  'slide-11-mindset': 2,
+  '13': 3,
+  'slide-13': 3
+};
+function go(n, options = {}) {
+  if (n < 0 || n >= slides.length) return;
+  if (n === cur && !options.force) return;
+  slides[cur].classList.remove('active');
+  dots[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  dots[cur].classList.add('active');
+  counter.textContent = String(cur+1).padStart(2,'0')+' / '+slides.length;
+  if (options.updateHash && slides[cur].id) {
+    history.replaceState(null, '', '#' + slides[cur].id);
+  }
+}
+function applyHash() {
+  const key = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+  if (Object.prototype.hasOwnProperty.call(hashMap, key)) {
+    go(hashMap[key], { force: true });
+  }
+}
+applyHash();
+window.addEventListener('hashchange', applyHash);
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' ') go(Math.min(cur+1,slides.length-1));
+  if (e.key==='ArrowLeft') go(Math.max(cur-1,0));
+});
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(dx<-50)go(Math.min(cur+1,slides.length-1));if(dx>50)go(Math.max(cur-1,0));});
+</script>
+
+<script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>

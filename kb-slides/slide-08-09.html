@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心流法则 × 对话流动</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --accent1: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e6c5;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --border: rgba(108, 99, 255, 0.2);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'PingFang SC', 'Helvetica Neue', sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  .back-home {
+    position: fixed;
+    top: 18px;
+    left: 22px;
+    z-index: 120;
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(108, 99, 255, 0.28);
+    background: rgba(10, 10, 15, 0.72);
+    color: rgba(232, 232, 240, 0.92);
+    font-size: 13px;
+    font-weight: 700;
+    backdrop-filter: blur(12px);
+  }
+
+  /* Animated background */
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(108, 99, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(108, 99, 255, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridShift 20s linear infinite;
+  }
+  @keyframes gridShift {
+    from { transform: translate(0, 0); }
+    to { transform: translate(60px, 60px); }
+  }
+
+  .slides-container {
+    position: relative;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    transform: translateY(30px);
+    pointer-events: none;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* SLIDE 1 — Title */
+  .s1-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(108, 99, 255, 0.15);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--accent1);
+    margin-bottom: 32px;
+    letter-spacing: 0.05em;
+  }
+  .s1-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent1); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+
+  .s1-title {
+    font-size: 58px;
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .s1-title .highlight {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .s1-sub {
+    font-size: 18px;
+    color: var(--muted);
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+  }
+  .s1-meta {
+    display: flex;
+    gap: 40px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .s1-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* SLIDE 2 — 10/30s law */
+  .timer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 36px;
+  }
+  .timer-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .timer-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .timer-card.ten::before { background: linear-gradient(90deg, var(--accent3), var(--accent1)); }
+  .timer-card.thirty::before { background: linear-gradient(90deg, var(--accent1), var(--accent2)); }
+
+  .timer-num {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .timer-card.ten .timer-num { color: var(--accent3); }
+  .timer-card.thirty .timer-num { color: var(--accent1); }
+
+  .timer-label { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+  .timer-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .timer-tag {
+    display: inline-block;
+    margin-top: 12px;
+    background: rgba(108, 99, 255, 0.15);
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--accent1);
+  }
+
+  .quote-block {
+    width: 100%;
+    max-width: 800px;
+    background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(255,101,132,0.08));
+    border: 1px solid rgba(108, 99, 255, 0.3);
+    border-radius: 16px;
+    padding: 24px 28px;
+    position: relative;
+  }
+  .quote-block::before {
+    content: '"';
+    position: absolute;
+    top: -12px; left: 20px;
+    font-size: 60px;
+    color: var(--accent1);
+    line-height: 1;
+    opacity: 0.5;
+  }
+  .quote-text { font-size: 15px; line-height: 1.8; font-style: italic; color: #c0c0d8; }
+  .quote-spotlight {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(67, 230, 197, 0.24);
+    background: rgba(67, 230, 197, 0.06);
+  }
+  .quote-spotlight span {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--accent3);
+  }
+  .quote-spotlight strong {
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  /* SLIDE 3 — Knowledge Flow */
+  .flow-title {
+    font-size: 40px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .flow-subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 36px;
+  }
+  .flow-node {
+    flex: 1;
+    text-align: center;
+    padding: 28px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: relative;
+  }
+  .flow-node-icon { font-size: 28px; margin-bottom: 10px; }
+  .flow-node-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .flow-node-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .flow-arrow {
+    width: 48px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 24px;
+    color: var(--accent1);
+    position: relative;
+  }
+  .flow-arrow::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 8px; right: 8px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    transform: translateY(-50%);
+  }
+
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 900px;
+  }
+  .principle-item {
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .principle-num {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .principle-text { font-size: 13px; line-height: 1.6; color: var(--text); }
+  .principle-text strong { color: var(--accent3); display: block; margin-bottom: 4px; font-size: 14px; }
+
+  /* Nav dots */
+  .nav {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-dot.active {
+    background: var(--accent1);
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  /* Slide indicator */
+  .slide-num {
+    position: fixed;
+    top: 28px; right: 36px;
+    font-size: 12px;
+    color: var(--muted);
+    z-index: 100;
+    letter-spacing: 0.1em;
+  }
+
+  /* Section header */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .section-tag {
+    background: rgba(67, 230, 197, 0.15);
+    border: 1px solid rgba(67, 230, 197, 0.3);
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--accent3);
+    letter-spacing: 0.08em;
+  }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* Glowing orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 { width: 400px; height: 400px; background: rgba(108, 99, 255, 0.12); top: -100px; left: -100px; }
+  .orb2 { width: 300px; height: 300px; background: rgba(255, 101, 132, 0.08); bottom: -50px; right: -50px; }
+
+  .arrow-txt { font-size: 22px; position: relative; z-index: 1; }
+</style>
+</head>
+<body data-feedback-page="08-09" data-audience-label="单版本条目">
+<a class="back-home" href="/">← 返回知识库</a>
+
+<div class="bg-grid"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="slide-num" id="slideNum">01 / 03</div>
+
+<div class="slides-container">
+
+  <!-- SLIDE 1: Cover -->
+  <div class="slide active" id="overview" data-feedback-index="8">
+    <div class="s1-badge">
+      <div class="s1-dot"></div>
+      Agent 交互原则 × 知识架构
+    </div>
+    <h1 class="s1-title">
+      心流法则<br>
+      <span class="highlight">+ 对话流动知识沉淀</span>
+    </h1>
+    <p class="s1-sub">
+      两条定律，一套哲学——<br>
+      重新定义 AI Agent 与人的协作边界
+    </p>
+    <div class="s1-meta">
+      <span>⏱ 10秒 / 30秒 响应定律</span>
+      <span>🌊 对话流动 × 知识沉淀</span>
+      <span>🧠 心流 × 异步机制</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: 10/30s Law -->
+  <div class="slide" id="slide-08" data-feedback-index="8">
+    <div class="section-header">
+      <div class="section-tag">INTERACTION LAW</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="timer-grid">
+      <div class="timer-card ten">
+        <div class="timer-num">10s</div>
+        <div class="timer-label">简单任务</div>
+        <div class="timer-desc">指令即结果。用户不应该等，等待的每一秒都在稀释信任。10秒是心流的底线。</div>
+        <span class="timer-tag">同步 · 即时反馈</span>
+      </div>
+      <div class="timer-card thirty">
+        <div class="timer-num">30s</div>
+        <div class="timer-label">复杂任务</div>
+        <div class="timer-desc">复杂不是慢的理由，是告知的理由。30秒内给反馈，超时就启动异步——永远不让用户盲等。</div>
+        <span class="timer-tag">异步 · 进度感知</span>
+      </div>
+    </div>
+    <div class="quote-block">
+      <p class="quote-text">「如果不能做到，超过了这个范围，就需要异步交流。整个做事的心流就被岔开了——Agent 从助手变成了打断者。不确定性比慢更致命，让用户干等着猜，是最差体验。」</p>
+    </div>
+    <div class="quote-spotlight">
+      <span>CORE QUOTE</span>
+      <strong>不确定性比慢更致命。</strong>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: 对话流动知识沉淀 -->
+  <div class="slide" id="slide-09" data-feedback-index="9">
+    <div class="section-header">
+      <div class="section-tag">KNOWLEDGE ARCHITECTURE</div>
+      <div class="section-line"></div>
+    </div>
+    <h2 class="flow-title">对话是流动的，知识是沉淀的</h2>
+    <p class="flow-subtitle">不分线程，单 Session 自然对话——知识层在水面下自动结晶</p>
+    <div class="quote-spotlight">
+      <span>CORE QUOTE</span>
+      <strong>不要让对话变整齐，让知识沉淀变整齐。</strong>
+    </div>
+    <div class="flow-diagram">
+      <div class="flow-node">
+        <div class="flow-node-icon">💬</div>
+        <div class="flow-node-title">自然对话</div>
+        <div class="flow-node-desc">不需要手动切线程，像真实对话一样流动</div>
+      </div>
+      <div class="flow-arrow"><span class="arrow-txt">→</span></div>
+      <div class="flow-node">
+        <div class="flow-node-icon">🧩</div>
+        <div class="flow-node-title">实时感知</div>
+        <div class="flow-node-desc">AI 在对话中识别决策、信号、状态变化</div>
+      </div>
+      <div class="flow-arrow"><span class="arrow-txt">→</span></div>
+      <div class="flow-node">
+        <div class="flow-node-icon">💎</div>
+        <div class="flow-node-title">自动沉淀</div>
+        <div class="flow-node-desc">关键信息写入记忆层，不丢失，可回溯</div>
+      </div>
+      <div class="flow-arrow"><span class="arrow-txt">→</span></div>
+      <div class="flow-node">
+        <div class="flow-node-icon">🔮</div>
+        <div class="flow-node-title">跨主题关联</div>
+        <div class="flow-node-desc">Hermes 夜间做跨项目关联 + 用户画像</div>
+      </div>
+    </div>
+    <div class="principles-grid">
+      <div class="principle-item">
+        <div class="principle-num">1</div>
+        <div class="principle-text"><strong>上下文不污染</strong>一件事没做完去做另一件——回来时上下文必须干净。</div>
+      </div>
+      <div class="principle-item">
+        <div class="principle-num">2</div>
+        <div class="principle-text"><strong>主动记忆</strong>决策确认、方案结论、状态变化——立刻写入，不等 flush。</div>
+      </div>
+      <div class="principle-item">
+        <div class="principle-num">3</div>
+        <div class="principle-text"><strong>5分钟时效</strong>开完会5分钟内没有行动建议——原文价值断崖式下跌。</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav">
+  <div class="nav-dot active" onclick="goTo(0)"></div>
+  <div class="nav-dot" onclick="goTo(1)"></div>
+  <div class="nav-dot" onclick="goTo(2)"></div>
+</div>
+
+<script>
+  let current = 0;
+	  const slides = document.querySelectorAll('.slide');
+	  const dots = document.querySelectorAll('.nav-dot');
+	  const numEl = document.getElementById('slideNum');
+	  const hashMap = {
+	    '08': 1,
+	    'slide-08': 1,
+	    '09': 2,
+	    'slide-09': 2
+	  };
+
+	  function goTo(n, options = {}) {
+	    if (n < 0 || n >= slides.length) return;
+	    if (n === current && !options.force) return;
+	    slides[current].classList.remove('active');
+	    dots[current].classList.remove('active');
+	    current = n;
+	    slides[current].classList.add('active');
+	    dots[current].classList.add('active');
+	    numEl.textContent = String(current + 1).padStart(2, '0') + ' / ' + slides.length;
+	    if (options.updateHash && slides[current].id) {
+	      history.replaceState(null, '', '#' + slides[current].id);
+	    }
+	  }
+
+	  function applyHash() {
+	    const key = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+	    if (Object.prototype.hasOwnProperty.call(hashMap, key)) {
+	      goTo(hashMap[key], { force: true });
+	    }
+	  }
+
+	  applyHash();
+	  window.addEventListener('hashchange', applyHash);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') goTo(Math.min(current + 1, slides.length - 1));
+    if (e.key === 'ArrowLeft') goTo(Math.max(current - 1, 0));
+  });
+
+  let startX = 0;
+  document.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (dx < -50) goTo(Math.min(current + 1, slides.length - 1));
+    if (dx > 50) goTo(Math.max(current - 1, 0));
+  });
+</script>
+
+<script src="/assets/kb-feedback.js" defer></script>
+	</body>
+	</html>
