@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>程翔的个人纪要时间线</title>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #ead88d;
+      --ink: #09090d;
+      --panel: rgba(18, 18, 24, 0.82);
+      --panel-strong: rgba(23, 23, 30, 0.94);
+      --text: #e8e4dc;
+      --text-soft: rgba(232, 228, 220, 0.72);
+      --text-dim: rgba(232, 228, 220, 0.52);
+      --line: rgba(232, 228, 220, 0.09);
+      --line-gold: rgba(201, 168, 76, 0.32);
+      --shadow: 0 34px 90px rgba(0, 0, 0, 0.48);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 14% 10%, rgba(201, 168, 76, 0.16), transparent 24%),
+        radial-gradient(circle at 84% 8%, rgba(77, 120, 255, 0.12), transparent 22%),
+        radial-gradient(circle at 72% 90%, rgba(232, 93, 74, 0.07), transparent 24%),
+        linear-gradient(180deg, #07070a 0%, #090a10 48%, #0d0d13 100%);
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+      background-size: 84px 84px;
+      opacity: 0.25;
+      mask-image: radial-gradient(circle at center, black 54%, transparent 94%);
+    }
+
+    body::after {
+      background:
+        linear-gradient(112deg, transparent 16%, rgba(201, 168, 76, 0.05) 38%, transparent 58%),
+        radial-gradient(circle at 48% 16%, rgba(255, 255, 255, 0.08), transparent 2px);
+      background-size: 180% 180%, 160px 160px;
+      animation: atmosphere 16s ease-in-out infinite alternate;
+      opacity: 0.72;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(1500px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 24px 0 64px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .pill,
+    .chip,
+    .button,
+    .ghost-button {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: rgba(232, 228, 220, 0.78);
+      background: rgba(255, 255, 255, 0.028);
+    }
+
+    .pill {
+      padding: 9px 13px;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .back-link {
+      color: var(--text-soft);
+      transition: color 160ms ease, transform 160ms ease;
+    }
+
+    .back-link:hover {
+      color: var(--gold-light);
+      transform: translateX(-2px);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.34fr);
+      gap: 28px;
+      min-height: 330px;
+      padding: clamp(28px, 4vw, 54px);
+      border: 1px solid rgba(232, 228, 220, 0.1);
+      border-radius: calc(var(--radius) + 10px);
+      background:
+        linear-gradient(135deg, rgba(201, 168, 76, 0.11), transparent 34%),
+        linear-gradient(180deg, rgba(25, 25, 32, 0.94), rgba(10, 10, 15, 0.9));
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(201, 168, 76, 0.2), transparent 18%),
+        conic-gradient(from 180deg at 50% 50%, transparent 0deg, rgba(201, 168, 76, 0.15) 70deg, transparent 140deg);
+      animation: slow-drift 18s ease-in-out infinite alternate;
+      opacity: 0.8;
+    }
+
+    .hero > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      margin-bottom: 18px;
+      color: var(--gold-light);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif SC", serif;
+      line-height: 1.22;
+      letter-spacing: -0.035em;
+    }
+
+    h1 {
+      max-width: 8.8em;
+      font-size: clamp(48px, 6vw, 78px);
+    }
+
+    h2 {
+      font-size: clamp(30px, 4vw, 44px);
+    }
+
+    h3 {
+      font-size: 24px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-dim);
+      font-size: 16px;
+      line-height: 1.78;
+    }
+
+    .hero-lead {
+      max-width: 52em;
+      margin-top: 22px;
+      color: rgba(232, 228, 220, 0.82);
+      font-size: 18px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .chip {
+      padding: 7px 12px;
+      color: rgba(232, 212, 139, 0.86);
+      font-size: 12px;
+      background: rgba(201, 168, 76, 0.08);
+    }
+
+    .hero-radar {
+      align-self: stretch;
+      display: grid;
+      align-content: end;
+      gap: 14px;
+      padding-left: 22px;
+      border-left: 1px solid rgba(201, 168, 76, 0.22);
+    }
+
+    .radar-node {
+      position: relative;
+      padding: 16px 16px 16px 20px;
+      border: 1px solid rgba(232, 228, 220, 0.08);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(18px);
+    }
+
+    .radar-node::before {
+      content: "";
+      position: absolute;
+      left: -29px;
+      top: 21px;
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      background: var(--gold-light);
+      box-shadow: 0 0 22px rgba(201, 168, 76, 0.76);
+    }
+
+    .radar-date {
+      margin-bottom: 6px;
+      color: var(--gold-light);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+    }
+
+    .radar-title {
+      color: rgba(232, 228, 220, 0.88);
+      font-weight: 800;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+      gap: 22px;
+      align-items: start;
+      margin-top: 24px;
+    }
+
+    .timeline-panel,
+    .capture-panel {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      background: linear-gradient(180deg, var(--panel-strong), rgba(11, 11, 16, 0.88));
+      box-shadow: var(--shadow);
+    }
+
+    .timeline-panel {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(22px, 3vw, 36px);
+    }
+
+    .timeline-panel::before {
+      content: "";
+      position: absolute;
+      left: clamp(30px, 4vw, 50px);
+      top: 92px;
+      bottom: 32px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(201, 168, 76, 0), rgba(201, 168, 76, 0.66), rgba(201, 168, 76, 0));
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.28);
+    }
+
+    .panel-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+
+    .panel-head p {
+      margin-top: 8px;
+    }
+
+    .status-line {
+      min-height: 20px;
+      color: rgba(232, 228, 220, 0.48);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .timeline {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 18px;
+    }
+
+    .memo-card {
+      position: relative;
+      margin-left: 48px;
+      padding: 24px;
+      border: 1px solid rgba(232, 228, 220, 0.09);
+      border-radius: calc(var(--radius) + 2px);
+      background:
+        linear-gradient(135deg, rgba(201, 168, 76, 0.08), transparent 42%),
+        rgba(255, 255, 255, 0.03);
+      animation: card-in 560ms ease both;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      scroll-margin-top: 24px;
+    }
+
+    .memo-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(201, 168, 76, 0.28);
+      background:
+        linear-gradient(135deg, rgba(201, 168, 76, 0.12), transparent 42%),
+        rgba(255, 255, 255, 0.045);
+    }
+
+    .memo-card.is-focused {
+      border-color: rgba(232, 212, 139, 0.54);
+      background:
+        linear-gradient(135deg, rgba(201, 168, 76, 0.2), transparent 46%),
+        rgba(255, 255, 255, 0.055);
+      box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.12), 0 22px 70px rgba(201, 168, 76, 0.12);
+    }
+
+    .memo-card::before {
+      content: "";
+      position: absolute;
+      left: -53px;
+      top: 28px;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(9, 9, 13, 0.9);
+      border-radius: 999px;
+      background: var(--gold-light);
+      box-shadow: 0 0 0 5px rgba(201, 168, 76, 0.12), 0 0 26px rgba(201, 168, 76, 0.7);
+    }
+
+    .memo-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+
+    .memo-date {
+      color: var(--gold-light);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+    }
+
+    .memo-content {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .memo-content p {
+      white-space: pre-wrap;
+      color: rgba(232, 228, 220, 0.72);
+    }
+
+    .memo-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .memo-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .memo-action {
+      border: 1px solid rgba(201, 168, 76, 0.22);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: rgba(232, 212, 139, 0.9);
+      background: rgba(201, 168, 76, 0.08);
+      cursor: pointer;
+    }
+
+    .memo-action.secondary {
+      border-color: rgba(232, 228, 220, 0.12);
+      color: rgba(232, 228, 220, 0.68);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    body.is-mirror .memo-actions {
+      display: none;
+    }
+
+    .capture-panel {
+      position: sticky;
+      top: 20px;
+      overflow: hidden;
+      padding: 22px;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(201, 168, 76, 0.12), transparent 34%),
+        linear-gradient(180deg, rgba(21, 21, 27, 0.9), rgba(12, 12, 17, 0.86));
+    }
+
+    .capture-panel h2 {
+      font-size: 26px;
+    }
+
+    .capture-note {
+      margin: 8px 0 18px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    label {
+      color: rgba(232, 228, 220, 0.66);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(232, 228, 220, 0.09);
+      border-radius: 16px;
+      padding: 12px 13px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.035);
+      outline: none;
+      transition: border-color 160ms ease, background 160ms ease;
+    }
+
+    textarea {
+      min-height: 156px;
+      resize: vertical;
+      line-height: 1.72;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: rgba(201, 168, 76, 0.34);
+      background: rgba(255, 255, 255, 0.052);
+    }
+
+    input:disabled,
+    textarea:disabled {
+      opacity: 0.52;
+      cursor: not-allowed;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .button,
+    .ghost-button {
+      justify-content: center;
+      min-height: 40px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .button {
+      border-color: rgba(201, 168, 76, 0.32);
+      color: #100f0b;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    }
+
+    .ghost-button {
+      color: rgba(232, 228, 220, 0.72);
+      background: rgba(255, 255, 255, 0.028);
+    }
+
+    .button:hover,
+    .ghost-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button:disabled,
+    .ghost-button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .empty-state {
+      margin-left: 48px;
+      padding: 28px;
+      border: 1px dashed rgba(232, 228, 220, 0.16);
+      border-radius: var(--radius);
+      color: var(--text-dim);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    @keyframes atmosphere {
+      from { background-position: 0% 0%, 0 0; }
+      to { background-position: 100% 100%, 80px 120px; }
+    }
+
+    @keyframes slow-drift {
+      from { transform: translate3d(-2%, -1%, 0) rotate(0deg); }
+      to { transform: translate3d(3%, 2%, 0) rotate(8deg); }
+    }
+
+    @keyframes card-in {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .capture-panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .shell {
+        width: min(100vw - 24px, 100%);
+        padding: 18px 0 44px;
+      }
+
+      .topbar,
+      .panel-head,
+      .memo-top {
+        display: grid;
+        gap: 10px;
+      }
+
+      .hero {
+        padding: 24px;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+
+      .hero-radar {
+        padding-left: 18px;
+      }
+
+      .timeline-panel {
+        padding: 22px;
+      }
+
+      .timeline-panel::before {
+        left: 28px;
+      }
+
+      .memo-card,
+      .empty-state {
+        margin-left: 28px;
+        padding: 20px;
+      }
+
+      .memo-card::before {
+        left: -34px;
+      }
+
+      .status-line {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <nav class="topbar" aria-label="页面导航">
+      <a class="pill back-link" href="/">← 返回知识库</a>
+      <div class="pill">程翔的个人纪要</div>
+    </nav>
+
+    <section class="hero" aria-labelledby="memoPageTitle">
+      <div>
+        <div class="eyebrow">Daily Memo Timeline</div>
+        <h1 id="memoPageTitle">把每天真正想留下的东西，按时间发光。</h1>
+        <p class="hero-lead">这里不是另一个输入框，而是一条持续生长的个人纪要时间线。感悟、判断、现场记录和产品直觉，会先沉到这里，再慢慢长成知识库条目。</p>
+        <div class="hero-meta">
+          <span class="chip">公开阅读</span>
+          <span class="chip">私密编辑</span>
+          <span class="chip">飞书同步</span>
+        </div>
+      </div>
+      <div class="hero-radar" data-hero-radar></div>
+    </section>
+
+    <section class="layout">
+      <section class="timeline-panel" aria-labelledby="timelineTitle">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">Timeline First</div>
+            <h2 id="timelineTitle">纪要时间线</h2>
+            <p>主视角是时间线：先看每天留下了什么，再决定要不要补一句。</p>
+          </div>
+          <div class="status-line" data-load-status>正在读取飞书纪要…</div>
+        </div>
+        <div class="timeline" data-memo-list></div>
+      </section>
+
+      <aside class="capture-panel" id="quick-capture" aria-labelledby="captureTitle">
+        <div class="eyebrow">Private Edit</div>
+        <h2 id="captureTitle">快速补一句</h2>
+        <p class="capture-note">输入框只是次要入口。默认会追加到今天；点时间线里的“追加一句 / 编辑全文”后，可以整理指定日期。</p>
+
+        <div class="field">
+          <label for="memoToken">编辑口令</label>
+          <input id="memoToken" type="password" autocomplete="current-password" placeholder="输入后开启私密编辑" />
+        </div>
+        <div class="button-row">
+          <button class="ghost-button" type="button" data-unlock>开启编辑模式</button>
+          <button class="ghost-button" type="button" data-reset-today>切回今日快记</button>
+        </div>
+
+        <form data-memo-form>
+          <div class="field">
+            <label for="memoDate">日期</label>
+            <input id="memoDate" name="date" type="date" disabled />
+          </div>
+          <div class="field">
+            <label for="memoTitle">标题</label>
+            <input id="memoTitle" name="title" type="text" maxlength="120" placeholder="今日纪要" disabled />
+          </div>
+          <div class="field">
+            <label for="memoContent">内容</label>
+            <textarea id="memoContent" name="content" maxlength="20000" placeholder="先记一句，稍后整理…" disabled></textarea>
+          </div>
+          <div class="field">
+            <label for="memoTags">标签</label>
+            <input id="memoTags" name="tags" type="text" placeholder="倾听者 / 前端 / 感悟" disabled />
+          </div>
+          <div class="button-row">
+            <button class="button" type="submit" disabled data-save>保存到今日</button>
+          </div>
+        </form>
+        <p class="capture-note" data-save-status>公开可读；写入需要私密口令。</p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const API_PATH = "/api/memos";
+    const TOKEN_KEY = "memo_admin_token";
+    const DEFAULT_MEMOS = [
+      {
+        date: "2026-05-19",
+        title: "倾听者前端感悟",
+        content: "今天做「倾听者」前端时，一个很强的感觉是：界面不能只是把功能摆出来，它要像一个能安静接住人的空间。\n\n输入不是主角，时间线才是主角。真正有价值的是那些连续留下来的判断、情绪和现场感。",
+        tags: ["倾听者", "前端", "感悟"]
+      },
+      {
+        date: "2026-05-18",
+        title: "AI 产品判断",
+        content: "产品不是把 AI 能做什么全部展示出来，而是把用户此刻最需要被接住的那一步做得足够稳。",
+        tags: ["AI 产品", "判断"]
+      },
+      {
+        date: "2026-05-17",
+        title: "一次会议后的反思",
+        content: "会议里真正重要的不是结论本身，而是谁在什么语境下说出了那个结论。纪要如果能保留语境，就比单纯摘要更有生命力。",
+        tags: ["会议", "复盘"]
+      },
+      {
+        date: "2026-05-16",
+        title: "产品节奏判断",
+        content: "真正要沉淀的不是灵感本身，而是灵感出现时的现场和取舍。否则过几天再看，只剩一句漂亮但失真的结论。",
+        tags: ["产品", "节奏"]
+      },
+      {
+        date: "2026-05-15",
+        title: "个人知识库入口",
+        content: "时间线先接住日常判断，再让重要内容慢慢长成知识库条目。它应该像一个入口，而不是另一个压力很大的写作系统。",
+        tags: ["知识库", "时间线"]
+      }
+    ];
+
+    const isMirror = location.hostname.endsWith("github.io");
+    const listEl = document.querySelector("[data-memo-list]");
+    const radarEl = document.querySelector("[data-hero-radar]");
+    const loadStatusEl = document.querySelector("[data-load-status]");
+    const saveStatusEl = document.querySelector("[data-save-status]");
+    const tokenInput = document.getElementById("memoToken");
+    const form = document.querySelector("[data-memo-form]");
+    const dateInput = document.getElementById("memoDate");
+    const titleInput = document.getElementById("memoTitle");
+    const contentInput = document.getElementById("memoContent");
+    const tagsInput = document.getElementById("memoTags");
+    const saveButton = document.querySelector("[data-save]");
+    const unlockButton = document.querySelector("[data-unlock]");
+    const resetTodayButton = document.querySelector("[data-reset-today]");
+
+    let memos = [...DEFAULT_MEMOS];
+    let adminToken = localStorage.getItem(TOKEN_KEY) || "";
+    let writeMode = "append";
+    const targetDate = getRequestedDate();
+
+    tokenInput.value = adminToken;
+    dateInput.value = todayISO();
+    titleInput.value = "今日纪要";
+
+    if (isMirror) {
+      document.body.classList.add("is-mirror");
+      setSaveStatus("GitHub Pages 镜像为只读；编辑请打开 Vercel 主站。");
+      unlockButton.disabled = true;
+    } else if (adminToken) {
+      enableEditing("已读取本机保存的编辑口令，保存时会验证。");
+    }
+
+    renderMemos(memos);
+    loadMemos();
+
+    unlockButton.addEventListener("click", () => {
+      const token = tokenInput.value.trim();
+      if (!token) {
+        setSaveStatus("先输入编辑口令。");
+        return;
+      }
+      adminToken = token;
+      localStorage.setItem(TOKEN_KEY, adminToken);
+      enableEditing("编辑模式已开启，保存时会同步到飞书。");
+    });
+
+    resetTodayButton.addEventListener("click", () => {
+      setAppendTodayMode();
+      document.getElementById("quick-capture").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await saveMemo();
+    });
+
+    async function loadMemos() {
+      if (isMirror) {
+        setLoadStatus("镜像只读预览");
+        return;
+      }
+
+      try {
+        const response = await fetch(API_PATH);
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || "读取失败");
+        }
+        memos = payload.memos?.length ? payload.memos : [];
+        renderMemos(memos);
+        setLoadStatus(memos.length ? "已同步飞书纪要" : "还没有线上纪要，先补第一条。");
+      } catch (error) {
+        console.warn("memo_load_failed", error);
+        setLoadStatus("暂用本地示例预览；配置飞书后会自动同步。");
+      }
+    }
+
+    async function saveMemo() {
+      if (!adminToken) {
+        setSaveStatus("需要先开启编辑模式。");
+        return;
+      }
+
+      const date = dateInput.value;
+      const title = titleInput.value.trim() || "今日纪要";
+      const rawContent = contentInput.value.trim();
+      if (!date || !rawContent) {
+        setSaveStatus("日期和内容都要有。");
+        return;
+      }
+
+      const existing = memos.find((memo) => memo.date === date);
+      const content = writeMode === "append" && existing?.content
+        ? `${existing.content}\n\n${timeLabel()} ${rawContent}`
+        : rawContent;
+      const tags = tagsInput.value.trim() || existing?.tags?.join(" / ") || "";
+
+      saveButton.disabled = true;
+      setSaveStatus("正在同步到飞书…");
+
+      try {
+        const response = await fetch(API_PATH, {
+          method: "POST",
+          headers: {
+            "X-Memo-Admin-Token": encodeURIComponent(adminToken),
+            "Content-Type": "application/json; charset=utf-8"
+          },
+          body: JSON.stringify({ date, title, content, tags })
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || payload.message || "保存失败");
+        }
+
+        upsertMemo(payload.memo);
+        renderMemos(memos);
+        setAppendTodayMode();
+        setSaveStatus("已保存到飞书。");
+      } catch (error) {
+        console.error("memo_save_failed", error);
+        setSaveStatus(error.message === "unauthorized" ? "口令不对，没保存。" : "保存失败，请检查口令和飞书配置。");
+      } finally {
+        saveButton.disabled = false;
+      }
+    }
+
+    function renderMemos(items) {
+      renderRadar(items);
+      listEl.replaceChildren();
+
+      if (!items.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "还没有纪要。开启编辑模式后，先从今天补一句开始。";
+        listEl.appendChild(empty);
+        return;
+      }
+
+      items
+        .slice()
+        .sort((left, right) => right.date.localeCompare(left.date))
+        .forEach((memo, index) => {
+          const card = document.createElement("article");
+          card.className = "memo-card";
+          if (memo.date === targetDate) {
+            card.classList.add("is-focused");
+          }
+          if (memo.date) {
+            card.id = `memo-${memo.date}`;
+          }
+          card.style.animationDelay = `${Math.min(index * 70, 420)}ms`;
+
+          const top = document.createElement("div");
+          top.className = "memo-top";
+
+          const heading = document.createElement("div");
+          const date = document.createElement("div");
+          date.className = "memo-date";
+          date.textContent = formatDate(memo.date);
+          const title = document.createElement("h3");
+          title.textContent = memo.title || "今日纪要";
+          heading.append(date, title);
+
+          const actions = document.createElement("div");
+          actions.className = "memo-actions";
+
+          const appendButton = document.createElement("button");
+          appendButton.className = "memo-action secondary";
+          appendButton.type = "button";
+          appendButton.textContent = "追加一句";
+          appendButton.addEventListener("click", () => requestMemoAction(memo, "append"));
+
+          const editButton = document.createElement("button");
+          editButton.className = "memo-action";
+          editButton.type = "button";
+          editButton.textContent = "编辑全文";
+          editButton.addEventListener("click", () => requestMemoAction(memo, "replace"));
+
+          actions.append(appendButton, editButton);
+          top.append(heading, actions);
+
+          const content = document.createElement("div");
+          content.className = "memo-content";
+          splitBlocks(memo.content).forEach((block) => {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = block;
+            content.appendChild(paragraph);
+          });
+
+          const tags = document.createElement("div");
+          tags.className = "memo-tags";
+          (memo.tags || []).forEach((tag) => {
+            const chip = document.createElement("span");
+            chip.className = "chip";
+            chip.textContent = tag;
+            tags.appendChild(chip);
+          });
+
+          card.append(top, content, tags);
+          listEl.appendChild(card);
+        });
+
+      focusRequestedMemo();
+    }
+
+    function renderRadar(items) {
+      radarEl.replaceChildren();
+      const latest = items.slice().sort((left, right) => right.date.localeCompare(left.date)).slice(0, 3);
+
+      latest.forEach((memo) => {
+        const node = document.createElement("div");
+        node.className = "radar-node";
+        const date = document.createElement("div");
+        date.className = "radar-date";
+        date.textContent = formatDate(memo.date);
+        const title = document.createElement("div");
+        title.className = "radar-title";
+        title.textContent = memo.title || "今日纪要";
+        node.append(date, title);
+        radarEl.appendChild(node);
+      });
+    }
+
+    function setReplaceMode(memo) {
+      writeMode = "replace";
+      dateInput.value = memo.date;
+      titleInput.value = memo.title || "今日纪要";
+      contentInput.value = memo.content || "";
+      tagsInput.value = memo.tags?.join(" / ") || "";
+      saveButton.textContent = "保存这天";
+      setSaveStatus(`正在整理 ${memo.date} 的完整纪要。`);
+      document.getElementById("quick-capture").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function setAppendMode(memo) {
+      writeMode = "append";
+      dateInput.value = memo.date;
+      titleInput.value = memo.title || "今日纪要";
+      contentInput.value = "";
+      tagsInput.value = memo.tags?.join(" / ") || "";
+      saveButton.textContent = "追加到这天";
+      setSaveStatus(`会追加到 ${memo.date}，不覆盖原文。`);
+      document.getElementById("quick-capture").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function requestMemoAction(memo, mode) {
+      if (isMirror) {
+        setSaveStatus("镜像站只读；编辑请打开 Vercel 主站。");
+        return;
+      }
+
+      if (!document.body.classList.contains("is-admin")) {
+        setSaveStatus("输入编辑口令后，就可以追加或编辑这天。");
+        document.getElementById("quick-capture").scrollIntoView({ behavior: "smooth", block: "start" });
+        tokenInput.focus();
+        return;
+      }
+
+      if (mode === "append") {
+        setAppendMode(memo);
+      } else {
+        setReplaceMode(memo);
+      }
+    }
+
+    function setAppendTodayMode() {
+      writeMode = "append";
+      const today = todayISO();
+      const existing = memos.find((memo) => memo.date === today);
+      dateInput.value = today;
+      titleInput.value = existing?.title || "今日纪要";
+      contentInput.value = "";
+      tagsInput.value = existing?.tags?.join(" / ") || "";
+      saveButton.textContent = "保存到今日";
+      setSaveStatus("快速补一句会追加到今天，不覆盖原内容。");
+    }
+
+    function enableEditing(message) {
+      document.body.classList.add("is-admin");
+      [dateInput, titleInput, contentInput, tagsInput, saveButton].forEach((node) => {
+        node.disabled = false;
+      });
+      setSaveStatus(message);
+    }
+
+    function upsertMemo(memo) {
+      const index = memos.findIndex((item) => item.date === memo.date);
+      if (index >= 0) {
+        memos[index] = memo;
+      } else {
+        memos.push(memo);
+      }
+      memos.sort((left, right) => right.date.localeCompare(left.date));
+    }
+
+    function splitBlocks(value) {
+      return String(value || "")
+        .split(/\n{2,}/)
+        .map((block) => block.trim())
+        .filter(Boolean);
+    }
+
+    function formatDate(value) {
+      const [, , month, day] = value.match(/^(\d{4})-(\d{2})-(\d{2})$/) || [];
+      if (!month || !day) {
+        return value || "今日";
+      }
+      return `${month}-${day}${value === todayISO() ? " 今日" : ""}`;
+    }
+
+    function todayISO() {
+      const now = new Date();
+      const timezoneOffset = now.getTimezoneOffset() * 60000;
+      return new Date(now.getTime() - timezoneOffset).toISOString().slice(0, 10);
+    }
+
+    function timeLabel() {
+      return new Date().toLocaleTimeString("zh-CN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      });
+    }
+
+    function setLoadStatus(message) {
+      loadStatusEl.textContent = message;
+    }
+
+    function setSaveStatus(message) {
+      saveStatusEl.textContent = message;
+    }
+
+    function normalizeDate(value) {
+      const date = String(value || "").trim();
+      return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : "";
+    }
+
+    function getRequestedDate() {
+      const date = normalizeDate(new URLSearchParams(location.search).get("date") || "");
+      if (date) {
+        return date;
+      }
+
+      const [, hashDate] = location.hash.match(/^#memo-(\d{4}-\d{2}-\d{2})$/) || [];
+      return normalizeDate(hashDate || "");
+    }
+
+    function focusRequestedMemo() {
+      if (!targetDate) {
+        return;
+      }
+
+      const card = document.getElementById(`memo-${targetDate}`);
+      if (!card) {
+        return;
+      }
+
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      setLoadStatus(`已定位 ${formatDate(targetDate)} 的完整纪要。`);
+    }
+  </script>
+</body>
+</html>

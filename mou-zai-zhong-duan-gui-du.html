@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>谋在众，断贵独 · 竖屏卡片</title>
+  <style>
+    :root {
+      --ink: #14120d;
+      --paper: #f2ead8;
+      --paper-deep: #e0cfab;
+      --gold: #b48a35;
+      --muted: rgba(20, 18, 13, 0.58);
+      --line: rgba(20, 18, 13, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+      color: var(--ink);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(180, 138, 53, 0.2), transparent 28%),
+        linear-gradient(135deg, #0f0d0a, #242018);
+    }
+
+    .back-home {
+      position: fixed;
+      left: 22px;
+      top: 22px;
+      z-index: 10;
+      text-decoration: none;
+      border: 1px solid rgba(242, 234, 216, 0.18);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: rgba(242, 234, 216, 0.76);
+      background: rgba(15, 13, 10, 0.7);
+      backdrop-filter: blur(14px);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .gallery {
+      width: min(960px, 100%);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      align-items: start;
+    }
+
+    .poster {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      border-radius: 30px;
+      padding: 7.2%;
+      display: grid;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(180, 138, 53, 0.24), transparent 28%),
+        radial-gradient(circle at 88% 84%, rgba(20, 18, 13, 0.1), transparent 34%),
+        linear-gradient(180deg, #f8f0df, var(--paper));
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+      isolation: isolate;
+    }
+
+    .poster::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(20, 18, 13, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 18, 13, 0.04) 1px, transparent 1px);
+      background-size: 54px 54px;
+      opacity: 0.42;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at center, black 48%, transparent 95%);
+      z-index: -1;
+    }
+
+    .poster::after {
+      content: "";
+      position: absolute;
+      width: 68%;
+      height: 68%;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(180, 138, 53, 0.2), transparent 64%);
+      right: -24%;
+      top: -18%;
+      z-index: -1;
+    }
+
+    .poster.dark {
+      color: #f4ead8;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(180, 138, 53, 0.28), transparent 28%),
+        radial-gradient(circle at 86% 82%, rgba(244, 234, 216, 0.08), transparent 34%),
+        linear-gradient(180deg, #17130c, #0d0b08);
+    }
+
+    .poster.dark::before {
+      background-image:
+        linear-gradient(rgba(244, 234, 216, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(244, 234, 216, 0.045) 1px, transparent 1px);
+    }
+
+    .poster.dark .small,
+    .poster.dark .body,
+    .poster.dark .rule-note,
+    .poster.dark .foot {
+      color: rgba(244, 234, 216, 0.62);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: clamp(12px, 1.4vw, 14px);
+      font-weight: 800;
+      letter-spacing: 0.28em;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+      font-size: clamp(45px, 7vw, 78px);
+      line-height: 0.98;
+      letter-spacing: -0.07em;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 92%;
+      font-size: clamp(20px, 2.4vw, 28px);
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .body {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(14px, 1.55vw, 17px);
+      line-height: 1.72;
+    }
+
+    .gold { color: var(--gold); }
+
+    .first-card {
+      grid-template-rows: auto 1fr auto auto;
+      gap: 22px;
+    }
+
+    .split-title {
+      align-self: end;
+      display: grid;
+      gap: 20px;
+    }
+
+    .two-lines {
+      display: grid;
+      gap: 12px;
+    }
+
+    .decision-line {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 14px;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid rgba(244, 234, 216, 0.18);
+    }
+
+    .decision-block {
+      display: grid;
+      gap: 6px;
+    }
+
+    .decision-word {
+      font-family: "Songti SC", "STSong", serif;
+      font-size: clamp(28px, 4.2vw, 46px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .decision-desc {
+      color: rgba(244, 234, 216, 0.58);
+      font-size: clamp(12px, 1.35vw, 14px);
+      line-height: 1.5;
+    }
+
+    .arrow {
+      color: var(--gold);
+      font-size: clamp(20px, 2.5vw, 28px);
+    }
+
+    .rules {
+      display: grid;
+      gap: 11px;
+    }
+
+    .rule {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .rule-no {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+    }
+
+    .rule-title {
+      font-size: clamp(16px, 1.9vw, 22px);
+      font-weight: 900;
+      line-height: 1.3;
+    }
+
+    .rule-note {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: clamp(12px, 1.35vw, 14px);
+      line-height: 1.55;
+    }
+
+    .second-card {
+      grid-template-rows: auto auto 1fr auto;
+      gap: 26px;
+    }
+
+    .curve {
+      display: grid;
+      gap: 14px;
+      align-self: center;
+    }
+
+    .curve-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .curve-mark {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: #17130c;
+      font-weight: 900;
+      background: linear-gradient(135deg, #e8d48b, var(--gold));
+    }
+
+    .curve-text {
+      font-size: clamp(19px, 2.4vw, 28px);
+      line-height: 1.28;
+      font-weight: 900;
+    }
+
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      border-top: 1px solid currentColor;
+      padding-top: 14px;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 18px; }
+      .gallery { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-feedback-page="20" data-audience-label="谋在众，断贵独">
+  <a class="back-home" href="/">← 返回知识库</a>
+  <main class="gallery" aria-label="谋在众断贵独竖屏卡片预览">
+    <section class="poster dark first-card">
+      <div class="small">01 / 决策方法</div>
+      <div class="split-title">
+        <h1>《谋在众，<br><span class="gold">断贵独</span>》</h1>
+        <p class="lead">众人负责把现实显影，最后由一个人收口。</p>
+      </div>
+      <div class="decision-line">
+        <div class="decision-block">
+          <div class="decision-word">谋在众</div>
+          <div class="decision-desc">事实、反对、代价，都要摊开。</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="decision-block">
+          <div class="decision-word">断贵独</div>
+          <div class="decision-desc">方向、边界、责任，必须有人承担。</div>
+        </div>
+      </div>
+      <div class="foot">
+        <span>听多数人的声音</span>
+        <span>做少数人的承担</span>
+      </div>
+    </section>
+
+    <section class="poster second-card">
+      <div class="small">02 / 成长原则</div>
+      <h1>《第一曲线<br>做到一百二十分》</h1>
+      <p class="lead">第二曲线不是规划出来的，是第一曲线被真正顶爆后长出来的。</p>
+      <div class="curve">
+        <div class="curve-row">
+          <div class="curve-mark">点</div>
+          <div>
+            <div class="curve-text">早期先把一个点打穿。</div>
+            <div class="rule-note">别急着做线、做面、做体。</div>
+          </div>
+        </div>
+        <div class="curve-row">
+          <div class="curve-mark">爆</div>
+          <div>
+            <div class="curve-text">做到需求自然外溢。</div>
+            <div class="rule-note">能力、用户、场景开始自己推着你走。</div>
+          </div>
+        </div>
+        <div class="curve-row">
+          <div class="curve-mark">长</div>
+          <div>
+            <div class="curve-text">第二曲线才有根。</div>
+            <div class="rule-note">不是幻想新方向，而是承接真实溢出。</div>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <span>先打穿</span>
+        <span>再扩张</span>
+      </div>
+    </section>
+  </main>
+  <script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>

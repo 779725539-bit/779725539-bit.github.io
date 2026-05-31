@@ -126,11 +126,28 @@
     }
 
     .hero {
-      padding: 40px;
-      display: none;
-      gap: 22px;
+      min-height: 430px;
+      padding: clamp(30px, 4vw, 48px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.56fr);
+      gap: 28px;
+      align-items: stretch;
+      margin-bottom: 18px;
       position: relative;
       overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -32%;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(201, 168, 76, 0.22), transparent 18%),
+        conic-gradient(from 210deg at 52% 46%, transparent 0deg, rgba(201, 168, 76, 0.16) 72deg, transparent 146deg);
+      opacity: 0.78;
+      animation: hero-drift 18s ease-in-out infinite alternate;
+      pointer-events: none;
     }
 
     .hero::after {
@@ -139,11 +156,18 @@
       inset: 0;
       background:
         radial-gradient(circle at 0% 0%, rgba(201, 168, 76, 0.16), transparent 24%),
-        radial-gradient(circle at 100% 0%, rgba(74, 124, 247, 0.08), transparent 22%);
+        radial-gradient(circle at 100% 0%, rgba(74, 124, 247, 0.1), transparent 22%),
+        linear-gradient(112deg, transparent 18%, rgba(255, 255, 255, 0.045) 42%, transparent 60%);
       pointer-events: none;
     }
 
     .hero > * { position: relative; z-index: 1; }
+
+    .memo-hero-copy {
+      display: grid;
+      align-content: center;
+      gap: 22px;
+    }
 
     .eyebrow,
     .tag {
@@ -175,7 +199,7 @@
 
     h1 {
       font-size: clamp(48px, 6vw, 72px);
-      max-width: 8.2em;
+      max-width: 9em;
     }
 
     h2 {
@@ -204,9 +228,110 @@
     }
 
     .hero-lead {
-      max-width: 42em;
+      max-width: 48em;
       font-size: 18px;
       color: rgba(232, 228, 220, 0.82);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .hero-button,
+    .hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      border-radius: 999px;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .hero-button {
+      padding: 13px 18px;
+      border: 1px solid rgba(201, 168, 76, 0.34);
+      color: #11100c;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      box-shadow: 0 16px 34px rgba(201, 168, 76, 0.18);
+    }
+
+    .hero-secondary {
+      padding: 12px 15px;
+      border: 1px solid rgba(232, 228, 220, 0.12);
+      color: rgba(232, 228, 220, 0.72);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .hero-button:hover,
+    .hero-secondary:hover {
+      transform: translateY(-2px);
+      border-color: rgba(201, 168, 76, 0.38);
+    }
+
+    .hero-timeline {
+      display: grid;
+      align-content: center;
+      gap: 10px;
+      padding-left: 24px;
+      border-left: 1px solid rgba(201, 168, 76, 0.24);
+    }
+
+    .hero-node {
+      position: relative;
+      display: block;
+      padding: 12px 14px 12px 18px;
+      border: 1px solid rgba(232, 228, 220, 0.08);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(18px);
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .hero-node:hover {
+      transform: translateX(3px);
+      border-color: rgba(201, 168, 76, 0.24);
+      background: rgba(255, 255, 255, 0.052);
+    }
+
+    .hero-node::before {
+      content: "";
+      position: absolute;
+      left: -31px;
+      top: 18px;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--gold-light);
+      box-shadow: 0 0 22px rgba(201, 168, 76, 0.78);
+    }
+
+    .hero-node-date {
+      margin-bottom: 4px;
+      color: var(--gold-light);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+    }
+
+    .hero-node-title {
+      color: rgba(232, 228, 220, 0.9);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .hero-node-copy {
+      display: -webkit-box;
+      margin-top: 4px;
+      color: rgba(232, 228, 220, 0.48);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
 
     .audience-switch,
@@ -366,10 +491,29 @@
       vertical-align: middle;
     }
 
+    @keyframes hero-drift {
+      from { transform: translate3d(-2%, -1%, 0) rotate(0deg); }
+      to { transform: translate3d(3%, 2%, 0) rotate(8deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
     @media (max-width: 980px) {
+      .hero,
       .audience-switch,
       .entries {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -410,18 +554,38 @@
       </div>
     </div>
 
-    <section class="hero">
-      <div class="hero-head">
-        <div class="eyebrow">线上知识库</div>
-        <div class="tag" id="heroTag">领导视角</div>
+    <section class="hero memo-hero" aria-labelledby="memoHeroTitle">
+      <div class="memo-hero-copy">
+        <div class="hero-head">
+          <div>
+            <div class="eyebrow">Daily Memo Timeline</div>
+            <div class="tag">公开阅读 · 私密编辑</div>
+          </div>
+          <span class="chip time-chip" data-hero-date>2026-05-19</span>
+        </div>
+        <h1 id="memoHeroTitle">程翔的个人纪要<span class="highlight">时间线</span></h1>
+        <p class="hero-lead" data-hero-summary>把每天真正想留下的判断、感悟和现场记录，按时间沉淀下来。时间线是主入口，输入框只是轻轻补一句。</p>
+        <div class="hero-actions">
+          <a class="hero-button" href="/memos.html">进入时间线 <span>→</span></a>
+          <a class="hero-secondary" href="/memos.html#quick-capture">快速记录</a>
+        </div>
       </div>
-      <h1>每个主题，都拆成 <span class="highlight">三个视角</span> 去讲。</h1>
-      <p class="hero-lead" id="heroLead"></p>
-
-      <div class="audience-switch" data-audience-switch>
-        <button class="audience-tab active" type="button" data-mode="leader" data-audience-label="领导视角">领导视角</button>
-        <button class="audience-tab" type="button" data-mode="colleague" data-audience-label="同事视角">同事视角</button>
-        <button class="audience-tab" type="button" data-mode="user" data-audience-label="用户视角">用户视角</button>
+      <div class="hero-timeline" data-hero-timeline aria-label="最近纪要">
+        <a class="hero-node" href="/memos.html?date=2026-05-19#memo-2026-05-19">
+          <div class="hero-node-date">05-19 今日</div>
+          <div class="hero-node-title">倾听者前端感悟</div>
+          <div class="hero-node-copy">界面不是功能陈列，而是能安静接住人的空间。</div>
+        </a>
+        <a class="hero-node" href="/memos.html?date=2026-05-18#memo-2026-05-18">
+          <div class="hero-node-date">05-18</div>
+          <div class="hero-node-title">AI 产品判断</div>
+          <div class="hero-node-copy">把用户此刻最需要的一步做稳，比展示能力更重要。</div>
+        </a>
+        <a class="hero-node" href="/memos.html?date=2026-05-17#memo-2026-05-17">
+          <div class="hero-node-date">05-17</div>
+          <div class="hero-node-title">一次会议后的反思</div>
+          <div class="hero-node-copy">纪要如果能保留语境，就比单纯摘要更有生命力。</div>
+        </a>
       </div>
     </section>
 
@@ -430,19 +594,64 @@
         <span class="section-label">2026-05 · 近期主题</span>
       </div>
 
+      <a class="card topic-card" href="/cook-sauerkraut.html" data-search-text="21 库克 酸泡菜 sauerkraut 航海 坏血病 行为设计 改认知 改环境 模仿 羡慕 权威 军官 水手 产品增长 adoption">
+        <div class="card-top">
+          <div class="tag">行为设计</div>
+          <div class="card-no">21</div>
+        </div>
+        <h3>库克酸泡菜实验：改认知很慢，改环境更快 <span class="badge-new">NEW</span></h3>
+        <p>不要只告诉用户“这是好东西”。让他羡慕的人先用起来，环境会替你完成说服。</p>
+        <div>
+          <span class="chip time-chip">2026-05-31</span>
+          <span class="chip">一页卡片</span>
+          <span class="chip">增长 / 行为设计</span>
+        </div>
+        <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
+      </a>
+
+      <a class="card topic-card" href="/mou-zai-zhong-duan-gui-du.html" data-search-text="20 谋在众 断贵独 第一曲线 第二曲线 众人 显影 一人 收口 决策 方法 成长 原则 竖屏 卡片 小红书">
+        <div class="card-top">
+          <div class="tag">决策方法</div>
+          <div class="card-no">20</div>
+        </div>
+        <h3>谋在众，断贵独｜第一曲线做到一百二十分 <span class="badge-new">NEW</span></h3>
+        <p>一张讲决策：众人负责显影，一人负责收口；一张讲成长：先把第一曲线顶爆，第二曲线才会自然长出来。</p>
+        <div>
+          <span class="chip time-chip">2026-05-31</span>
+          <span class="chip">2 张竖屏卡</span>
+          <span class="chip">方法论</span>
+        </div>
+        <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
+      </a>
+
       <a class="card topic-card" href="/tamagotchi-design.html" data-search-text="19 拓麻歌子 tamagotchi paradise 生命感 真实时间 照顾压力 物理仪式 代际变化 自传播 ugc 极致 手机 专用设备 平板 录音卡 产品设计 机制">
         <div class="card-top">
           <div class="tag">设计机制</div>
           <div class="card-no">19</div>
         </div>
         <h3>拓麻歌子设计机制：不是更智能，而是更像活着 <span class="badge-new">NEW</span></h3>
-        <p>把核心判断和生命感机制收成一节，再落到自传播产品原则与专用设备机会：好产品不是堆功能，而是制造持续牵挂。</p>
+        <p>把“核心判断”和“生命感机制”收成一节，再落到自传播产品原则与专用设备机会：好产品不是堆功能，而是制造持续牵挂。</p>
         <div>
           <span class="chip time-chip">2026-05-31</span>
           <span class="chip">3 页收敛版</span>
           <span class="chip">产品设计</span>
         </div>
         <div class="card-foot"><span class="entry-button">进入条目 <span>→</span></span></div>
+      </a>
+
+      <a class="card topic-card collection-card" href="/kb-slides/slide-18.html" data-search-text="18 思想汇编 ai 时代 稀缺 生产能力 个人上下文 认知存储 分发 信任 留存 真实需求 商品化 opc builder 创业 市场 势能差 硬件 commercial scarcity context distribution">
+        <div class="card-top">
+          <div class="tag">Thought Compilation</div>
+          <div class="card-no">18</div>
+        </div>
+        <h3>AI 时代，真正稀缺的不是生产能力 <span class="badge-new">NEW</span></h3>
+        <p>从“能不能做出来”转向“凭什么能赚钱”：生产能力被拉平以后，真正值钱的是个人上下文、认知存储、分发信任、真实需求和商品化能力。</p>
+        <div>
+          <span class="chip time-chip">2026-05-15 → 05-19</span>
+          <span class="chip">思想汇编</span>
+          <span class="chip">8 篇主题 + 17 条原子笔记</span>
+        </div>
+        <div class="card-foot"><span class="entry-button">进入专题 <span>→</span></span></div>
       </a>
 
       <a class="card topic-card" href="/kb-slides/slide-17.html" data-search-text="17 蓝海 差异化 韩寒 李想 能力 壁垒 营销 赚钱 产品突围 融资 种田 AI海啸 注意力 personal philosophy">
@@ -645,59 +854,120 @@
   </main>
 
   <script>
-    const AUDIENCE_KEY = "kb_audience_mode";
-    const content = {
-      leader: {
-        tag: "领导视角",
-        lead: "这里每个条目都默认拆成领导、同事、用户三种讲法。领导视角先看价值判断、资源投入、风险边界和结果预期。",
-        aiPm: "看懂 AI 产品经理为什么从写 PRD，转向做原型、定标准、建评测，以及这对团队效率意味着什么。",
-        slides: "从行业缺口和能力闭环出发，看 Agent 为什么值得做、卡在哪里、下一步应该押注什么。",
-        herone: "把产品讲述和界面判断收成一个入口，一次看清 HerOne 的定位、主链路、系统结构和成立条件。",
-        essay: "从趋势和风险控制角度看 AI 情感依赖，重点不在八卦，而在这类关系结构会带来什么长期影响。",
-        books: "把两本书读成一套战略判断框架，重点看真需求、独特优势和可复制模式能不能真正成立。"
-      },
-      colleague: {
-        tag: "同事视角",
-        lead: "这里每个条目都默认拆成领导、同事、用户三种讲法。同事视角先看结构、逻辑闭环、边界和落地怎么推进。",
-        aiPm: "把 AI PM 的新交付件讲清楚：原型、Benchmark、Eval suite，以及它们怎样构成日常飞轮。",
-        slides: "把五层结构讲清楚，方便开发、产品、运营对齐模块、数据和边界，而不是只停在概念层。",
-        herone: "把输入、记忆、回流、双系统和关键界面收在一页里，方便团队直接对齐主链路和模块边界。",
-        essay: "把心理机制、用户行为和产品边界拆开，帮助团队理解什么能做、什么要克制。",
-        books: "把《因为独特》和《真需求》读成一套可执行方法，重点看价值、共识、模式如何彼此咬合。"
-      },
-      user: {
-        tag: "用户视角",
-        lead: "这里每个条目都默认拆成领导、同事、用户三种讲法。用户视角先看这件事跟你有什么关系、能解决什么、值不值得继续看。",
-        aiPm: "用最白话的方式解释：AI 产品经理为什么不再只是写 PRD，而是要先做、再定、再测。",
-        slides: "不先讲术语，而是先讲 AI 为什么常常有脑没手、有智无家，以及这会带来什么体验差异。",
-        herone: "不拆成两篇看了，而是直接回答一个问题：HerOne 能不能更轻地接住你、记住你、再把重要的事还给你。",
-        essay: "先讲为什么人会把情感投向 AI，这件事短期为什么舒服，长期又为什么可能有代价。",
-        books: "把两本书读成一套理解选择的方式，重点看什么是真需求，什么又是真正值得长期记住的独特。"
-      }
+    const entryCopy = {
+      entryAiPm: "从 PRD 驱动转向原型、Benchmark、Eval 驱动，讲清 AI 产品经理为什么要用飞轮工作。",
+      entrySlides: "从行业缺口和能力闭环出发，看 Agent 为什么值得做、卡在哪里、下一步应该押注什么。",
+      entryHerOne: "把产品讲述和界面判断收成一个入口，一次看清 HerOne 的定位、主链路、系统结构和成立条件。",
+      entryEssay: "从趋势和风险控制角度看 AI 情感依赖，重点不在八卦，而在这类关系结构会带来什么长期影响。",
+      entryBooks: "把两本书读成一套战略判断框架，重点看真需求、独特优势和可复制模式能不能真正成立。"
     };
 
-    const buttons = [...document.querySelectorAll(".audience-tab")];
+    const defaultMemos = [
+      {
+        date: "2026-05-19",
+        title: "倾听者前端感悟",
+        excerpt: "界面不是功能陈列，而是能安静接住人的空间。"
+      },
+      {
+        date: "2026-05-18",
+        title: "AI 产品判断",
+        excerpt: "把用户此刻最需要的一步做稳，比展示能力更重要。"
+      },
+      {
+        date: "2026-05-17",
+        title: "一次会议后的反思",
+        excerpt: "纪要如果能保留语境，就比单纯摘要更有生命力。"
+      },
+      {
+        date: "2026-05-16",
+        title: "产品节奏判断",
+        excerpt: "真正要沉淀的不是灵感本身，而是灵感出现时的现场和取舍。"
+      },
+      {
+        date: "2026-05-15",
+        title: "个人知识库入口",
+        excerpt: "时间线先接住日常判断，再让重要内容慢慢长成知识库条目。"
+      }
+    ];
 
-    function render(mode) {
-      const data = content[mode];
-      document.getElementById("heroTag").textContent = data.tag;
-      document.getElementById("heroLead").textContent = data.lead;
-      document.getElementById("entryAiPm").textContent = "从 PRD 驱动转向原型、Benchmark、Eval 驱动，讲清 AI 产品经理为什么要用飞轮工作。";
-      document.getElementById("entrySlides").textContent = data.slides;
-      document.getElementById("entryHerOne").textContent = data.herone;
-      document.getElementById("entryEssay").textContent = data.essay;
-      document.getElementById("entryBooks").textContent = data.books;
-      buttons.forEach((button) => {
-        const active = button.dataset.mode === mode;
-        button.classList.toggle("active", active);
-        button.setAttribute("aria-pressed", active ? "true" : "false");
+    Object.entries(entryCopy).forEach(([id, text]) => {
+      const node = document.getElementById(id);
+      if (node) {
+        node.textContent = text;
+      }
+    });
+
+    const heroTimeline = document.querySelector("[data-hero-timeline]");
+    const heroDate = document.querySelector("[data-hero-date]");
+    const heroSummary = document.querySelector("[data-hero-summary]");
+
+    function renderHeroMemos(memos) {
+      const items = (memos.length ? memos : defaultMemos)
+        .slice()
+        .sort((left, right) => String(right.date || "").localeCompare(String(left.date || "")))
+        .slice(0, 5);
+      heroTimeline.replaceChildren();
+      items.forEach((memo) => {
+        const node = document.createElement("a");
+        node.className = "hero-node";
+        node.href = memo.date ? `/memos.html?date=${encodeURIComponent(memo.date)}#memo-${memo.date}` : "/memos.html";
+        node.setAttribute("aria-label", `查看 ${memo.title || "今日纪要"}`);
+        const date = document.createElement("div");
+        date.className = "hero-node-date";
+        date.textContent = formatMemoDate(memo.date);
+        const title = document.createElement("div");
+        title.className = "hero-node-title";
+        title.textContent = memo.title || "今日纪要";
+        const copy = document.createElement("div");
+        copy.className = "hero-node-copy";
+        copy.textContent = makeExcerpt(memo.excerpt || memo.content || "");
+        node.append(date, title, copy);
+        heroTimeline.appendChild(node);
       });
-      sessionStorage.setItem(AUDIENCE_KEY, mode);
+
+      const latest = items[0];
+      if (latest) {
+        heroDate.textContent = latest.date || "今日";
+        heroSummary.textContent = makeExcerpt(latest.excerpt || latest.content || "") || "把每天真正想留下的判断、感悟和现场记录，按时间沉淀下来。时间线是主入口，输入框只是轻轻补一句。";
+      }
     }
 
-    buttons.forEach((button) => {
-      button.addEventListener("click", () => render(button.dataset.mode));
-    });
+    async function loadHeroMemos() {
+      if (location.hostname.endsWith("github.io")) {
+        renderHeroMemos(defaultMemos);
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/memos");
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || "memo api unavailable");
+        }
+        renderHeroMemos(payload.memos || []);
+      } catch (error) {
+        renderHeroMemos(defaultMemos);
+      }
+    }
+
+    function formatMemoDate(value) {
+      const match = String(value || "").match(/^\d{4}-(\d{2})-(\d{2})$/);
+      if (!match) {
+        return value || "今日";
+      }
+      const date = `${match[1]}-${match[2]}`;
+      return value === todayISO() ? `${date} 今日` : date;
+    }
+
+    function makeExcerpt(value) {
+      return String(value || "").replace(/\s+/g, " ").slice(0, 64);
+    }
+
+    function todayISO() {
+      const now = new Date();
+      const timezoneOffset = now.getTimezoneOffset() * 60000;
+      return new Date(now.getTime() - timezoneOffset).toISOString().slice(0, 10);
+    }
 
     const searchInput = document.querySelector("[data-entry-search]");
     const cards = [...document.querySelectorAll(".entries .card")];
@@ -730,7 +1000,7 @@
     }
 
     searchInput.addEventListener("input", filterEntries);
-    render(sessionStorage.getItem(AUDIENCE_KEY) || "leader");
+    loadHeroMemos();
   </script>
   <script src="/assets/kb-feedback.js" defer></script>
 </body>

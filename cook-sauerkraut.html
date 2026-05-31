@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>库克酸泡菜实验 · 改认知很慢，改环境更快</title>
+  <style>
+    :root {
+      --sea: #0d231d;
+      --sea-deep: #07120f;
+      --paper: #efe5cf;
+      --paper-soft: #fbf4e7;
+      --ink: #17221c;
+      --muted: rgba(23, 34, 28, 0.62);
+      --gold: #bc8f38;
+      --line: rgba(23, 34, 28, 0.16);
+      --white: #fff8ea;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 34px;
+      color: var(--ink);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 16% 12%, rgba(188, 143, 56, 0.22), transparent 28%),
+        radial-gradient(circle at 84% 80%, rgba(255, 248, 234, 0.08), transparent 32%),
+        linear-gradient(145deg, var(--sea), var(--sea-deep));
+    }
+
+    .back-home {
+      position: fixed;
+      left: 22px;
+      top: 22px;
+      z-index: 10;
+      text-decoration: none;
+      border: 1px solid rgba(255, 248, 234, 0.18);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: rgba(255, 248, 234, 0.78);
+      background: rgba(7, 18, 15, 0.68);
+      backdrop-filter: blur(14px);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .poster {
+      position: relative;
+      width: min(560px, calc(100vw - 34px));
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      border-radius: 34px;
+      padding: 42px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 24px;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(188, 143, 56, 0.22), transparent 30%),
+        linear-gradient(180deg, var(--paper-soft), var(--paper));
+      box-shadow: 0 32px 90px rgba(0, 0, 0, 0.4);
+      isolation: isolate;
+    }
+
+    .poster::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(23, 34, 28, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 34, 28, 0.035) 1px, transparent 1px);
+      background-size: 52px 52px;
+      opacity: 0.62;
+      mask-image: radial-gradient(circle at center, black 44%, transparent 92%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .poster::after {
+      content: "";
+      position: absolute;
+      width: 72%;
+      height: 42%;
+      right: -18%;
+      bottom: -12%;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(188, 143, 56, 0.2), transparent 66%);
+      z-index: -1;
+    }
+
+    .kicker {
+      color: rgba(23, 34, 28, 0.56);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+      font-size: clamp(44px, 9vw, 72px);
+      line-height: 1;
+      letter-spacing: -0.08em;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 92%;
+      color: rgba(23, 34, 28, 0.82);
+      font-size: clamp(19px, 4.2vw, 28px);
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .gold { color: var(--gold); }
+
+    .ship-scene {
+      position: relative;
+      align-self: center;
+      min-height: 190px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .wave {
+      position: absolute;
+      left: -8%;
+      right: -8%;
+      bottom: 18px;
+      height: 54px;
+      border-radius: 50%;
+      border-top: 2px solid rgba(13, 35, 29, 0.22);
+    }
+
+    .ship {
+      position: relative;
+      width: 260px;
+      height: 110px;
+      transform: translateY(8px);
+    }
+
+    .sail {
+      position: absolute;
+      left: 104px;
+      top: 4px;
+      width: 88px;
+      height: 92px;
+      background: linear-gradient(135deg, rgba(255, 248, 234, 0.96), rgba(232, 216, 177, 0.72));
+      clip-path: polygon(0 0, 100% 46%, 0 100%);
+      border-left: 3px solid rgba(23, 34, 28, 0.34);
+    }
+
+    .mast {
+      position: absolute;
+      left: 101px;
+      top: 0;
+      width: 4px;
+      height: 104px;
+      background: rgba(23, 34, 28, 0.52);
+    }
+
+    .hull {
+      position: absolute;
+      left: 20px;
+      right: 14px;
+      bottom: 4px;
+      height: 52px;
+      background: linear-gradient(180deg, #314438, #17231d);
+      clip-path: polygon(0 0, 100% 0, 85% 100%, 16% 100%);
+      border-radius: 0 0 22px 22px;
+    }
+
+    .barrel {
+      position: absolute;
+      left: 38px;
+      bottom: 38px;
+      width: 58px;
+      height: 52px;
+      border-radius: 14px 14px 18px 18px;
+      background: linear-gradient(90deg, #9b6b2c, #d2a44f, #8a5b25);
+      box-shadow: inset 0 0 0 2px rgba(23, 34, 28, 0.18);
+    }
+
+    .people {
+      position: absolute;
+      right: 36px;
+      bottom: 48px;
+      display: flex;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .person {
+      width: 18px;
+      height: 38px;
+      border-radius: 999px 999px 6px 6px;
+      background: #203129;
+      box-shadow: 0 -14px 0 -4px #203129;
+    }
+
+    .person.officer {
+      height: 46px;
+      background: var(--gold);
+      box-shadow: 0 -16px 0 -4px var(--gold);
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-self: end;
+    }
+
+    .compare-card {
+      min-height: 146px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.26);
+    }
+
+    .compare-card.strong {
+      color: var(--white);
+      background: linear-gradient(145deg, #14261f, #07120f);
+      border-color: rgba(188, 143, 56, 0.38);
+    }
+
+    .label {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      margin-bottom: 12px;
+    }
+
+    .compare-title {
+      font-size: clamp(19px, 4vw, 26px);
+      line-height: 1.22;
+      font-weight: 900;
+    }
+
+    .compare-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .strong .compare-note {
+      color: rgba(255, 248, 234, 0.64);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: rgba(23, 34, 28, 0.52);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    @media (max-width: 620px) {
+      body { padding: 18px; }
+      .poster { padding: 32px 28px; border-radius: 28px; }
+      .compare { grid-template-columns: 1fr; }
+      .ship-scene { min-height: 160px; }
+    }
+  </style>
+</head>
+<body data-feedback-page="21" data-audience-label="库克酸泡菜实验">
+  <a class="back-home" href="/">← 返回知识库</a>
+  <main class="poster" aria-label="库克酸泡菜实验">
+    <div class="kicker">库克的酸泡菜实验</div>
+    <div>
+      <h1>改认知很慢，<br><span class="gold">改环境更快。</span></h1>
+      <p class="lead">库克没有急着说服水手，他先让水手看见“值得羡慕的人”在用。</p>
+    </div>
+
+    <div class="ship-scene" aria-hidden="true">
+      <div class="wave"></div>
+      <div class="ship">
+        <div class="sail"></div>
+        <div class="mast"></div>
+        <div class="hull"></div>
+        <div class="barrel"></div>
+        <div class="people">
+          <div class="person officer"></div>
+          <div class="person officer"></div>
+          <div class="person"></div>
+          <div class="person"></div>
+        </div>
+      </div>
+    </div>
+
+    <section class="compare" aria-label="两种行为改变方式">
+      <div class="compare-card">
+        <div class="label">低效</div>
+        <div class="compare-title">讲它是好东西</div>
+        <div class="compare-note">这是改认知。用户要先相信你，再改变自己。</div>
+      </div>
+      <div class="compare-card strong">
+        <div class="label">高效</div>
+        <div class="compare-title">让他羡慕的人在用</div>
+        <div class="compare-note">这是改环境。用户先看见身份和场，再主动靠近。</div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <span>不是说服</span>
+      <span>是布置一个会被模仿的场</span>
+    </div>
+  </main>
+  <script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>
