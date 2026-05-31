@@ -554,42 +554,52 @@
       </div>
     </div>
 
-    <section class="hero memo-hero" aria-labelledby="memoHeroTitle">
+    <section class="hero memo-hero" aria-labelledby="timelineHubTitle">
       <div class="memo-hero-copy">
         <div class="hero-head">
           <div>
-            <div class="eyebrow">Daily Memo Timeline</div>
-            <div class="tag">公开阅读 · 私密编辑</div>
+            <div class="eyebrow">Timeline Hub</div>
+            <div class="tag">五条主线 · 分开沉淀</div>
           </div>
-          <span class="chip time-chip" data-hero-date>2026-05-19</span>
+          <span class="chip time-chip">2026-05-31</span>
         </div>
-        <h1 id="memoHeroTitle">程翔的个人纪要<span class="highlight">时间线</span></h1>
-        <p class="hero-lead" data-hero-summary>把每天真正想留下的判断、感悟和现场记录，按时间沉淀下来。时间线是主入口，输入框只是轻轻补一句。</p>
+        <h1 id="timelineHubTitle">程翔的五条<span class="highlight">时间线</span></h1>
+        <p class="hero-lead">把个人纪要、对外宣发、挂件软件、挂件硬件、吊坠软硬件拆成五条线分别沉淀。时间线负责记录演化，下面的卡片负责沉淀成知识库条目。</p>
         <div class="hero-actions">
-          <a class="hero-button" href="/memos.html">进入时间线 <span>→</span></a>
-          <a class="hero-secondary" href="/memos.html#quick-capture">快速记录</a>
+          <a class="hero-button" href="/memos.html">进入个人纪要 <span>→</span></a>
+          <a class="hero-secondary" href="#knowledge-entries">浏览知识库条目</a>
         </div>
       </div>
-      <div class="hero-timeline" data-hero-timeline aria-label="最近纪要">
-        <a class="hero-node" href="/memos.html?date=2026-05-19#memo-2026-05-19">
-          <div class="hero-node-date">05-19 今日</div>
-          <div class="hero-node-title">倾听者前端感悟</div>
-          <div class="hero-node-copy">界面不是功能陈列，而是能安静接住人的空间。</div>
+      <div class="hero-timeline" aria-label="五条时间线">
+        <a class="hero-node" href="/memos.html">
+          <div class="hero-node-date">01 / 个人</div>
+          <div class="hero-node-title">我的个人时间线</div>
+          <div class="hero-node-copy">每日判断、现场感受、复盘和个人纪要，先在这里连续沉淀。</div>
         </a>
-        <a class="hero-node" href="/memos.html?date=2026-05-18#memo-2026-05-18">
-          <div class="hero-node-date">05-18</div>
-          <div class="hero-node-title">AI 产品判断</div>
-          <div class="hero-node-copy">把用户此刻最需要的一步做稳，比展示能力更重要。</div>
+        <a class="hero-node" href="/memos.html?timeline=outbound">
+          <div class="hero-node-date">02 / 宣发</div>
+          <div class="hero-node-title">向外宣发的时间线</div>
+          <div class="hero-node-copy">对外表达、发布节奏、社媒选题、产品故事和公开传播素材。</div>
         </a>
-        <a class="hero-node" href="/memos.html?date=2026-05-17#memo-2026-05-17">
-          <div class="hero-node-date">05-17</div>
-          <div class="hero-node-title">一次会议后的反思</div>
-          <div class="hero-node-copy">纪要如果能保留语境，就比单纯摘要更有生命力。</div>
+        <a class="hero-node" href="/memos.html?timeline=widget-software">
+          <div class="hero-node-date">03 / 挂件软件</div>
+          <div class="hero-node-title">挂件软件的时间线</div>
+          <div class="hero-node-copy">桌面挂件、交互体验、软件能力、记忆回流和前端迭代。</div>
+        </a>
+        <a class="hero-node" href="/memos.html?timeline=widget-hardware">
+          <div class="hero-node-date">04 / 挂件硬件</div>
+          <div class="hero-node-title">挂件硬件的时间线</div>
+          <div class="hero-node-copy">桌搭、可穿戴、实体挂件形态、材料、供应链和工程取舍。</div>
+        </a>
+        <a class="hero-node" href="/memos.html?timeline=pendant-system">
+          <div class="hero-node-date">05 / 吊坠</div>
+          <div class="hero-node-title">吊坠硬件软件的时间线</div>
+          <div class="hero-node-copy">吊坠形态、录音采集、记忆链路、软硬件协同和产品闭环。</div>
         </a>
       </div>
     </section>
 
-    <section class="entries">
+    <section class="entries" id="knowledge-entries">
       <div class="section-divider">
         <span class="section-label">2026-05 · 近期主题</span>
       </div>
@@ -862,112 +872,12 @@
       entryBooks: "把两本书读成一套战略判断框架，重点看真需求、独特优势和可复制模式能不能真正成立。"
     };
 
-    const defaultMemos = [
-      {
-        date: "2026-05-19",
-        title: "倾听者前端感悟",
-        excerpt: "界面不是功能陈列，而是能安静接住人的空间。"
-      },
-      {
-        date: "2026-05-18",
-        title: "AI 产品判断",
-        excerpt: "把用户此刻最需要的一步做稳，比展示能力更重要。"
-      },
-      {
-        date: "2026-05-17",
-        title: "一次会议后的反思",
-        excerpt: "纪要如果能保留语境，就比单纯摘要更有生命力。"
-      },
-      {
-        date: "2026-05-16",
-        title: "产品节奏判断",
-        excerpt: "真正要沉淀的不是灵感本身，而是灵感出现时的现场和取舍。"
-      },
-      {
-        date: "2026-05-15",
-        title: "个人知识库入口",
-        excerpt: "时间线先接住日常判断，再让重要内容慢慢长成知识库条目。"
-      }
-    ];
-
     Object.entries(entryCopy).forEach(([id, text]) => {
       const node = document.getElementById(id);
       if (node) {
         node.textContent = text;
       }
     });
-
-    const heroTimeline = document.querySelector("[data-hero-timeline]");
-    const heroDate = document.querySelector("[data-hero-date]");
-    const heroSummary = document.querySelector("[data-hero-summary]");
-
-    function renderHeroMemos(memos) {
-      const items = (memos.length ? memos : defaultMemos)
-        .slice()
-        .sort((left, right) => String(right.date || "").localeCompare(String(left.date || "")))
-        .slice(0, 5);
-      heroTimeline.replaceChildren();
-      items.forEach((memo) => {
-        const node = document.createElement("a");
-        node.className = "hero-node";
-        node.href = memo.date ? `/memos.html?date=${encodeURIComponent(memo.date)}#memo-${memo.date}` : "/memos.html";
-        node.setAttribute("aria-label", `查看 ${memo.title || "今日纪要"}`);
-        const date = document.createElement("div");
-        date.className = "hero-node-date";
-        date.textContent = formatMemoDate(memo.date);
-        const title = document.createElement("div");
-        title.className = "hero-node-title";
-        title.textContent = memo.title || "今日纪要";
-        const copy = document.createElement("div");
-        copy.className = "hero-node-copy";
-        copy.textContent = makeExcerpt(memo.excerpt || memo.content || "");
-        node.append(date, title, copy);
-        heroTimeline.appendChild(node);
-      });
-
-      const latest = items[0];
-      if (latest) {
-        heroDate.textContent = latest.date || "今日";
-        heroSummary.textContent = makeExcerpt(latest.excerpt || latest.content || "") || "把每天真正想留下的判断、感悟和现场记录，按时间沉淀下来。时间线是主入口，输入框只是轻轻补一句。";
-      }
-    }
-
-    async function loadHeroMemos() {
-      if (location.hostname.endsWith("github.io")) {
-        renderHeroMemos(defaultMemos);
-        return;
-      }
-
-      try {
-        const response = await fetch("/api/memos");
-        const payload = await response.json().catch(() => ({}));
-        if (!response.ok || !payload.ok) {
-          throw new Error(payload.error || "memo api unavailable");
-        }
-        renderHeroMemos(payload.memos || []);
-      } catch (error) {
-        renderHeroMemos(defaultMemos);
-      }
-    }
-
-    function formatMemoDate(value) {
-      const match = String(value || "").match(/^\d{4}-(\d{2})-(\d{2})$/);
-      if (!match) {
-        return value || "今日";
-      }
-      const date = `${match[1]}-${match[2]}`;
-      return value === todayISO() ? `${date} 今日` : date;
-    }
-
-    function makeExcerpt(value) {
-      return String(value || "").replace(/\s+/g, " ").slice(0, 64);
-    }
-
-    function todayISO() {
-      const now = new Date();
-      const timezoneOffset = now.getTimezoneOffset() * 60000;
-      return new Date(now.getTime() - timezoneOffset).toISOString().slice(0, 10);
-    }
 
     const searchInput = document.querySelector("[data-entry-search]");
     const cards = [...document.querySelectorAll(".entries .card")];
@@ -1000,7 +910,6 @@
     }
 
     searchInput.addEventListener("input", filterEntries);
-    loadHeroMemos();
   </script>
   <script src="/assets/kb-feedback.js" defer></script>
 </body>

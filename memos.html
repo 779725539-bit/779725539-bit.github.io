@@ -691,6 +691,48 @@
   <script>
     const API_PATH = "/api/memos";
     const TOKEN_KEY = "memo_admin_token";
+    const TIMELINES = {
+      personal: {
+        title: "把每天真正想留下的东西，按时间发光。",
+        lead: "这里不是另一个输入框，而是一条持续生长的个人纪要时间线。感悟、判断、现场记录和产品直觉，会先沉到这里，再慢慢长成知识库条目。",
+        listTitle: "我的个人时间线",
+        note: "主视角是时间线：先看每天留下了什么，再决定要不要补一句。",
+        tag: "个人时间线",
+        empty: "还没有纪要。开启编辑模式后，先从今天补一句开始。"
+      },
+      outbound: {
+        title: "向外宣发的时间线",
+        lead: "这里沉淀对外发布、产品故事、社媒选题、公开表达和宣发节奏。它负责把内部判断翻译成外部能理解、愿意转发的表达。",
+        listTitle: "向外宣发",
+        note: "先记录每次对外表达的主题、渠道、反馈和下一步素材。",
+        tag: "向外宣发",
+        empty: "这条宣发时间线已经建好。后续记录带上「向外宣发」标签，就会沉到这里。"
+      },
+      "widget-software": {
+        title: "挂件软件的时间线",
+        lead: "这里沉淀挂件软件的产品判断、交互链路、前端体验、记忆回流和系统能力，让软件演化不散在临时对话里。",
+        listTitle: "挂件软件",
+        note: "先记录软件体验、功能迭代、界面取舍和用户反馈。",
+        tag: "挂件软件",
+        empty: "这条挂件软件时间线已经建好。后续记录带上「挂件软件」标签，就会沉到这里。"
+      },
+      "widget-hardware": {
+        title: "挂件硬件的时间线",
+        lead: "这里沉淀桌搭、可穿戴、实体挂件形态、材料、结构、供应链和工程取舍，让硬件判断能连续追踪。",
+        listTitle: "挂件硬件",
+        note: "先记录形态探索、材料手感、工程风险、供应链反馈和样机判断。",
+        tag: "挂件硬件",
+        empty: "这条挂件硬件时间线已经建好。后续记录带上「挂件硬件」标签，就会沉到这里。"
+      },
+      "pendant-system": {
+        title: "吊坠硬件软件的时间线",
+        lead: "这里沉淀吊坠形态、录音采集、记忆链路、软硬件协同和产品闭环，专门追踪吊坠从概念到可用系统的演化。",
+        listTitle: "吊坠硬件软件",
+        note: "先记录吊坠的采集链路、佩戴体验、硬件约束、软件回流和闭环验证。",
+        tag: "吊坠硬件软件",
+        empty: "这条吊坠硬件软件时间线已经建好。后续记录带上「吊坠硬件软件」标签，就会沉到这里。"
+      }
+    };
     const DEFAULT_MEMOS = [
       {
         date: "2026-05-19",
@@ -743,10 +785,14 @@
     let adminToken = localStorage.getItem(TOKEN_KEY) || "";
     let writeMode = "append";
     const targetDate = getRequestedDate();
+    const targetTimeline = getRequestedTimeline();
+    const activeTimeline = TIMELINES[targetTimeline];
 
+    applyTimelineContext();
     tokenInput.value = adminToken;
     dateInput.value = todayISO();
     titleInput.value = "今日纪要";
+    tagsInput.value = activeTimeline.tag;
 
     if (isMirror) {
       document.body.classList.add("is-mirror");
@@ -756,7 +802,7 @@
       enableEditing("已读取本机保存的编辑口令，保存时会验证。");
     }
 
-    renderMemos(memos);
+    renderMemos(getVisibleMemos(memos));
     loadMemos();
 
     unlockButton.addEventListener("click", () => {
@@ -787,14 +833,15 @@
       }
 
       try {
-        const response = await fetch(API_PATH);
+        const response = await fetch(`${API_PATH}?timeline=${encodeURIComponent(targetTimeline)}`);
         const payload = await response.json().catch(() => ({}));
         if (!response.ok || !payload.ok) {
           throw new Error(payload.error || "读取失败");
         }
         memos = payload.memos?.length ? payload.memos : [];
-        renderMemos(memos);
-        setLoadStatus(memos.length ? "已同步飞书纪要" : "还没有线上纪要，先补第一条。");
+        const visibleMemos = getVisibleMemos(memos);
+        renderMemos(visibleMemos);
+        setLoadStatus(visibleMemos.length ? "已同步飞书纪要" : "这条时间线还没有线上纪要，先补第一条。");
       } catch (error) {
         console.warn("memo_load_failed", error);
         setLoadStatus("暂用本地示例预览；配置飞书后会自动同步。");
@@ -815,11 +862,11 @@
         return;
       }
 
-      const existing = memos.find((memo) => memo.date === date);
+      const existing = memos.find((memo) => memo.date === date && (memo.timeline || "personal") === targetTimeline);
       const content = writeMode === "append" && existing?.content
         ? `${existing.content}\n\n${timeLabel()} ${rawContent}`
         : rawContent;
-      const tags = tagsInput.value.trim() || existing?.tags?.join(" / ") || "";
+      const tags = tagsInput.value.trim() || existing?.tags?.join(" / ") || activeTimeline.tag;
 
       saveButton.disabled = true;
       setSaveStatus("正在同步到飞书…");
@@ -831,7 +878,7 @@
             "X-Memo-Admin-Token": encodeURIComponent(adminToken),
             "Content-Type": "application/json; charset=utf-8"
           },
-          body: JSON.stringify({ date, title, content, tags })
+          body: JSON.stringify({ date, title, content, tags, timeline: targetTimeline })
         });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok || !payload.ok) {
@@ -839,7 +886,7 @@
         }
 
         upsertMemo(payload.memo);
-        renderMemos(memos);
+        renderMemos(getVisibleMemos(memos));
         setAppendTodayMode();
         setSaveStatus("已保存到飞书。");
       } catch (error) {
@@ -857,7 +904,7 @@
       if (!items.length) {
         const empty = document.createElement("div");
         empty.className = "empty-state";
-        empty.textContent = "还没有纪要。开启编辑模式后，先从今天补一句开始。";
+        empty.textContent = activeTimeline.empty;
         listEl.appendChild(empty);
         return;
       }
@@ -952,7 +999,7 @@
       dateInput.value = memo.date;
       titleInput.value = memo.title || "今日纪要";
       contentInput.value = memo.content || "";
-      tagsInput.value = memo.tags?.join(" / ") || "";
+      tagsInput.value = memo.tags?.join(" / ") || activeTimeline.tag;
       saveButton.textContent = "保存这天";
       setSaveStatus(`正在整理 ${memo.date} 的完整纪要。`);
       document.getElementById("quick-capture").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -963,7 +1010,7 @@
       dateInput.value = memo.date;
       titleInput.value = memo.title || "今日纪要";
       contentInput.value = "";
-      tagsInput.value = memo.tags?.join(" / ") || "";
+      tagsInput.value = memo.tags?.join(" / ") || activeTimeline.tag;
       saveButton.textContent = "追加到这天";
       setSaveStatus(`会追加到 ${memo.date}，不覆盖原文。`);
       document.getElementById("quick-capture").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -992,11 +1039,11 @@
     function setAppendTodayMode() {
       writeMode = "append";
       const today = todayISO();
-      const existing = memos.find((memo) => memo.date === today);
+      const existing = memos.find((memo) => memo.date === today && (memo.timeline || "personal") === targetTimeline);
       dateInput.value = today;
       titleInput.value = existing?.title || "今日纪要";
       contentInput.value = "";
-      tagsInput.value = existing?.tags?.join(" / ") || "";
+      tagsInput.value = existing?.tags?.join(" / ") || activeTimeline.tag;
       saveButton.textContent = "保存到今日";
       setSaveStatus("快速补一句会追加到今天，不覆盖原内容。");
     }
@@ -1010,13 +1057,28 @@
     }
 
     function upsertMemo(memo) {
-      const index = memos.findIndex((item) => item.date === memo.date);
+      const index = memos.findIndex((item) => item.date === memo.date && (item.timeline || "personal") === (memo.timeline || "personal"));
       if (index >= 0) {
         memos[index] = memo;
       } else {
         memos.push(memo);
       }
       memos.sort((left, right) => right.date.localeCompare(left.date));
+    }
+
+    function applyTimelineContext() {
+      document.getElementById("memoPageTitle").textContent = activeTimeline.title;
+      document.querySelector(".hero-lead").textContent = activeTimeline.lead;
+      document.getElementById("timelineTitle").textContent = activeTimeline.listTitle;
+      document.querySelector(".timeline-panel .panel-head p").textContent = activeTimeline.note;
+      document.title = `${activeTimeline.listTitle} · 程翔的个人知识库`;
+    }
+
+    function getVisibleMemos(items) {
+      if (targetTimeline === "personal") {
+        return items.filter((memo) => (memo.timeline || "personal") === "personal");
+      }
+      return items.filter((memo) => (memo.timeline || "personal") === targetTimeline || (memo.tags || []).includes(activeTimeline.tag));
     }
 
     function splitBlocks(value) {
@@ -1069,6 +1131,11 @@
 
       const [, hashDate] = location.hash.match(/^#memo-(\d{4}-\d{2}-\d{2})$/) || [];
       return normalizeDate(hashDate || "");
+    }
+
+    function getRequestedTimeline() {
+      const timeline = new URLSearchParams(location.search).get("timeline") || "personal";
+      return TIMELINES[timeline] ? timeline : "personal";
     }
 
     function focusRequestedMemo() {
