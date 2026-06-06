@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>情绪价值与 IP 价值｜知识库卡片</title>
+  <style>
+    :root {
+      --paper: #f7f1e7;
+      --paper-2: #efe5d4;
+      --ink: #191713;
+      --muted: #6e675c;
+      --line: #d8cdbb;
+      --red: #c53828;
+      --blue: #276078;
+      --green: #55734a;
+      --gold: #c98a20;
+      --purple: #76528a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #181818;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+      letter-spacing: 0;
+    }
+
+    .back-home {
+      position: fixed;
+      left: 24px;
+      top: 24px;
+      z-index: 20;
+      text-decoration: none;
+      border: 1px solid rgba(247, 241, 231, .22);
+      border-radius: 999px;
+      padding: 10px 16px;
+      color: rgba(247, 241, 231, .82);
+      background: rgba(24, 24, 24, .72);
+      backdrop-filter: blur(14px);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .deck {
+      display: grid;
+      gap: 42px;
+      padding: 42px;
+      justify-content: center;
+    }
+
+    .card {
+      position: relative;
+      width: 1080px;
+      height: 1440px;
+      overflow: hidden;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(25, 23, 19, .045) 1px, transparent 1px) 0 0 / 90px 90px,
+        linear-gradient(0deg, rgba(25, 23, 19, .04) 1px, transparent 1px) 0 0 / 90px 90px,
+        radial-gradient(circle at 84% 16%, rgba(201, 138, 32, .18), transparent 28%),
+        radial-gradient(circle at 14% 88%, rgba(39, 96, 120, .12), transparent 31%),
+        var(--paper);
+      padding: 70px 74px 58px;
+    }
+
+    .card.dark {
+      color: #f6f1e7;
+      background:
+        linear-gradient(90deg, rgba(246, 241, 231, .055) 1px, transparent 1px) 0 0 / 90px 90px,
+        linear-gradient(0deg, rgba(246, 241, 231, .045) 1px, transparent 1px) 0 0 / 90px 90px,
+        radial-gradient(circle at 82% 18%, rgba(197, 56, 40, .32), transparent 28%),
+        radial-gradient(circle at 16% 86%, rgba(39, 96, 120, .36), transparent 30%),
+        #171716;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .dark .top {
+      color: rgba(246, 241, 231, .68);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 42px;
+      padding: 0 17px;
+      border: 1.5px solid currentColor;
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(247, 241, 231, .62);
+      font-weight: 850;
+    }
+
+    .dark .tag {
+      color: #f6f1e7;
+      background: rgba(246, 241, 231, .06);
+    }
+
+    h1 {
+      margin: 74px 0 0;
+      font-size: 82px;
+      line-height: 1.06;
+      font-weight: 950;
+      letter-spacing: 0;
+      max-width: 880px;
+    }
+
+    .compact h1 {
+      font-size: 72px;
+    }
+
+    .kicker {
+      margin: 24px 0 0;
+      color: #3c3730;
+      font-size: 32px;
+      line-height: 1.5;
+      font-weight: 720;
+      max-width: 840px;
+    }
+
+    .dark .kicker {
+      color: rgba(246, 241, 231, .82);
+    }
+
+    .red { color: var(--red); }
+    .blue { color: var(--blue); }
+    .green { color: var(--green); }
+    .gold { color: var(--gold); }
+    .purple { color: var(--purple); }
+
+    .section {
+      margin-top: 48px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .box {
+      position: relative;
+      min-height: 150px;
+      padding: 24px 24px 22px;
+      border: 2px solid rgba(25, 23, 19, .14);
+      background: rgba(255, 252, 246, .44);
+    }
+
+    .dark .box {
+      border-color: rgba(246, 241, 231, .16);
+      background: rgba(246, 241, 231, .06);
+    }
+
+    .box strong {
+      display: block;
+      margin: 0 0 14px;
+      font-size: 31px;
+      line-height: 1.22;
+      font-weight: 900;
+    }
+
+    .box span,
+    .box p {
+      display: block;
+      margin: 0;
+      color: var(--muted);
+      font-size: 24px;
+      line-height: 1.42;
+      font-weight: 650;
+    }
+
+    .dark .box span,
+    .dark .box p {
+      color: rgba(246, 241, 231, .7);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr 34px 1fr 34px 1fr 34px 1fr;
+      gap: 13px;
+      align-items: stretch;
+      margin-top: 60px;
+    }
+
+    .flow .arrow {
+      display: grid;
+      place-items: center;
+      font-size: 44px;
+      font-weight: 900;
+      color: var(--red);
+    }
+
+    .flow .box {
+      min-height: 235px;
+    }
+
+    .bottom-note {
+      position: absolute;
+      left: 74px;
+      right: 74px;
+      bottom: 56px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      padding-top: 26px;
+      border-top: 2px solid rgba(25, 23, 19, .13);
+      color: #2a2722;
+      font-size: 28px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+
+    .dark .bottom-note {
+      border-color: rgba(246, 241, 231, .16);
+      color: #f6f1e7;
+    }
+
+    .bar {
+      flex: 0 0 12px;
+      height: 78px;
+      border-radius: 999px;
+      background: var(--red);
+      margin-top: 4px;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 52px;
+    }
+
+    .panel {
+      min-height: 520px;
+      padding: 34px 32px;
+      border: 2px solid rgba(25, 23, 19, .15);
+      background: rgba(255, 252, 246, .46);
+    }
+
+    .panel.hot {
+      border-color: rgba(197, 56, 40, .36);
+      background: rgba(197, 56, 40, .06);
+    }
+
+    .panel h2 {
+      margin: 0 0 28px;
+      font-size: 43px;
+      line-height: 1.18;
+      font-weight: 940;
+    }
+
+    .panel p {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 27px;
+      line-height: 1.45;
+      font-weight: 680;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 46px;
+      padding: 8px 16px;
+      border: 1.6px solid rgba(25, 23, 19, .18);
+      border-radius: 999px;
+      background: rgba(255, 252, 246, .56);
+      color: #302d28;
+      font-size: 23px;
+      line-height: 1.25;
+      font-weight: 760;
+    }
+
+    .dark .chip {
+      border-color: rgba(246, 241, 231, .22);
+      background: rgba(246, 241, 231, .08);
+      color: rgba(246, 241, 231, .84);
+    }
+
+    .quote-large {
+      margin-top: 64px;
+      padding: 44px 48px;
+      border-left: 14px solid var(--red);
+      background: rgba(255, 252, 246, .48);
+      font-size: 48px;
+      line-height: 1.35;
+      font-weight: 930;
+    }
+
+    .route {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .route span {
+      display: block;
+      padding: 18px 20px;
+      border: 2px solid rgba(25, 23, 19, .14);
+      background: rgba(255, 252, 246, .58);
+      font-size: 29px;
+      font-weight: 850;
+    }
+
+    .route .accent {
+      border-color: rgba(197, 56, 40, .34);
+      color: var(--red);
+    }
+
+    .number-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .number-list div {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 16px;
+      align-items: start;
+      color: var(--ink);
+      font-size: 25px;
+      line-height: 1.35;
+      font-weight: 760;
+    }
+
+    .number-list b {
+      color: var(--red);
+      font-size: 25px;
+      font-weight: 950;
+    }
+
+    .motive-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .motive {
+      min-height: 118px;
+      padding: 21px 22px;
+      border: 2px solid rgba(25, 23, 19, .13);
+      background: rgba(255, 252, 246, .48);
+    }
+
+    .motive strong {
+      display: block;
+      color: var(--red);
+      font-size: 28px;
+      font-weight: 930;
+      line-height: 1.2;
+    }
+
+    .motive span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 24px;
+      line-height: 1.35;
+      font-weight: 680;
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 44px;
+    }
+
+    .map-col {
+      min-height: 650px;
+      padding: 28px 24px;
+      border: 2px solid rgba(25, 23, 19, .14);
+      background: rgba(255, 252, 246, .42);
+    }
+
+    .map-col h2 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.16;
+      font-weight: 940;
+    }
+
+    .map-col p {
+      min-height: 82px;
+      margin: 16px 0 22px;
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 1.36;
+      font-weight: 660;
+    }
+
+    .map-col li {
+      margin: 0 0 14px;
+      color: #2d2a25;
+      font-size: 25px;
+      line-height: 1.28;
+      font-weight: 780;
+    }
+
+    .map-col ul {
+      padding-left: 26px;
+      margin: 0;
+    }
+
+    .monster-board {
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      gap: 24px;
+      margin-top: 42px;
+    }
+
+    .monster-main {
+      min-height: 595px;
+      padding: 34px;
+      border: 2px solid rgba(25, 23, 19, .14);
+      background: rgba(255, 252, 246, .48);
+    }
+
+    .monster-main h2 {
+      margin: 0 0 22px;
+      font-size: 52px;
+      line-height: 1.15;
+      font-weight: 950;
+    }
+
+    .monster-main p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 27px;
+      line-height: 1.48;
+      font-weight: 700;
+    }
+
+    .monster-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .monster-list .m {
+      padding: 20px 22px;
+      border: 2px solid rgba(25, 23, 19, .14);
+      background: rgba(255, 252, 246, .55);
+      font-size: 27px;
+      font-weight: 880;
+    }
+
+    .case-columns {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      margin-top: 42px;
+    }
+
+    .case-box {
+      min-height: 264px;
+      padding: 25px 24px;
+      border: 2px solid rgba(25, 23, 19, .14);
+      background: rgba(255, 252, 246, .47);
+    }
+
+    .case-box h2 {
+      margin: 0 0 16px;
+      font-size: 31px;
+      line-height: 1.2;
+      font-weight: 930;
+      color: var(--red);
+    }
+
+    .case-box p {
+      margin: 0;
+      color: #4b463d;
+      font-size: 23px;
+      line-height: 1.42;
+      font-weight: 680;
+    }
+
+    .quote-wall {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .quote-item {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      padding: 13px 17px;
+      border: 1.6px solid rgba(246, 241, 231, .17);
+      background: rgba(246, 241, 231, .06);
+      color: rgba(246, 241, 231, .88);
+      font-size: 21px;
+      line-height: 1.28;
+      font-weight: 760;
+    }
+
+    .check-blocks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 38px;
+    }
+
+    .check {
+      min-height: 285px;
+      padding: 25px 25px 21px;
+      border: 2px solid rgba(25, 23, 19, .14);
+      background: rgba(255, 252, 246, .48);
+    }
+
+    .check.wide {
+      grid-column: span 2;
+      min-height: 230px;
+    }
+
+    .check h2 {
+      margin: 0 0 18px;
+      color: var(--red);
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 930;
+    }
+
+    .check ol,
+    .check ul {
+      margin: 0;
+      padding-left: 28px;
+    }
+
+    .check li {
+      margin-bottom: 9px;
+      color: #3c3831;
+      font-size: 23px;
+      line-height: 1.32;
+      font-weight: 720;
+    }
+
+    .chain-strong {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 58px;
+    }
+
+    .chain-step {
+      position: relative;
+      min-height: 330px;
+      padding: 28px 24px 26px;
+      border: 2px solid rgba(25, 23, 19, .14);
+      background: rgba(255, 252, 246, .5);
+    }
+
+    .chain-step::after {
+      content: "→";
+      position: absolute;
+      right: -31px;
+      top: 130px;
+      color: var(--red);
+      font-size: 42px;
+      font-weight: 950;
+      z-index: 2;
+    }
+
+    .chain-step:last-child::after {
+      content: "";
+    }
+
+    .chain-num {
+      color: transparent;
+      -webkit-text-stroke: 1.4px rgba(25, 23, 19, .45);
+      font-size: 52px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .chain-step h2 {
+      margin: 26px 0 18px;
+      font-size: 38px;
+      line-height: 1.14;
+      font-weight: 950;
+    }
+
+    .chain-step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 26px;
+      line-height: 1.42;
+      font-weight: 720;
+    }
+
+    .spread-groups {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 40px;
+    }
+
+    .spread-group {
+      min-height: 610px;
+      padding: 26px 22px;
+      border: 1.6px solid rgba(246, 241, 231, .17);
+      background: rgba(246, 241, 231, .055);
+    }
+
+    .spread-group h2 {
+      margin: 0 0 22px;
+      color: #f6f1e7;
+      font-size: 31px;
+      line-height: 1.18;
+      font-weight: 930;
+    }
+
+    .spread-group .quote-item {
+      min-height: 84px;
+      margin-bottom: 13px;
+      padding: 14px 15px;
+      font-size: 22px;
+    }
+
+    .product-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 34px;
+    }
+
+    .product-strip .box {
+      min-height: 128px;
+      padding: 21px 22px;
+    }
+
+    .tool-ribbon {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .tool-ribbon div {
+      min-height: 84px;
+      display: grid;
+      place-items: center;
+      padding: 13px 12px;
+      border: 2px solid rgba(197, 56, 40, .24);
+      background: rgba(197, 56, 40, .055);
+      color: #2f2b25;
+      font-size: 24px;
+      line-height: 1.24;
+      font-weight: 850;
+      text-align: center;
+    }
+  </style>
+</head>
+<body data-feedback-page="22" data-audience-label="情绪价值与 IP 价值">
+  <a class="back-home" href="/">← 返回知识库</a>
+  <div class="deck">
+    <section class="card compact" id="card-01">
+      <div class="top"><span class="tag">01 总纲</span><span>正文入口</span></div>
+      <h1>功能让人开始用，<br><span class="red">情绪</span>让人留下来</h1>
+      <p class="kicker">一个强 C 端产品，往往不是功能更强，而是能把功能、情绪、身份和关系揉在一起。</p>
+      <div class="chain-strong">
+        <div class="chain-step"><div class="chain-num">01</div><h2>功能</h2><p>解决外部任务：它帮我完成什么。</p></div>
+        <div class="chain-step"><div class="chain-num">02</div><h2>情绪</h2><p>解决内部体验：它让我处在什么状态。</p></div>
+        <div class="chain-step"><div class="chain-num">03</div><h2>IP</h2><p>不是故事本身，而是用户借来表达自己的符号。</p></div>
+        <div class="chain-step"><div class="chain-num">04</div><h2>陪伴硬件</h2><p>低压力、稳定在场，替用户记住生活。</p></div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>功能决定下限，情绪决定溢价；工具解决问题，关系创造留存。</div></div>
+    </section>
+
+    <section class="card" id="card-02">
+      <div class="top"><span class="tag">02 情绪价值</span><span>概念对照</span></div>
+      <h1>情绪价值<br>不是功能的<span class="red">反面</span></h1>
+      <p class="kicker">好功能会长出情绪价值，情绪价值也可以成为一种功能。</p>
+      <div class="compare">
+        <div class="panel">
+          <h2>功能价值</h2>
+          <p>偏外部任务。</p>
+          <p>它回答的是：这个东西帮我完成什么？</p>
+          <p>例如 Codex 把 bug 修好，这是功能。</p>
+        </div>
+        <div class="panel hot">
+          <h2>情绪价值</h2>
+          <p>偏内部体验。</p>
+          <p>它回答的是：它让我感觉自己处在什么状态？</p>
+          <p>连续几次靠谱之后，“有人兜底”的安心感就出现了。</p>
+        </div>
+      </div>
+      <div class="section chips">
+        <span class="chip">安心</span><span class="chip">被陪伴</span><span class="chip">被理解</span><span class="chip">掌控感</span><span class="chip">身份感</span><span class="chip">有趣</span><span class="chip">有希望</span><span class="chip">仪式感</span>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>摆件、潮玩、香水、手账看似“没用”，但能稳定情绪、表达身份、保存记忆。</div></div>
+    </section>
+
+    <section class="card compact" id="card-03">
+      <div class="top"><span class="tag">03 C 端产品</span><span>内容化表达</span></div>
+      <h1>To C 的本质<br>是<span class="red">做内容</span></h1>
+      <p class="kicker">C 端用户没有义务理解你。你要先抢到注意力，再制造感受、记忆、欲望和分享冲动。</p>
+      <div class="section grid-4">
+        <div class="box"><strong>无聊</strong><span>用户不会替产品找意义。</span></div>
+        <div class="box"><strong>不酷</strong><span>没有身份感，就难以被展示。</span></div>
+        <div class="box"><strong>不值</strong><span>价格之外，还要有心理账。</span></div>
+        <div class="box"><strong>不方便</strong><span>低摩擦是 C 端底线。</span></div>
+      </div>
+      <div class="quote-large">产品本身要像内容一样可感知，卖点要能被一句话传播。</div>
+      <div class="bottom-note"><div class="bar"></div><div>使用过程要产生可晒、可讲、可复述的瞬间；品牌要持续输出故事、审美、身份和情绪。</div></div>
+    </section>
+
+    <section class="card compact" id="card-04">
+      <div class="top"><span class="tag">04 购买动机</span><span>8 格卡片</span></div>
+      <h1>用户买的<br>不是<span class="red">物品本身</span></h1>
+      <p class="kicker">用户买的是情绪、审美、陪伴、收藏感、社交货币、低门槛艺术、礼物价值和身份表达。</p>
+      <div class="motive-grid">
+        <div class="motive"><strong>买情绪</strong><span>这个东西有点像我</span></div>
+        <div class="motive"><strong>买审美</strong><span>这是我的品味</span></div>
+        <div class="motive"><strong>买陪伴</strong><span>它没什么用，但它在那儿</span></div>
+        <div class="motive"><strong>买收藏感</strong><span>我想集齐，想拥有稀缺款</span></div>
+        <div class="motive"><strong>买社交货币</strong><span>懂的人自然懂</span></div>
+        <div class="motive"><strong>买低门槛艺术</strong><span>我也能拥有一点艺术感</span></div>
+        <div class="motive"><strong>买礼物价值</strong><span>这个礼物轻，但不敷衍</span></div>
+        <div class="motive"><strong>买身份表达</strong><span>它替我说明我是什么样的人</span></div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>低价情绪符号 + 可展示收藏 + 场景纪念 + 持续上新，是很多消费品的底层组合。</div></div>
+    </section>
+
+    <section class="card" id="card-05">
+      <div class="top"><span class="tag">05 新 IP</span><span>新旧路径对比</span></div>
+      <h1>过去 IP 是故事角色，<br>现在 IP 是<span class="red">情绪形状</span></h1>
+      <p class="kicker">新 IP 不一定先让用户看完故事，而是先用一个强视觉符号占住用户的眼睛和情绪。</p>
+      <div class="compare">
+        <div class="panel">
+          <h2>过去路径</h2>
+          <div class="route">
+            <span>故事</span><span>理解角色</span><span>建立感情</span><span class="accent">买周边</span>
+          </div>
+        </div>
+        <div class="panel hot">
+          <h2>现在路径</h2>
+          <div class="route">
+            <span>形象</span><span>一眼记住</span><span>情绪投射</span><span>展示收藏</span><span class="accent">反过来补故事</span>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>Labubu 先作为强视觉符号进入生活，让用户觉得：这东西有点像我。</div></div>
+    </section>
+
+    <section class="card compact" id="card-06">
+      <div class="top"><span class="tag">06 方法论</span><span>7 个变化 + 5 问</span></div>
+      <h1>判断新 IP，<br>先问<span class="red">5 个问题</span></h1>
+      <p class="kicker">新 IP 的关键不是完整世界观，而是能不能被一眼记住、被展示、被二创、被持续上新。</p>
+      <div class="grid-2 section">
+        <div class="box" style="min-height: 550px;">
+          <strong>新 IP 的 7 个变化</strong>
+          <div class="number-list">
+            <div><b>01</b><span>从故事 IP 到情绪 IP</span></div>
+            <div><b>02</b><span>从角色设定到视觉记忆点</span></div>
+            <div><b>03</b><span>从内容先行到商品 / 社交先行</span></div>
+            <div><b>04</b><span>从大众共同观看到算法反复触达</span></div>
+            <div><b>05</b><span>从英雄叙事到低能量共情</span></div>
+            <div><b>06</b><span>从公共神话到个人配饰</span></div>
+            <div><b>07</b><span>从民族文化输出到轻文化负担输出</span></div>
+          </div>
+        </div>
+        <div class="box" style="min-height: 550px;">
+          <strong>新 IP 5 问</strong>
+          <div class="number-list">
+            <div><b>01</b><span>它占据什么新情绪？</span></div>
+            <div><b>02</b><span>它能不能一秒被记住？</span></div>
+            <div><b>03</b><span>它能不能被展示？</span></div>
+            <div><b>04</b><span>它有没有二创空间？</span></div>
+            <div><b>05</b><span>它能不能持续上新？</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>新 IP 更像小型精神图腾、社交暗号、情绪配饰和可变体符号系统。</div></div>
+    </section>
+
+    <section class="card dark compact" id="card-07">
+      <div class="top"><span class="tag">07 符号传播</span><span>传播动机</span></div>
+      <h1>人不是在传播 IP，<br>而是在<span class="red">传播自己</span></h1>
+      <p class="kicker">符号会被传播，不是因为符号自己厉害，而是因为传播它对用户有用。</p>
+      <div class="spread-groups">
+        <div class="spread-group">
+          <h2>表达自己</h2>
+          <div class="quote-item">表达身份：我是谁，我是什么审美和圈层</div>
+          <div class="quote-item">提升形象：给自己贴标签</div>
+          <div class="quote-item">替我表达情绪：委屈、反卷、怪可爱</div>
+          <div class="quote-item">投射理想自我：靠近想成为的人</div>
+        </div>
+        <div class="spread-group">
+          <h2>进入关系</h2>
+          <div class="quote-item">寻找同类：懂的人自然懂</div>
+          <div class="quote-item">制造谈资：热门 IP、明星、梗</div>
+          <div class="quote-item">获得参与感：加入集体事件</div>
+          <div class="quote-item">建立关系：送周边、转梗、一起讨论</div>
+        </div>
+        <div class="spread-group">
+          <h2>获得外部收益</h2>
+          <div class="quote-item">证明在场：我知道这个热点</div>
+          <div class="quote-item">降低表达成本：一句歌词、一个表情包</div>
+          <div class="quote-item">合理化消费：晒出来，说限量</div>
+          <div class="quote-item">获得流量：内容素材带来互动</div>
+        </div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>一个符号越能帮用户表达自己，越容易被用户主动传播。</div></div>
+    </section>
+
+    <section class="card compact" id="card-08">
+      <div class="top"><span class="tag">08 情绪坑位</span><span>三大地图</span></div>
+      <h1>新 IP 抢的<br>不是故事，是<span class="red">情绪坑位</span></h1>
+      <p class="kicker">当代用户的情绪需求，可以先归成三大类：安全感缺失、表达欲爆发、关系重新组织。</p>
+      <div class="map">
+        <div class="map-col">
+          <h2 class="red">安全感缺失</h2>
+          <p>累、焦虑、不确定，想抓住一点稳定感。</p>
+          <ul><li>疲惫感</li><li>委屈感</li><li>确定感 / 好运</li><li>自我管理焦虑</li></ul>
+        </div>
+        <div class="map-col">
+          <h2 class="blue">表达欲爆发</h2>
+          <p>不想再按传统体面活，想表达真实状态。</p>
+          <ul><li>反卷感</li><li>发疯感</li><li>低成本体面</li><li>复古怀旧</li><li>本土文化自信</li></ul>
+        </div>
+        <div class="map-col">
+          <h2 class="green">关系重新组织</h2>
+          <p>不想高压力社交，但仍需要陪伴和同类。</p>
+          <ul><li>陪伴感</li><li>身份暗号</li><li>私人化</li></ul>
+        </div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>现在的新 IP，不是在讲“快乐人生”，而是在替用户表达：我很累，但我还想可爱。</div></div>
+    </section>
+
+    <section class="card compact" id="card-09">
+      <div class="top"><span class="tag">09 xiwa / 挂件</span><span>产品落地</span></div>
+      <h1>陪你经历，<br>也替你<span class="red">记得</span></h1>
+      <p class="kicker">xiwa 不应该被表达成一个硬聊天 AI，而是一个低压力、稳定在场、能陪用户经历时间的小存在。</p>
+      <div class="product-strip">
+        <div class="box"><strong>不是硬聊天</strong><span>陪伴不等于一直对话。</span></div>
+        <div class="box"><strong>低摩擦在场</strong><span>随身、轻触、随取随用。</span></div>
+        <div class="box"><strong>状态符号</strong><span>把生活碎片变成小怪兽。</span></div>
+      </div>
+      <div class="monster-board">
+        <div class="monster-main">
+          <h2>xiwa｜一个会听你说话的潮玩手机挂件</h2>
+          <p>现代人的生活太碎了：情绪碎、灵感碎、关系碎、任务碎、身体状态碎。</p>
+          <p>手机能记录，但它太主动。要掏出来、打开、组织语言。</p>
+          <p>所以用户会被 always on、低摩擦、随身在场的设备吸引。</p>
+        </div>
+        <div class="monster-list">
+          <div class="m">困困怪：昨晚睡得少，今天慢一点</div>
+          <div class="m">纸条怪：事情有点多，先留三张</div>
+          <div class="m">电池怪：恢复值低，别硬扛</div>
+          <div class="m">星星怪：有一个小成就</div>
+          <div class="m">躲躲怪：今天想逃避一下</div>
+        </div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>主角不是功能人格，而是情绪容器。小怪兽不是任务模块，而是状态符号。</div></div>
+    </section>
+
+    <section class="card compact" id="card-10">
+      <div class="top"><span class="tag">10 案例库</span><span>资料层</span></div>
+      <h1>这些产品卖的<br>不只是<span class="red">功能</span></h1>
+      <p class="kicker">案例库不负责讲逻辑，而是给正文提供可跳转、可复用的材料。</p>
+      <div class="case-columns">
+        <div class="case-box"><h2>情绪科技玩具</h2><p>Apple Watch、智能戒指、AI 录音卡、桌面机器人、AI 陪伴硬件。</p></div>
+        <div class="case-box"><h2>仪式感工具</h2><p>Kindle、拍立得、CCD、机械键盘、手账本、钢笔、黑胶、香薰机、氛围灯。</p></div>
+        <div class="case-box"><h2>IP 与潮玩</h2><p>泡泡玛特、MINISO、环球影城、Labubu、Chiikawa、卡皮巴拉、Jellycat、迪士尼。</p></div>
+        <div class="case-box"><h2>符号消费</h2><p>CASETiFY、高端水、联名手机壳、谷子、痛包、徽章、演唱会周边、文博文创。</p></div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>每个案例都要标注：表层功能、真正卖的情绪 / 身份 / 关系、相关正文页。</div></div>
+    </section>
+
+    <section class="card dark compact" id="card-11">
+      <div class="top"><span class="tag">11 金句库</span><span>复用材料</span></div>
+      <h1>可以反复复用的<br><span class="red">概念句</span></h1>
+      <p class="kicker">适合做小红书标题、PPT 大字报、产品讨论和内部文案。</p>
+      <div class="quote-wall" style="grid-template-columns: 1fr; margin-top: 44px;">
+        <div class="quote-item">功能让你开始用，情绪让你留下来。</div>
+        <div class="quote-item">功能决定下限，情绪决定溢价。</div>
+        <div class="quote-item">功能解决问题，情绪创造关系。</div>
+        <div class="quote-item">To C 的本质是做内容。</div>
+        <div class="quote-item">过去 IP 是大众故事的角色，现在 IP 是个人情绪的形状。</div>
+        <div class="quote-item">人不是在传播 IP，而是在借 IP 传播自己。</div>
+        <div class="quote-item">不要定义她是谁，要定义她会出现什么。</div>
+        <div class="quote-item">xiwa｜陪你经历，也替你记得。</div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>第三批要检查：哪些句子适合放图，哪些句子只适合放知识库。</div></div>
+    </section>
+
+    <section class="card compact" id="card-12">
+      <div class="top"><span class="tag">12 Checklist</span><span>执行检查</span></div>
+      <h1>判断一个情绪产品<br>能不能<span class="red">成立</span></h1>
+      <p class="kicker">以后判断 IP、挂件、陪伴产品、情绪消费品，都可以先看这页。</p>
+      <div class="tool-ribbon">
+        <div>先看情绪</div>
+        <div>再看符号</div>
+        <div>再看传播</div>
+        <div>最后看陪伴</div>
+      </div>
+      <div class="check-blocks">
+        <div class="check"><h2>新 IP 5 问</h2><ol><li>占据什么新情绪？</li><li>能不能一秒被记住？</li><li>能不能被展示？</li><li>有没有二创空间？</li><li>能不能持续上新？</li></ol></div>
+        <div class="check"><h2>符号产品 6 问</h2><ol><li>我自己有感觉吗？</li><li>别人能读出我是谁吗？</li><li>能佩戴、展示或分享吗？</li><li>有没有稀缺机制？</li><li>有传播机会吗？</li><li>能成为社交暗号吗？</li></ol></div>
+        <div class="check"><h2>陪伴产品 5 问</h2><ol><li>是不是硬聊天？</li><li>是否低压力？</li><li>是否稳定在场？</li><li>是否能和时间绑定？</li><li>是否像我的小角色？</li></ol></div>
+        <div class="check"><h2>挂件方向</h2><ul><li>情绪见证：生日、失恋、上岸、发财、出差、城市限定</li><li>轻陪伴：摸一下会亮、每天一句话、说辛苦了</li><li>状态符号：困困怪、纸条怪、电池怪、星星怪</li></ul></div>
+      </div>
+      <div class="bottom-note"><div class="bar"></div><div>这页是执行工具：看完观点之后，回到清单判断产品有没有可能成立。</div></div>
+    </section>
+  </div>
+  <script src="/assets/kb-feedback.js" defer></script>
+</body>
+</html>
