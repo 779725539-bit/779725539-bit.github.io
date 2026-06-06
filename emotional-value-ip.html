@@ -31,6 +31,10 @@
       letter-spacing: 0;
     }
 
+    body.slide-runtime {
+      overflow: hidden;
+    }
+
     .back-home {
       position: fixed;
       left: 24px;
@@ -77,6 +81,74 @@
         linear-gradient(115deg, rgba(35, 92, 115, .32), transparent 36%),
         linear-gradient(292deg, rgba(200, 58, 43, .32), transparent 38%),
         var(--dark);
+    }
+
+    .deck.is-slideshow {
+      min-height: 100vh;
+      place-items: center;
+      gap: 0;
+      padding: 28px;
+    }
+
+    .deck.is-slideshow .slide {
+      display: none;
+      zoom: var(--slide-scale, 1);
+      box-shadow: 0 34px 90px rgba(0, 0, 0, .42);
+    }
+
+    .deck.is-slideshow .slide.is-active {
+      display: block;
+    }
+
+    .slide-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      z-index: 30;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border: 1px solid rgba(246, 240, 229, .18);
+      border-radius: 999px;
+      color: rgba(246, 240, 229, .82);
+      background: rgba(17, 17, 17, .72);
+      box-shadow: 0 18px 54px rgba(0, 0, 0, .28);
+      backdrop-filter: blur(16px);
+      transform: translateX(-50%);
+      user-select: none;
+    }
+
+    .slide-nav__button {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 999px;
+      color: #171512;
+      background: #f4eee2;
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .slide-nav__button:disabled {
+      cursor: not-allowed;
+      opacity: .34;
+    }
+
+    .slide-nav__count {
+      min-width: 72px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    .slide-nav__hint {
+      padding-left: 4px;
+      color: rgba(246, 240, 229, .54);
+      font-size: 13px;
+      font-weight: 760;
     }
 
     .top {
@@ -792,16 +864,50 @@
       }
     }
 
+    @media screen and (max-width: 760px) {
+      .back-home {
+        left: 14px;
+        top: 14px;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .deck.is-slideshow {
+        padding: 16px;
+      }
+
+      .slide-nav {
+        bottom: 12px;
+      }
+
+      .slide-nav__hint {
+        display: none;
+      }
+    }
+
     @media print {
       body {
         background: white;
+        overflow: visible;
+      }
+      .slide-nav,
+      .back-home {
+        display: none !important;
       }
       .deck {
         display: block;
         padding: 0;
       }
+      .deck.is-slideshow {
+        min-height: 0;
+      }
       .slide {
         page-break-after: always;
+      }
+      .deck.is-slideshow .slide {
+        display: block;
+        zoom: 1;
+        box-shadow: none;
       }
       .motion-enabled .slide,
       .motion-enabled .slide * {
@@ -1123,41 +1229,121 @@
   </main>
   <script>
     (() => {
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduced) return;
-
       const root = document.documentElement;
+      const deck = document.querySelector(".deck");
       const slides = Array.from(document.querySelectorAll(".slide"));
-      root.classList.add("motion-enabled");
+      if (!deck || !slides.length) return;
+
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.body.classList.add("slide-runtime");
+      deck.classList.add("is-slideshow");
+      if (!reduced) root.classList.add("motion-enabled");
+
+      const pageNo = (index) => String(index + 1).padStart(2, "0");
+      const clamp = (value) => Math.min(slides.length - 1, Math.max(0, value));
+      let current = 0;
+
+      const nav = document.createElement("div");
+      nav.className = "slide-nav";
+      nav.innerHTML = `
+        <button class="slide-nav__button" type="button" data-dir="-1" aria-label="上一页">←</button>
+        <span class="slide-nav__count" aria-live="polite">01 / ${pageNo(slides.length - 1)}</span>
+        <button class="slide-nav__button" type="button" data-dir="1" aria-label="下一页">→</button>
+        <span class="slide-nav__hint">方向键翻页</span>
+      `;
+      document.body.append(nav);
 
       const fitSlides = () => {
-        const scale = Math.min(1, Math.max(.24, (window.innerWidth - 48) / 1920));
+        const reservedY = window.innerWidth <= 760 ? 108 : 84;
+        const availableW = Math.max(320, window.innerWidth - 48);
+        const availableH = Math.max(240, window.innerHeight - reservedY);
+        const scale = Math.min(1, Math.max(.18, Math.min(availableW / 1920, availableH / 1080)));
         root.style.setProperty("--slide-scale", scale.toFixed(4));
       };
 
-      fitSlides();
-      window.addEventListener("resize", fitSlides);
+      const indexFromHash = () => {
+        const hash = window.location.hash;
+        const match = hash.match(/slide-(\d+)/i) || hash.match(/^#\/?(\d+)$/);
+        if (!match) return 0;
+        return clamp(Number(match[1]) - 1);
+      };
 
-      const reveal = (slide) => slide.classList.add("motion-visible");
-      if (slides[0]) reveal(slides[0]);
+      const setHash = (index) => {
+        const nextHash = `#slide-${pageNo(index)}`;
+        if (window.location.hash === nextHash) return;
+        window.history.replaceState(null, "", nextHash);
+      };
 
-      if (!("IntersectionObserver" in window)) {
-        slides.forEach(reveal);
-        return;
-      }
+      const reveal = (slide) => {
+        if (!slide) return;
+        if (!reduced) {
+          slide.classList.remove("motion-visible");
+          void slide.offsetWidth;
+        }
+        slide.classList.add("motion-visible");
+      };
 
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          reveal(entry.target);
-          observer.unobserve(entry.target);
+      const updateNav = () => {
+        nav.querySelector(".slide-nav__count").textContent = `${pageNo(current)} / ${pageNo(slides.length - 1)}`;
+        nav.querySelector('[data-dir="-1"]').disabled = current === 0;
+        nav.querySelector('[data-dir="1"]').disabled = current === slides.length - 1;
+      };
+
+      const goTo = (index, options = {}) => {
+        current = clamp(index);
+        slides.forEach((slide, slideIndex) => {
+          const active = slideIndex === current;
+          slide.classList.toggle("is-active", active);
+          slide.setAttribute("aria-hidden", String(!active));
+          if (!active && !reduced) slide.classList.remove("motion-visible");
         });
-      }, {
-        threshold: 0.01,
-        rootMargin: "180px 0px 180px 0px"
+        reveal(slides[current]);
+        updateNav();
+        if (!options.fromHash) setHash(current);
+      };
+
+      nav.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-dir]");
+        if (!button) return;
+        goTo(current + Number(button.dataset.dir));
       });
 
-      slides.forEach((slide) => observer.observe(slide));
+      window.addEventListener("keydown", (event) => {
+        const target = event.target;
+        if (target instanceof Element && target.closest("input, textarea, select, [contenteditable='true']")) return;
+
+        if (["ArrowRight", "ArrowDown", " ", "PageDown"].includes(event.key)) {
+          event.preventDefault();
+          goTo(current + 1);
+          return;
+        }
+
+        if (["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)) {
+          event.preventDefault();
+          goTo(current - 1);
+          return;
+        }
+
+        if (event.key === "Home") {
+          event.preventDefault();
+          goTo(0);
+          return;
+        }
+
+        if (event.key === "End") {
+          event.preventDefault();
+          goTo(slides.length - 1);
+        }
+      });
+
+      window.addEventListener("hashchange", () => {
+        goTo(indexFromHash(), { fromHash: true });
+      });
+
+      fitSlides();
+      window.addEventListener("resize", fitSlides);
+      goTo(indexFromHash(), { fromHash: true });
+      setHash(current);
     })();
   </script>
   <script src="/assets/kb-feedback.js" defer></script>
