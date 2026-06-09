@@ -1,0 +1,28 @@
+{
+  "status": "pending",
+  "updatedAt": null,
+  "title": "尚未发布健康摘要",
+  "summary": "这里是公开健康摘要占位文件。不要把 Apple 健康原始数据写入这个公开仓库。",
+  "metrics": [
+    {
+      "label": "睡眠",
+      "value": "--",
+      "note": "等待 OpenClaw 生成脱敏摘要"
+    },
+    {
+      "label": "活动",
+      "value": "--",
+      "note": "等待 OpenClaw 生成脱敏摘要"
+    },
+    {
+      "label": "恢复",
+      "value": "--",
+      "note": "等待 OpenClaw 生成脱敏摘要"
+    },
+    {
+      "label": "备注",
+      "value": "--",
+      "note": "公开页不展示原始健康记录"
+    }
+  ]
+}
